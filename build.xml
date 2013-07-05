@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 
-<project name="BACnet4J" basedir="." default="jar">
+<project name="BACnet4J" basedir="." default="deploy">
+  <property file="build.properties" />
+  
   <path id="master-classpath">
     <fileset dir="lib">
       <include name="*.jar"/>
@@ -49,5 +51,20 @@
         <include name="**/*"/>
       </fileset>
     </zip>
+  </target>
+  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="lib-opt/ant-contrib-1.0b3.jar" />
+  <target name="deploy" depends="jar" description="Copy the jar file to the places where it is needed">
+    <foreach list="${deploy.jar.paths}" target="|deploy" param="todir" delimiter=":">
+      <param name="deploy.file" value="bacnet4J.jar" />
+    </foreach>
+
+    <foreach list="${deploy.src.paths}" target="|deploy" param="todir" delimiter=":">
+      <param name="deploy.file" value="bacnet4J-src.zip" />
+    </foreach>
+  </target>
+
+  <target name="|deploy">
+    <copy todir="${todir}" preservelastmodified="true" file="${deploy.file}" />
   </target>
 </project>

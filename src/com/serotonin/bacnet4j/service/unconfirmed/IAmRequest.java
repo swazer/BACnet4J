@@ -78,8 +78,8 @@ public class IAmRequest extends UnconfirmedRequestService {
                 if (addr.getMacAddress().equals(from.getMacAddress()))
                     // This is a local address, so ignore.
                     return;
-                LOGGER.warning("Another instance with my device instance ID found!");
             }
+            LOGGER.warning("Another instance with my device instance ID found!");
         }
 
         // Register the device in the list of known devices.

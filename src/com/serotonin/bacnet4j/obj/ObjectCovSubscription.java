@@ -67,6 +67,7 @@ public class ObjectCovSubscription implements Serializable {
         supportedObjectTypes.add(ObjectType.multiStateOutput);
         supportedObjectTypes.add(ObjectType.multiStateValue);
         supportedObjectTypes.add(ObjectType.pulseConverter);
+        supportedObjectTypes.add(ObjectType.schedule);
 
         supportedPropertyIdentifiers.add(PropertyIdentifier.presentValue);
         supportedPropertyIdentifiers.add(PropertyIdentifier.statusFlags);

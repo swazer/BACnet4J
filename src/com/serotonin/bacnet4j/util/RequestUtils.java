@@ -16,6 +16,7 @@ import com.serotonin.bacnet4j.exception.AbortAPDUException;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.exception.BACnetTimeoutException;
 import com.serotonin.bacnet4j.exception.ErrorAPDUException;
+import com.serotonin.bacnet4j.exception.ServiceTooBigException;
 import com.serotonin.bacnet4j.obj.ObjectProperties;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyMultipleAck;
@@ -252,6 +253,19 @@ public class RequestUtils {
                             break;
                     }
                 }
+                catch (ServiceTooBigException e) {
+                    if (counter > 0)
+                        sendOneAtATime(localDevice, d, partition, updater);
+                    else {
+                        // Failed on the first partition. Send all one at a time, reduce the device's max
+                        // references, and quit.
+                        sendOneAtATime(localDevice, d, refs, updater);
+                        d.reduceMaxReadMultipleReferences();
+                        LOG.warning("Service too big. Reduced max read multiple refs to "
+                                + d.getMaxReadMultipleReferences());
+                        break;
+                    }
+                }
                 catch (AbortAPDUException e) {
                     LOG.warning("Chunked request failed.");
                     if (e.getApdu().getAbortReason() == AbortReason.bufferOverflow.intValue()
@@ -293,7 +307,7 @@ public class RequestUtils {
 
     private static void sendOneAtATime(LocalDevice localDevice, RemoteDevice d, PropertyReferences refs,
             RequestListenerUpdater updater) throws BACnetException {
-        LOG.info("Making property reference requests one at a time");
+        LOG.fine("Making property reference requests one at a time");
         List<PropertyReference> refList;
         ReadPropertyRequest request;
         ReadPropertyAck ack;

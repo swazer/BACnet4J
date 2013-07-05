@@ -366,20 +366,25 @@ public class LocalDevice {
     //
     // Message sending
     //
-    public AcknowledgementService send(RemoteDevice d, ConfirmedRequestService serviceRequest) throws BACnetException {
-        return transport.send(d.getAddress(), d.getLinkService(), d.getMaxAPDULengthAccepted(),
+    @SuppressWarnings("unchecked")
+    public <T extends AcknowledgementService> T send(RemoteDevice d, ConfirmedRequestService serviceRequest)
+            throws BACnetException {
+        return (T) transport.send(d.getAddress(), d.getLinkService(), d.getMaxAPDULengthAccepted(),
                 d.getSegmentationSupported(), serviceRequest);
     }
 
-    public AcknowledgementService send(Address address, MaxApduLength maxAPDULength,
+    @SuppressWarnings("unchecked")
+    public <T extends AcknowledgementService> T send(Address address, MaxApduLength maxAPDULength,
             Segmentation segmentationSupported, ConfirmedRequestService serviceRequest) throws BACnetException {
-        return transport.send(address, null, maxAPDULength.getMaxLength(), segmentationSupported, serviceRequest);
+        return (T) transport.send(address, null, maxAPDULength.getMaxLength(), segmentationSupported, serviceRequest);
     }
 
-    public AcknowledgementService send(Address address, OctetString linkService, MaxApduLength maxAPDULength,
-            Segmentation segmentationSupported, ConfirmedRequestService serviceRequest) throws BACnetException {
-        return transport
-                .send(address, linkService, maxAPDULength.getMaxLength(), segmentationSupported, serviceRequest);
+    @SuppressWarnings("unchecked")
+    public <T extends AcknowledgementService> T send(Address address, OctetString linkService,
+            MaxApduLength maxAPDULength, Segmentation segmentationSupported, ConfirmedRequestService serviceRequest)
+            throws BACnetException {
+        return (T) transport.send(address, linkService, maxAPDULength.getMaxLength(), segmentationSupported,
+                serviceRequest);
     }
 
     public void sendUnconfirmed(Address address, UnconfirmedRequestService serviceRequest) throws BACnetException {

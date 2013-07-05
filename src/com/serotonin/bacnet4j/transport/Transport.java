@@ -27,6 +27,7 @@ import com.serotonin.bacnet4j.exception.ErrorAPDUException;
 import com.serotonin.bacnet4j.exception.NotImplementedException;
 import com.serotonin.bacnet4j.exception.ReflectionException;
 import com.serotonin.bacnet4j.exception.RejectAPDUException;
+import com.serotonin.bacnet4j.exception.ServiceTooBigException;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
 import com.serotonin.bacnet4j.npdu.ip.SegmentWindow;
@@ -160,10 +161,10 @@ public class Transport {
             // Check if the device can accept what we want to send.
             if (segmentationSupported.intValue() == Segmentation.noSegmentation.intValue()
                     || segmentationSupported.intValue() == Segmentation.segmentedTransmit.intValue())
-                throw new BACnetException("Request too big to send to device without segmentation");
+                throw new ServiceTooBigException("Request too big to send to device without segmentation");
             int segmentsRequired = serviceData.size() / maxServiceData + 1;
             if (segmentsRequired > 128)
-                throw new BACnetException("Request too big to send to device; too many segments required");
+                throw new ServiceTooBigException("Request too big to send to device; too many segments required");
 
             WaitingRoomKey key = waitingRoom.enterClient(address, linkService);
             try {
@@ -296,10 +297,10 @@ public class Transport {
                 int maxServiceData = request.getMaxApduLengthAccepted().getMaxLength() - ComplexACK.getHeaderSize(true);
                 // Check if the device can accept what we want to send.
                 if (!request.isSegmentedResponseAccepted())
-                    throw new BACnetException("Response too big to send to device without segmentation");
+                    throw new ServiceTooBigException("Response too big to send to device without segmentation");
                 int segmentsRequired = serviceData.size() / maxServiceData + 1;
                 if (segmentsRequired > request.getMaxSegmentsAccepted().getMaxSegments() || segmentsRequired > 128)
-                    throw new BACnetException("Response too big to send to device; too many segments required");
+                    throw new ServiceTooBigException("Response too big to send to device; too many segments required");
 
                 WaitingRoomKey key = waitingRoom.enterServer(address, linkService, request.getInvokeId());
                 try {

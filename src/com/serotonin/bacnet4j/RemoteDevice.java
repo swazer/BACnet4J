@@ -195,8 +195,8 @@ public class RemoteDevice implements Serializable {
     }
 
     public void reduceMaxReadMultipleReferences() {
-        if (maxReadMultipleReferences > 1)
-            maxReadMultipleReferences = (int) (maxReadMultipleReferences * 0.75);
+        if (getMaxReadMultipleReferences() > 1)
+            maxReadMultipleReferences = (int) (getMaxReadMultipleReferences() * 0.75);
     }
 
     @Override
