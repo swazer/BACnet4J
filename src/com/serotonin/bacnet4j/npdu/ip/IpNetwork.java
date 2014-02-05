@@ -67,6 +67,8 @@ public class IpNetwork extends Network implements Runnable {
     private Thread thread;
     private DatagramSocket socket;
     private Address broadcastAddress;
+    private long bytesOut;
+    private long bytesIn;
 
     public IpNetwork() {
         this(DEFAULT_BROADCAST_IP);
@@ -111,6 +113,16 @@ public class IpNetwork extends Network implements Runnable {
 
     public String getBroadcastIp() {
         return broadcastIp;
+    }
+
+    @Override
+    public long getBytesOut() {
+        return bytesOut;
+    }
+
+    @Override
+    public long getBytesIn() {
+        return bytesIn;
     }
 
     @Override
@@ -220,6 +232,7 @@ public class IpNetwork extends Network implements Runnable {
         try {
             DatagramPacket packet = new DatagramPacket(data, data.length, addr);
             socket.send(packet);
+            bytesOut += data.length;
         }
         catch (Exception e) {
             throw new BACnetException(e);
@@ -237,6 +250,7 @@ public class IpNetwork extends Network implements Runnable {
             try {
                 socket.receive(p);
 
+                bytesIn += p.getLength();
                 ByteQueue queue = new ByteQueue(p.getData(), 0, p.getLength());
                 OctetString link = new OctetString(p.getAddress().getAddress(), p.getPort());
                 new IncomingMessageExecutor(this, queue, link).run();

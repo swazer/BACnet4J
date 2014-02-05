@@ -48,4 +48,9 @@ public class DailySchedule extends BaseType {
     public DailySchedule(ByteQueue queue) throws BACnetException {
         daySchedule = readSequenceOf(queue, TimeValue.class, 0);
     }
+
+    @Override
+    public String toString() {
+        return "DailySchedule [daySchedule=" + daySchedule + "]";
+    }
 }

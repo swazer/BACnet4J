@@ -40,17 +40,25 @@ public class PropertyReferences implements Serializable {
 
     private final Map<ObjectIdentifier, List<PropertyReference>> properties = new LinkedHashMap<ObjectIdentifier, List<PropertyReference>>();
 
-    public void add(ObjectIdentifier oid, PropertyReference ref) {
-        List<PropertyReference> refs = properties.get(oid);
-        if (refs == null) {
-            refs = new ArrayList<PropertyReference>();
-            properties.put(oid, refs);
-        }
-        refs.add(ref);
+    public void add(ObjectIdentifier oid, PropertyReference... refs) {
+        List<PropertyReference> list = getOidList(oid);
+        for (PropertyReference ref : refs)
+            list.add(ref);
     }
 
-    public void add(ObjectIdentifier oid, PropertyIdentifier pid) {
-        add(oid, new PropertyReference(pid));
+    public void add(ObjectIdentifier oid, PropertyIdentifier... pids) {
+        List<PropertyReference> list = getOidList(oid);
+        for (PropertyIdentifier pid : pids)
+            list.add(new PropertyReference(pid));
+    }
+
+    private List<PropertyReference> getOidList(ObjectIdentifier oid) {
+        List<PropertyReference> list = properties.get(oid);
+        if (list == null) {
+            list = new ArrayList<PropertyReference>();
+            properties.put(oid, list);
+        }
+        return list;
     }
 
     public Map<ObjectIdentifier, List<PropertyReference>> getProperties() {

@@ -63,12 +63,12 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
-import com.serotonin.bacnet4j.util.RequestUtils;
+import com.serotonin.bacnet4j.util.DiscoveryUtils;
 
 public class Test {
     public static void main(String[] args) {
         //        new Address(0, "192.168.0.70:47808");
-        new OctetString("192.168.2.3:47808", 47808);
+        new OctetString("192.168.2.3:47808");
     }
 
     //    public static void main(String[] args) throws Exception {
@@ -162,7 +162,7 @@ public class Test {
         rd.setMaxAPDULengthAccepted(1476);
 
         d.addRemoteDevice(rd);
-        RequestUtils.getExtendedDeviceInformation(d, rd);
+        DiscoveryUtils.getExtendedDeviceInformation(d, rd);
 
         // List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)d.sendReadPropertyAllowNull(
         // rd, rd.getObjectIdentifier(), PropertyIdentifier.objectList)).getValues();

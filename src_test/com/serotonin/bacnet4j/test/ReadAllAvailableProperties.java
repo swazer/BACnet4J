@@ -54,6 +54,7 @@ import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
+import com.serotonin.bacnet4j.util.DiscoveryUtils;
 import com.serotonin.bacnet4j.util.PropertyReferences;
 import com.serotonin.bacnet4j.util.PropertyValues;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -176,7 +177,7 @@ public class ReadAllAvailableProperties {
     private void printDevices() throws BACnetException {
         for (RemoteDevice d : remoteDevices) {
 
-            RequestUtils.getExtendedDeviceInformation(localDevice, d);
+            DiscoveryUtils.getExtendedDeviceInformation(localDevice, d);
 
             List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>) RequestUtils.sendReadPropertyAllowNull(
                     localDevice, d, d.getObjectIdentifier(), PropertyIdentifier.objectList)).getValues();

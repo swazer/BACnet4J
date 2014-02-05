@@ -148,8 +148,8 @@ public class WaitingRoom {
                 // no op
             }
         }
-        throw new BACnetException("No waiting recipient for message: address=" + address + ", id=" + (id & 0xff)
-                + ", isFromServer=" + isFromServer + ", message=" + apdu);
+        //        throw new BACnetException("No waiting recipient for message: address=" + address + ", isFromServer="
+        //                + isFromServer + ", message=" + apdu);
     }
 
     private Member getMember(WaitingRoomKey key) {

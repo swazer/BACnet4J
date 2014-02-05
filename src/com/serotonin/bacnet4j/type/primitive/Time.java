@@ -126,7 +126,7 @@ public class Time extends Primitive {
     /**
      * @param that
      *            The time with which to compare this
-     * @return true if this >= that
+     * @return true if this > that
      */
     public boolean after(Time that) {
         if (!this.isHourUnspecified() && !that.isHourUnspecified()) {
@@ -153,7 +153,7 @@ public class Time extends Primitive {
         if (this.isHundredthUnspecified() || that.isHundredthUnspecified())
             return true;
 
-        return this.hundredth >= that.hundredth;
+        return this.hundredth > that.hundredth;
     }
 
     //

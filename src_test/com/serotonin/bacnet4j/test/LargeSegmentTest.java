@@ -14,6 +14,7 @@ import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.Real;
+import com.serotonin.bacnet4j.util.DiscoveryUtils;
 import com.serotonin.bacnet4j.util.RequestUtils;
 
 /**
@@ -47,7 +48,7 @@ public class LargeSegmentTest {
         localDevice.initialize();
         Address address = new Address(BACnetUtils.dottedStringToBytes("127.0.0.1"), IpNetwork.DEFAULT_PORT);
         RemoteDevice remoteDevice = localDevice.findRemoteDevice(address, null, deviceWithObjectsId);
-        RequestUtils.getExtendedDeviceInformation(localDevice, remoteDevice);
+        DiscoveryUtils.getExtendedDeviceInformation(localDevice, remoteDevice);
 
         try {
             // When querying the list of objects

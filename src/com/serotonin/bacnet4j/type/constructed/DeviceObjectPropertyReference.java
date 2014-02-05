@@ -123,4 +123,11 @@ public class DeviceObjectPropertyReference extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "DeviceObjectPropertyReference [objectIdentifier=" + objectIdentifier + ", propertyIdentifier="
+                + propertyIdentifier + ", propertyArrayIndex=" + propertyArrayIndex + ", deviceIdentifier="
+                + deviceIdentifier + "]";
+    }
 }

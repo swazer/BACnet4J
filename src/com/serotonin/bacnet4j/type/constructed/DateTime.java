@@ -117,4 +117,9 @@ public class DateTime extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "DateTime [date=" + date + ", time=" + time + "]";
+    }
 }

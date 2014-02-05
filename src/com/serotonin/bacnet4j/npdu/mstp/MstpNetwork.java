@@ -63,6 +63,16 @@ public class MstpNetwork extends Network {
     }
 
     @Override
+    public long getBytesOut() {
+        return node.getBytesOut();
+    }
+
+    @Override
+    public long getBytesIn() {
+        return node.getBytesIn();
+    }
+
+    @Override
     public void sendAPDU(Address recipient, OctetString link, APDU apdu, boolean broadcast) throws BACnetException {
         ByteQueue queue = new ByteQueue();
 

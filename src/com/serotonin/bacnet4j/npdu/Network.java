@@ -32,6 +32,10 @@ abstract public class Network {
         return transport;
     }
 
+    abstract public long getBytesOut();
+
+    abstract public long getBytesIn();
+
     abstract public NetworkIdentifier getNetworkIdentifier();
 
     abstract public MaxApduLength getMaxApduLength();

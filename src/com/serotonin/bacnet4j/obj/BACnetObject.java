@@ -35,6 +35,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
+import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.event.ExceptionDispatch;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
@@ -53,6 +54,7 @@ import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
 import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
+import com.serotonin.bacnet4j.type.enumerated.Segmentation;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.Date;
@@ -318,7 +320,7 @@ public class BACnetObject implements Serializable {
             Boolean issueConfirmedNotifications, UnsignedInteger lifetime) throws BACnetServiceException {
         synchronized (covSubscriptions) {
             ObjectCovSubscription sub = findCovSubscription(from, subscriberProcessIdentifier);
-            boolean confirmed = issueConfirmedNotifications.booleanValue();
+            //            boolean confirmed = issueConfirmedNotifications.booleanValue();
 
             if (sub == null) {
                 // Ensure that this object is valid for COV notifications.
@@ -326,13 +328,13 @@ public class BACnetObject implements Serializable {
                     throw new BACnetServiceException(ErrorClass.services, ErrorCode.covSubscriptionFailed,
                             "Object is invalid for COV notifications");
 
-                if (confirmed) {
-                    // If the peer wants confirmed notifications, it must be in the remote device list.
-                    RemoteDevice d = localDevice.getRemoteDevice(from);
-                    if (d == null)
-                        throw new BACnetServiceException(ErrorClass.services, ErrorCode.covSubscriptionFailed,
-                                "From address not found in remote device list. Cannot send confirmed notifications");
-                }
+                //                if (confirmed) {
+                //                    // If the peer wants confirmed notifications, it must be in the remote device list.
+                //                    RemoteDevice d = localDevice.getRemoteDevice(from);
+                //                    if (d == null)
+                //                        throw new BACnetServiceException(ErrorClass.services, ErrorCode.covSubscriptionFailed,
+                //                                "From address not found in remote device list. Cannot send confirmed notifications");
+                //                }
 
                 sub = new ObjectCovSubscription(from, linkService, subscriberProcessIdentifier, this.getCovIncrement());
                 covSubscriptions.add(sub);
@@ -375,7 +377,11 @@ public class BACnetObject implements Serializable {
                         sub.getSubscriberProcessIdentifier(), localDevice.getConfiguration().getId(), id, timeLeft,
                         values);
                 RemoteDevice d = localDevice.getRemoteDevice(sub.getAddress());
-                localDevice.send(d, req);
+                if (d == null)
+                    localDevice.sendConfirmed(sub.getAddress(), sub.getLinkService(), MaxApduLength.UP_TO_50,
+                            Segmentation.noSegmentation, req);
+                else
+                    localDevice.sendConfirmed(d, req);
             }
             else {
                 // Unconfirmed

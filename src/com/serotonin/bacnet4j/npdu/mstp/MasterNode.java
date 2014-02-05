@@ -554,14 +554,26 @@ public class MasterNode extends MstpNode {
                 state = MasterNodeState.idle;
                 activity = true;
             }
-            else if (replyDeadline >= timeSource.currentTimeMillis()) {
-                // DeferredReply
-                //                debug("answerDataRequest:DeferredReply to " + frameToReply.getSourceAddress());
-                if (LOG.isLoggable(Level.FINE))
-                    LOG.fine(thisStation + " answerDataRequest:DeferredReply");
-                sendFrame(FrameType.replyPostponed, frame.getSourceAddress());
-                state = MasterNodeState.idle;
-                activity = true;
+            else {
+                long now = timeSource.currentTimeMillis();
+                if (replyDeadline < now) {
+                    // DeferredReply
+                    //                debug("answerDataRequest:DeferredReply to " + frameToReply.getSourceAddress());
+                    if (LOG.isLoggable(Level.FINE))
+                        LOG.fine(thisStation + " answerDataRequest:DeferredReply");
+                    sendFrame(FrameType.replyPostponed, frame.getSourceAddress());
+                    state = MasterNodeState.idle;
+                    activity = true;
+                }
+                else {
+                    // If the current time of the host was moved back, the above condition could cause an indefinite
+                    // wait. So, we check if the reply deadline is too long, and correct if so.
+                    long timeDiff = replyDeadline - now;
+                    if (timeDiff > Constants.REPLY_DELAY) {
+                        LOG.warning("Correcting replyDeadline time because of timeDiff of " + timeDiff);
+                        replyDeadline = now + Constants.REPLY_DELAY;
+                    }
+                }
             }
         }
     }

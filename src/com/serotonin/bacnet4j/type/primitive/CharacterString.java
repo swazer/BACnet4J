@@ -51,7 +51,7 @@ public class CharacterString extends Primitive {
 
     public CharacterString(String value) {
         encoding = Encodings.ANSI_X3_4;
-        this.value = value;
+        this.value = value == null ? "" : value;
     }
 
     public CharacterString(byte encoding, String value) {
@@ -63,7 +63,7 @@ public class CharacterString extends Primitive {
             throw new BACnetRuntimeException(e);
         }
         this.encoding = encoding;
-        this.value = value;
+        this.value = value == null ? "" : value;
     }
 
     public byte getEncoding() {
@@ -138,7 +138,7 @@ public class CharacterString extends Primitive {
             // Should never happen, so convert to a runtime exception.
             throw new RuntimeException(e);
         }
-        return null;
+        return "";
     }
 
     private void validateEncoding() throws BACnetErrorException {

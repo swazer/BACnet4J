@@ -196,4 +196,11 @@ public class Destination extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Destination [validDays=" + validDays + ", fromTime=" + fromTime + ", toTime=" + toTime + ", recipient="
+                + recipient + ", processIdentifier=" + processIdentifier + ", issueConfirmedNotifications="
+                + issueConfirmedNotifications + ", transitions=" + transitions + "]";
+    }
 }

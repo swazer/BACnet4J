@@ -67,6 +67,10 @@ public class Reject extends AckAPDU {
         rejectReason = new RejectReason(queue.popU1B());
     }
 
+    public RejectReason getRejectReason() {
+        return rejectReason;
+    }
+
     @Override
     public int hashCode() {
         final int PRIME = 31;

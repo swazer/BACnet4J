@@ -36,7 +36,7 @@ public class Test2 {
 
             //        getObjectList(localDevice, "192.168.0.68", 0xBAC0, 101);
             //            getObjectList(localDevice, "192.168.0.68", 76058, new Address(2001, new byte[] { 0x3a }));
-            getObjectList(localDevice, new Address(2001, new byte[] { 0x3a }), new OctetString("192.168.0.68", 0xBAC0),
+            getObjectList(localDevice, new Address(2001, new byte[] { 0x3a }), new OctetString("192.168.0.68:47808"),
                     76058);
 
             //getObjectList(localDevice, "206.210.100.135", 0xBAC0, 1011);

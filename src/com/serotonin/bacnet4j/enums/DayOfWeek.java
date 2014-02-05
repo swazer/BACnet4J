@@ -38,6 +38,10 @@ public enum DayOfWeek {
         return id;
     }
 
+    public static DayOfWeek valueOf(int id) {
+        return valueOf((byte) id);
+    }
+
     public static DayOfWeek valueOf(byte id) {
         if (id == MONDAY.id)
             return MONDAY;

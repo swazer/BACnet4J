@@ -25,9 +25,12 @@
  */
 package com.serotonin.bacnet4j.type.error;
 
+import com.serotonin.bacnet4j.exception.BACnetErrorException;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.constructed.BACnetError;
 import com.serotonin.bacnet4j.type.constructed.BaseType;
+import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
+import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.util.queue.ByteQueue;
 
 public class BaseError extends BaseType {
@@ -36,18 +39,29 @@ public class BaseError extends BaseType {
     public static BaseError createBaseError(ByteQueue queue) throws BACnetException {
         byte choice = queue.pop();
 
-        switch (choice) {
-        case 8:
-        case 9:
-            return new ChangeListError(choice, queue);
-        case 10:
-            return new CreateObjectError(choice, queue);
-        case 16:
-            return new WritePropertyMultipleError(choice, queue);
-        case 18:
-            return new ConfirmedPrivateTransferError(choice, queue);
-        case 22:
-            return new VTCloseError(choice, queue);
+        try {
+            queue.mark();
+            switch (choice) {
+            case 8:
+            case 9:
+                return new ChangeListError(choice, queue);
+            case 10:
+                return new CreateObjectError(choice, queue);
+            case 16:
+                return new WritePropertyMultipleError(choice, queue);
+            case 18:
+                return new ConfirmedPrivateTransferError(choice, queue);
+            case 22:
+                return new VTCloseError(choice, queue);
+            }
+        }
+        catch (BACnetErrorException e) {
+            // Some devices do not send properly formatted error. In case of error, try just parsing as a BaseError.
+            if (e.getError().getError().getErrorClass().isOneOf(ErrorClass.property)
+                    && e.getError().getError().getErrorCode().isOneOf(ErrorCode.missingRequiredParameter))
+                queue.reset();
+            else
+                throw e;
         }
         return new BaseError(choice, queue);
     }

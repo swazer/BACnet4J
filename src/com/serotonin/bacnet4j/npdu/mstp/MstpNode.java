@@ -65,6 +65,8 @@ abstract public class MstpNode implements Runnable {
     private ReadFrameState state;
 
     private String lastWriteError;
+    private long bytesOut;
+    private long bytesIn;
 
     public MstpNode(SerialParameters serialParams, byte thisStation) {
         this.serialParams = serialParams;
@@ -85,6 +87,14 @@ abstract public class MstpNode implements Runnable {
 
     public void initialize() throws Exception {
         initialize(true);
+    }
+
+    public long getBytesOut() {
+        return bytesOut;
+    }
+
+    public long getBytesIn() {
+        return bytesIn;
     }
 
     public void initialize(boolean runInThread) throws Exception {
@@ -266,6 +276,7 @@ abstract public class MstpNode implements Runnable {
         try {
             if (in.available() > 0) {
                 readCount = in.read(readArray);
+                bytesIn += readCount;
                 if (DEBUG)
                     debug("in: " + StreamUtils.dumpArrayHex(readArray, 0, readCount));
                 inputBuffer.push(readArray, 0, readCount);
@@ -521,6 +532,7 @@ abstract public class MstpNode implements Runnable {
             out.write((frame.getLength() >> 8) & 0xff);
             out.write(frame.getLength() & 0xff);
             out.write(sendHeaderCRC.getCrc(frame));
+            bytesOut += 8;
 
             if (frame.getLength() > 0) {
                 // Data
@@ -528,6 +540,7 @@ abstract public class MstpNode implements Runnable {
                 int crc = sendDataCRC.getCrc(frame);
                 out.write(crc & 0xff);
                 out.write((crc >> 8) & 0xff);
+                bytesOut += frame.getLength() + 2;
             }
 
             out.flush();

@@ -84,6 +84,12 @@ abstract public class Primitive extends Encodable {
         throw new BACnetErrorException(ErrorClass.property, ErrorCode.invalidParameterDataType);
     }
 
+    public static boolean isPrimitive(byte firstByte) {
+        // Get the first byte. The 4 high-order bits will tell us what the data type is.
+        firstByte = (byte) ((firstByte & 0xff) >> 4);
+        return firstByte >= Null.TYPE_ID && firstByte <= ObjectIdentifier.TYPE_ID;
+    }
+
     /**
      * This field is maintained specifically for boolean types, since their encoding differs depending on whether the
      * type is context specific or not.

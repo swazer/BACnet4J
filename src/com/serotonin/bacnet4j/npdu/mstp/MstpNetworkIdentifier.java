@@ -14,6 +14,11 @@ public class MstpNetworkIdentifier extends NetworkIdentifier {
     }
 
     @Override
+    public String getIdString() {
+        return commPortId;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

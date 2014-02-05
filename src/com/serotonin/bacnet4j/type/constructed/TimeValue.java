@@ -91,4 +91,9 @@ public class TimeValue extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "TimeValue [time=" + time + ", value=" + value + "]";
+    }
 }

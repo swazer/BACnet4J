@@ -32,7 +32,6 @@ import java.util.Arrays;
 
 import com.serotonin.bacnet4j.base.BACnetUtils;
 import com.serotonin.bacnet4j.npdu.ip.InetAddrCache;
-import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.util.ArrayUtils;
 import com.serotonin.util.IpAddressUtils;
 import com.serotonin.util.queue.ByteQueue;
@@ -49,19 +48,10 @@ public class OctetString extends Primitive {
     }
 
     public OctetString(String dottedString) {
-        this(dottedString, IpNetwork.DEFAULT_PORT);
-    }
-
-    public OctetString(String dottedString, int defaultPort) {
         dottedString = dottedString.trim();
         int colon = dottedString.indexOf(":");
-        if (colon == -1) {
-            byte[] b = BACnetUtils.dottedStringToBytes(dottedString);
-            if (b.length == 4)
-                value = toBytes(b, defaultPort);
-            else
-                value = b;
-        }
+        if (colon == -1)
+            value = BACnetUtils.dottedStringToBytes(dottedString);
         else {
             byte[] ip = BACnetUtils.dottedStringToBytes(dottedString.substring(0, colon));
             int port = Integer.parseInt(dottedString.substring(colon + 1));
@@ -220,7 +210,7 @@ public class OctetString extends Primitive {
             // Assume an I/P address
             sb.append(toIpPortString());
         else
-            sb.append(toString());
+            sb.append(getMacAddressDottedString());
         return sb.toString();
     }
 }

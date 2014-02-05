@@ -180,4 +180,12 @@ public class ReadRangeAck extends AcknowledgementService {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "ReadRangeAck [objectIdentifier=" + objectIdentifier + ", propertyIdentifier=" + propertyIdentifier
+                + ", propertyArrayIndex=" + propertyArrayIndex + ", resultFlags=" + resultFlags + ", itemCount="
+                + itemCount + ", itemData=" + itemData + ", firstSequenceNumber=" + firstSequenceNumber + "]";
+    }
+
 }

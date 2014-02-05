@@ -42,8 +42,8 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 public class RemoteDevice implements Serializable {
     private static final long serialVersionUID = 6338537708566242078L;
     private final int instanceNumber;
-    private final Address address;
-    private final OctetString linkService;
+    private Address address;
+    private OctetString linkService;
     private int maxAPDULengthAccepted;
     private Segmentation segmentationSupported;
     private int vendorId;
@@ -100,8 +100,16 @@ public class RemoteDevice implements Serializable {
         return address;
     }
 
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public OctetString getLinkService() {
         return linkService;
+    }
+
+    public void setLinkService(OctetString linkService) {
+        this.linkService = linkService;
     }
 
     public int getMaxAPDULengthAccepted() {

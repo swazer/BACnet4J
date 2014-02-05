@@ -9,14 +9,11 @@ import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.Transport;
-import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.enumerated.Segmentation;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
-import com.serotonin.bacnet4j.type.primitive.Unsigned16;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 
@@ -43,26 +40,27 @@ public class BacnetTest {
 
     static class Listener extends DeviceEventAdapter {
         @Override
-        public void iAmReceived(RemoteDevice d) {
-            try {
-                System.out.println("IAm received from " + d);
-                System.out.println("Segmentation: " + d.getSegmentationSupported());
-                d.setSegmentationSupported(Segmentation.noSegmentation);
+        public void iAmReceived(final RemoteDevice d) {
+            System.out.println("IAm received from " + d);
+            System.out.println("Segmentation: " + d.getSegmentationSupported());
+            d.setSegmentationSupported(Segmentation.noSegmentation);
 
-                Address a = new Address(new Unsigned16(0), new OctetString(new byte[] { (byte) 0xc0, (byte) 0xa8, 0x1,
-                        0x5, (byte) 0xba, (byte) 0xc0 }));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        getExtendedDeviceInformation(d);
+                        System.out.println("Done getting extended information");
 
-                System.out.println("Equals: " + a.equals(d.getAddress()));
-                getExtendedDeviceInformation(d);
-                System.out.println("Done getting extended information");
-
-                List oids = ((SequenceOf) RequestUtils.sendReadPropertyAllowNull(localDevice, d,
-                        d.getObjectIdentifier(), PropertyIdentifier.objectList)).getValues();
-                System.out.println(oids);
-            }
-            catch (BACnetException e) {
-                e.printStackTrace();
-            }
+                        List oids = ((SequenceOf) RequestUtils.sendReadPropertyAllowNull(localDevice, d,
+                                d.getObjectIdentifier(), PropertyIdentifier.objectList)).getValues();
+                        System.out.println(oids);
+                    }
+                    catch (BACnetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 

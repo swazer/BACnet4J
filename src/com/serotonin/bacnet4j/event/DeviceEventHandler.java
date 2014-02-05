@@ -199,6 +199,11 @@ public class DeviceEventHandler {
         }
     }
 
+    public void handleException(Throwable e) {
+        for (DeviceEventListener l : listeners)
+            handleException(l, e);
+    }
+
     private void handleException(DeviceEventListener l, Throwable e) {
         try {
             l.listenerException(e);

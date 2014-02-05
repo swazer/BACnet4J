@@ -49,6 +49,15 @@ public class Enumerated extends UnsignedInteger {
         return intValue() == that.intValue();
     }
 
+    public boolean isOneOf(Enumerated... those) {
+        int id = intValue();
+        for (Enumerated that : those) {
+            if (id == that.intValue())
+                return true;
+        }
+        return false;
+    }
+
     //
     // Reading and writing
     //

@@ -126,6 +126,14 @@ public class Transport {
         network.terminate();
     }
 
+    public long getBytesOut() {
+        return network.getBytesOut();
+    }
+
+    public long getBytesIn() {
+        return network.getBytesIn();
+    }
+
     //
     //
     // Sending messages - messages are initiated by the application layer
@@ -187,6 +195,9 @@ public class Transport {
                     key.getInvokeId(), (byte) 0, 0, service.getChoiceId(), serviceData);
             try {
                 ack = sendSegments(key, timeout, new APDU[] { apdu });
+            }
+            catch (BACnetTimeoutException e) {
+                throw new BACnetTimeoutException("Timeout waiting for ack for " + service.getClass().getSimpleName());
             }
             finally {
                 waitingRoom.leave(key);
@@ -271,7 +282,7 @@ public class Transport {
                     continue;
 
                 // Give up
-                throw new BACnetTimeoutException("Timeout while waiting for response for id " + key.getInvokeId());
+                throw new BACnetTimeoutException();
             }
 
             // We got the response

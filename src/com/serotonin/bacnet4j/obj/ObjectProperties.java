@@ -143,9 +143,9 @@ public class ObjectProperties {
         if (def.isSequence()) {
             SequenceOf<Encodable> seq = (SequenceOf<Encodable>) value;
             for (Encodable e : seq) {
-                if (!def.getClazz().isAssignableFrom(e.getClass()))
+                if (e == null || !def.getClazz().isAssignableFrom(e.getClass()))
                     throw new BACnetServiceException(ErrorClass.property, ErrorCode.invalidDataType, "expected "
-                            + def.getClazz() + ", received=" + value.getClass());
+                            + def.getClazz() + ", received=" + (e == null ? "null" : e.getClass()));
             }
         }
         else if (!def.getClazz().isAssignableFrom(value.getClass()))
@@ -856,7 +856,8 @@ public class ObjectProperties {
         add(ObjectType.multiStateInput, PropertyIdentifier.objectName, CharacterString.class, false, true, null);
         add(ObjectType.multiStateInput, PropertyIdentifier.objectType, ObjectType.class, false, true,
                 ObjectType.multiStateInput);
-        add(ObjectType.multiStateInput, PropertyIdentifier.presentValue, UnsignedInteger.class, false, true, null);
+        add(ObjectType.multiStateInput, PropertyIdentifier.presentValue, UnsignedInteger.class, false, true,
+                new UnsignedInteger(0));
         add(ObjectType.multiStateInput, PropertyIdentifier.description, CharacterString.class, false, false, null);
         add(ObjectType.multiStateInput, PropertyIdentifier.deviceType, CharacterString.class, false, false, null);
         add(ObjectType.multiStateInput, PropertyIdentifier.statusFlags, StatusFlags.class, false, true,

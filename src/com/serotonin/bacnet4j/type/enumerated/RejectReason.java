@@ -52,4 +52,30 @@ public class RejectReason extends Enumerated {
     public RejectReason(ByteQueue queue) {
         super(queue);
     }
+
+    @Override
+    public String toString() {
+        int type = intValue();
+        if (type == other.intValue())
+            return "Other";
+        if (type == bufferOverflow.intValue())
+            return "Buffer overflow";
+        if (type == inconsistentParameters.intValue())
+            return "Inconsistent parameters";
+        if (type == invalidParameterDataType.intValue())
+            return "Invalid parameter data type";
+        if (type == invalidTag.intValue())
+            return "Invalid tag";
+        if (type == missingRequiredParameter.intValue())
+            return "Missing required parameter";
+        if (type == parameterOutOfRange.intValue())
+            return "Parameter out of range";
+        if (type == tooManyArguments.intValue())
+            return "Too many arguments";
+        if (type == undefinedEnumeration.intValue())
+            return "Undefined enumeration";
+        if (type == unrecognizedService.intValue())
+            return "Unrecognized service";
+        return "Unknown reject reason(" + type + ")";
+    }
 }

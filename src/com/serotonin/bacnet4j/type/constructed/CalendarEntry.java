@@ -115,4 +115,9 @@ public class CalendarEntry extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "CalendarEntry [entry=" + entry + "]";
+    }
 }

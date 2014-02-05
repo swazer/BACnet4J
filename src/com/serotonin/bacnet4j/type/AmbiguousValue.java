@@ -27,6 +27,7 @@ package com.serotonin.bacnet4j.type;
 
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
+import com.serotonin.bacnet4j.type.primitive.Primitive;
 import com.serotonin.io.StreamUtils;
 import com.serotonin.util.queue.ByteQueue;
 
@@ -105,6 +106,14 @@ public class AmbiguousValue extends Encodable {
 
     @Override
     public String toString() {
+        if (Primitive.isPrimitive(data[0])) {
+            try {
+                return convertTo(Primitive.class).toString();
+            }
+            catch (BACnetException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return "Ambiguous(" + StreamUtils.dumpArrayHex(data) + ")";
     }
 

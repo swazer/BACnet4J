@@ -34,6 +34,7 @@ import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
+import com.serotonin.bacnet4j.util.DiscoveryUtils;
 import com.serotonin.bacnet4j.util.PropertyReferences;
 import com.serotonin.bacnet4j.util.PropertyValues;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -71,7 +72,7 @@ public class DiscoveryTest {
 
         // Get extended information for all remote devices.
         for (RemoteDevice d : localDevice.getRemoteDevices()) {
-            RequestUtils.getExtendedDeviceInformation(localDevice, d);
+            DiscoveryUtils.getExtendedDeviceInformation(localDevice, d);
             List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>) RequestUtils.sendReadPropertyAllowNull(
                     localDevice, d, d.getObjectIdentifier(), PropertyIdentifier.objectList)).getValues();
 

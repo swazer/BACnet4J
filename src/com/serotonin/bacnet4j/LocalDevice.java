@@ -51,6 +51,8 @@ import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.IAmRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.UnconfirmedEventNotificationRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.UnconfirmedRequestService;
+import com.serotonin.bacnet4j.transport.ConfirmedSendItem;
+import com.serotonin.bacnet4j.transport.ConfirmedSendProcessor;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
@@ -77,6 +79,7 @@ import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Unsigned16;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
+import com.serotonin.bkgd.WorkItemQueue;
 
 /**
  * Enhancements: - default character string encoding - BIBBs (B-OWS) (services to implement) - AE-N-A - AE-ACK-A -
@@ -105,6 +108,7 @@ public class LocalDevice {
 
     // Event listeners
     private final DeviceEventHandler eventHandler = new DeviceEventHandler();
+    private WorkItemQueue<ConfirmedSendItem> confirmedSendQueue;
 
     //private final DeviceEventHandler eventHandler = new DeviceEventAsyncHandler();
 
@@ -202,6 +206,20 @@ public class LocalDevice {
         this.strict = strict;
     }
 
+    /**
+     * @return the number of bytes sent by the transport
+     */
+    public long getBytesOut() {
+        return transport.getBytesOut();
+    }
+
+    /**
+     * @return the number of bytes received by the transport
+     */
+    public long getBytesIn() {
+        return transport.getBytesIn();
+    }
+
     public synchronized void initialize() throws Exception {
         if (executorService == null) {
             executorService = Executors.newCachedThreadPool();
@@ -209,8 +227,13 @@ public class LocalDevice {
         }
         else
             ownsExecutorService = false;
+
         // For the async handler
         //eventHandler.initialize(executorService);
+
+        confirmedSendQueue = new WorkItemQueue<ConfirmedSendItem>(executorService, new ConfirmedSendProcessor(
+                transport, eventHandler));
+
         transport.initialize();
         initialized = true;
     }
@@ -338,13 +361,14 @@ public class LocalDevice {
 
     public void removeObject(ObjectIdentifier id) throws BACnetServiceException {
         BACnetObject obj = getObject(id);
-        if (obj != null)
+        if (obj != null) {
             localObjects.remove(obj);
+
+            // Remove the reference in the device's object list for this id.
+            getObjectList().remove(id);
+        }
         else
             throw new BACnetServiceException(ErrorClass.object, ErrorCode.unknownObject);
-
-        // Remove the reference in the device's object list for this id.
-        getObjectList().remove(id);
     }
 
     @SuppressWarnings("unchecked")
@@ -385,6 +409,27 @@ public class LocalDevice {
             throws BACnetException {
         return (T) transport.send(address, linkService, maxAPDULength.getMaxLength(), segmentationSupported,
                 serviceRequest);
+    }
+
+    public void sendConfirmed(RemoteDevice d, ConfirmedRequestService serviceRequest) {
+        sendConfirmed(d.getAddress(), d.getLinkService(), d.getMaxAPDULengthAccepted(), d.getSegmentationSupported(),
+                serviceRequest);
+    }
+
+    public void sendConfirmed(Address address, MaxApduLength maxAPDULength, Segmentation segmentationSupported,
+            ConfirmedRequestService serviceRequest) {
+        sendConfirmed(address, null, maxAPDULength.getMaxLength(), segmentationSupported, serviceRequest);
+    }
+
+    public void sendConfirmed(Address address, OctetString linkService, MaxApduLength maxAPDULength,
+            Segmentation segmentationSupported, ConfirmedRequestService serviceRequest) {
+        sendConfirmed(address, linkService, maxAPDULength.getMaxLength(), segmentationSupported, serviceRequest);
+    }
+
+    private void sendConfirmed(Address address, OctetString linkService, int maxAPDULengthAccepted,
+            Segmentation segmentationSupported, ConfirmedRequestService service) {
+        confirmedSendQueue.addWorkItem(new ConfirmedSendItem(address, linkService, maxAPDULengthAccepted,
+                segmentationSupported, service));
     }
 
     public void sendUnconfirmed(Address address, UnconfirmedRequestService serviceRequest) throws BACnetException {
@@ -437,6 +482,10 @@ public class LocalDevice {
                 throw new NullPointerException("addr cannot be null");
             d = new RemoteDevice(instanceId, address, linkService);
             remoteDevices.add(d);
+        }
+        else {
+            d.setAddress(address);
+            d.setLinkService(linkService);
         }
         return d;
     }
@@ -617,30 +666,38 @@ public class LocalDevice {
     }
 
     //
+    //
     // Manual device discovery
+    //
     public RemoteDevice findRemoteDevice(Address address, OctetString linkService, int deviceId) throws BACnetException {
         RemoteDevice d = getRemoteDeviceImpl(deviceId, address, linkService);
-        if (d != null)
-            return d;
 
-        ObjectIdentifier deviceOid = new ObjectIdentifier(ObjectType.device, deviceId);
-        ReadPropertyRequest req = new ReadPropertyRequest(deviceOid, PropertyIdentifier.maxApduLengthAccepted);
-        ReadPropertyAck ack = (ReadPropertyAck) transport.send(address, linkService,
-                MaxApduLength.UP_TO_50.getMaxLength(), Segmentation.noSegmentation, req);
+        if (d == null) {
+            ObjectIdentifier deviceOid = new ObjectIdentifier(ObjectType.device, deviceId);
+            ReadPropertyRequest req = new ReadPropertyRequest(deviceOid, PropertyIdentifier.maxApduLengthAccepted);
+            ReadPropertyAck ack = (ReadPropertyAck) transport.send(address, linkService,
+                    MaxApduLength.UP_TO_50.getMaxLength(), Segmentation.noSegmentation, req);
 
-        // If we got this far, then we got a response. Now get the other required properties.
-        d = new RemoteDevice(deviceOid.getInstanceNumber(), address, linkService);
-        d.setMaxAPDULengthAccepted(((UnsignedInteger) ack.getValue()).intValue());
-        d.setSegmentationSupported(Segmentation.noSegmentation);
+            // If we got this far, then we got a response. Now get the other required properties.
+            d = new RemoteDevice(deviceOid.getInstanceNumber(), address, linkService);
+            d.setMaxAPDULengthAccepted(((UnsignedInteger) ack.getValue()).intValue());
+            d.setSegmentationSupported(Segmentation.noSegmentation);
 
-        Map<PropertyIdentifier, Encodable> map = RequestUtils.getProperties(this, d, null,
-                PropertyIdentifier.segmentationSupported, PropertyIdentifier.vendorIdentifier,
-                PropertyIdentifier.protocolServicesSupported);
-        d.setSegmentationSupported((Segmentation) map.get(PropertyIdentifier.segmentationSupported));
-        d.setVendorId(((Unsigned16) map.get(PropertyIdentifier.vendorIdentifier)).intValue());
-        d.setServicesSupported((ServicesSupported) map.get(PropertyIdentifier.protocolServicesSupported));
+            Map<PropertyIdentifier, Encodable> map = RequestUtils.getProperties(this, d, null,
+                    PropertyIdentifier.segmentationSupported, PropertyIdentifier.vendorIdentifier,
+                    PropertyIdentifier.protocolServicesSupported);
+            d.setSegmentationSupported((Segmentation) map.get(PropertyIdentifier.segmentationSupported));
+            d.setVendorId(((Unsigned16) map.get(PropertyIdentifier.vendorIdentifier)).intValue());
+            d.setServicesSupported((ServicesSupported) map.get(PropertyIdentifier.protocolServicesSupported));
 
-        addRemoteDevice(d);
+            addRemoteDevice(d);
+        }
+        else if (d.getServicesSupported() == null) {
+            // Ensure the device has services supported.
+            Map<PropertyIdentifier, Encodable> map = RequestUtils.getProperties(this, d, null,
+                    PropertyIdentifier.protocolServicesSupported);
+            d.setServicesSupported((ServicesSupported) map.get(PropertyIdentifier.protocolServicesSupported));
+        }
 
         return d;
     }

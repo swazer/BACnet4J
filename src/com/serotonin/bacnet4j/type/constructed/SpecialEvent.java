@@ -133,4 +133,10 @@ public class SpecialEvent extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "SpecialEvent [calendar=" + calendar + ", listOfTimeValues=" + listOfTimeValues + ", eventPriority="
+                + eventPriority + "]";
+    }
 }

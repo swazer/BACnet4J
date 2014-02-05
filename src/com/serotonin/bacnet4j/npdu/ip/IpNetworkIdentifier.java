@@ -20,6 +20,11 @@ public class IpNetworkIdentifier extends NetworkIdentifier {
     }
 
     @Override
+    public String getIdString() {
+        return port + "/" + localBindAddress;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

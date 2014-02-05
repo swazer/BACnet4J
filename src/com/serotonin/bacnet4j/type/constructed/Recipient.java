@@ -103,4 +103,9 @@ public class Recipient extends BaseType {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Recipient [choice=" + choice + "]";
+    }
 }

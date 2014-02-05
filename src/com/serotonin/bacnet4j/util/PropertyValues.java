@@ -108,4 +108,9 @@ public class PropertyValues implements Iterable<ObjectPropertyReference>, Serial
             return null;
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "PropertyValues [values=" + values + "]";
+    }
 }

@@ -39,6 +39,10 @@ public enum Month {
         return id;
     }
 
+    public static Month valueOf(int id) {
+        return valueOf((byte) id);
+    }
+
     public static Month valueOf(byte id) {
         if (id == JANUARY.id)
             return JANUARY;

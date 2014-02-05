@@ -17,6 +17,7 @@ import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
+import com.serotonin.bacnet4j.util.DiscoveryUtils;
 import com.serotonin.bacnet4j.util.PropertyReferences;
 import com.serotonin.bacnet4j.util.RequestListener;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -31,7 +32,8 @@ public class MstpObjectList {
     public static void main(String[] args) throws Exception {
         MstpNode.DEBUG = true;
         SerialParameters serialParams = new SerialParameters();
-        serialParams.setCommPortId("COM4");
+        //        serialParams.setCommPortId("COM4");
+        serialParams.setCommPortId("COM16");
         serialParams.setBaudRate(38400);
         MasterNode node = new MasterNode(serialParams, (byte) 0, 2);
         MstpNetwork network = new MstpNetwork(node);
@@ -80,7 +82,7 @@ public class MstpObjectList {
     @SuppressWarnings("unchecked")
     static void getObjectList(RemoteDevice d) throws BACnetException {
         LOG.out("Getting extended information");
-        RequestUtils.getExtendedDeviceInformation(localDevice, d);
+        DiscoveryUtils.getExtendedDeviceInformation(localDevice, d);
         LOG.out("Got extended information");
 
         // Get the device's object list.

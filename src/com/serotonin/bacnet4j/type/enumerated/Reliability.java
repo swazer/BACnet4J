@@ -53,4 +53,34 @@ public class Reliability extends Enumerated {
     public Reliability(ByteQueue queue) {
         super(queue);
     }
+
+    @Override
+    public String toString() {
+        int type = intValue();
+        if (type == noFaultDetected.intValue())
+            return "No fault detected";
+        if (type == noSensor.intValue())
+            return "No sensor";
+        if (type == overRange.intValue())
+            return "Over range";
+        if (type == underRange.intValue())
+            return "Under range";
+        if (type == openLoop.intValue())
+            return "Open loop";
+        if (type == shortedLoop.intValue())
+            return "Shorted loop";
+        if (type == noOutput.intValue())
+            return "No output";
+        if (type == unreliableOther.intValue())
+            return "Unreliable other";
+        if (type == processError.intValue())
+            return "Process error";
+        if (type == multiStateFault.intValue())
+            return "Multi state fault";
+        if (type == configurationError.intValue())
+            return "Configuration error";
+        if (type == communicationFailure.intValue())
+            return "Communication failure";
+        return "Unknown (" + type + ")";
+    }
 }
