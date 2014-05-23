@@ -1,7 +1,5 @@
 package com.serotonin.bacnet4j.npdu.mstp;
 
-import gnu.io.SerialPort;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +12,8 @@ import com.serotonin.bacnet4j.util.ClockTimeSource;
 import com.serotonin.bacnet4j.util.TimeSource;
 import com.serotonin.io.StreamUtils;
 import com.serotonin.io.serial.SerialParameters;
+import com.serotonin.io.serial.SerialPortException;
+import com.serotonin.io.serial.SerialPortProxy;
 import com.serotonin.io.serial.SerialUtils;
 import com.serotonin.util.queue.ByteQueue;
 
@@ -46,7 +46,7 @@ abstract public class MstpNode implements Runnable {
     private MstpNetwork network;
 
     private SerialParameters serialParams;
-    private SerialPort serialPort;
+    private SerialPortProxy serialPort;
 
     private OutputStream out;
     private InputStream in;
@@ -228,8 +228,12 @@ abstract public class MstpNode implements Runnable {
             }
         }
 
-        if (serialPort != null)
+        try {
             SerialUtils.close(serialPort);
+        }
+        catch (SerialPortException e) {
+            LOG.log(Level.WARNING, "", e);
+        }
     }
 
     abstract protected void doCycle();
