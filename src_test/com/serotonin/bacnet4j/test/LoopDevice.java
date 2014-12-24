@@ -31,10 +31,10 @@ import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
 import com.serotonin.bacnet4j.transport.Transport;
-import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
+import com.serotonin.bacnet4j.type.constructed.Sequence;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.constructed.TimeStamp;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
@@ -133,7 +133,7 @@ public class LoopDevice implements Runnable {
 
                 @Override
                 public void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
-                        Encodable serviceParameters) {
+                        Sequence serviceParameters) {
                     System.out.println("loopDevice privateTransferReceived");
                 }
 

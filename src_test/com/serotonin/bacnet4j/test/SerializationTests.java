@@ -82,7 +82,7 @@ public class SerializationTests {
             deserialized = AcknowledgementService.createAcknowledgementService(((Service) encodable).getChoiceId(),
                     queue);
         else if (UnconfirmedRequestService.class.isAssignableFrom(encodable.getClass()))
-            deserialized = UnconfirmedRequestService.createUnconfirmedRequestService(servicesSupported,
+            deserialized = UnconfirmedRequestService.createUnconfirmedRequestService(
                     ((Service) encodable).getChoiceId(), queue);
         else {
             Constructor<? extends Encodable> c = encodable.getClass().getConstructor(ByteQueue.class);
