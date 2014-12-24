@@ -38,7 +38,7 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 public class PropertyReferences implements Serializable {
     private static final long serialVersionUID = -1512876955215003611L;
 
-    private final Map<ObjectIdentifier, List<PropertyReference>> properties = new LinkedHashMap<ObjectIdentifier, List<PropertyReference>>();
+    private final Map<ObjectIdentifier, List<PropertyReference>> properties = new LinkedHashMap<>();
 
     public void add(ObjectIdentifier oid, PropertyReference... refs) {
         List<PropertyReference> list = getOidList(oid);
@@ -55,7 +55,7 @@ public class PropertyReferences implements Serializable {
     private List<PropertyReference> getOidList(ObjectIdentifier oid) {
         List<PropertyReference> list = properties.get(oid);
         if (list == null) {
-            list = new ArrayList<PropertyReference>();
+            list = new ArrayList<>();
             properties.put(oid, list);
         }
         return list;
@@ -66,7 +66,7 @@ public class PropertyReferences implements Serializable {
     }
 
     public List<PropertyReferences> getPropertiesPartitioned(int maxPartitionSize) {
-        List<PropertyReferences> partitions = new ArrayList<PropertyReferences>();
+        List<PropertyReferences> partitions = new ArrayList<>();
 
         if (size() <= maxPartitionSize)
             partitions.add(this);

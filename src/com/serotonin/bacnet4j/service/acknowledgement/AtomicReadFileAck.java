@@ -102,10 +102,10 @@ public class AtomicReadFileAck extends AcknowledgementService {
             fileStartPosition = read(queue, SignedInteger.class);
             returnedRecordCount = read(queue, UnsignedInteger.class);
             fileData = null;
-            List<OctetString> records = new ArrayList<OctetString>();
+            List<OctetString> records = new ArrayList<>();
             for (int i = 0; i < returnedRecordCount.intValue(); i++)
                 records.add(read(queue, OctetString.class));
-            fileRecordData = new SequenceOf<OctetString>(records);
+            fileRecordData = new SequenceOf<>(records);
             popEnd(queue, 1);
         }
     }

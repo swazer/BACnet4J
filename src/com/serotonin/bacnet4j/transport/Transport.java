@@ -54,16 +54,16 @@ public class Transport {
     public static final int DEFAULT_SEG_WINDOW = 5;
     public static final int DEFAULT_RETRIES = 2;
 
-    private static final Logger LOG = Logger.getLogger(Transport.class.getName());
+    static final Logger LOG = Logger.getLogger(Transport.class.getName());
     private static final MaxSegments MAX_SEGMENTS = MaxSegments.MORE_THAN_64;
 
     private LocalDevice localDevice;
     private final Network network;
-    private final WaitingRoom waitingRoom = new WaitingRoom();
+    final WaitingRoom waitingRoom = new WaitingRoom();
 
     private int timeout = DEFAULT_TIMEOUT;
     private int segTimeout = DEFAULT_SEG_TIMEOUT;
-    private int segWindow = DEFAULT_SEG_WINDOW;
+    int segWindow = DEFAULT_SEG_WINDOW;
     private int retries = DEFAULT_RETRIES;
 
     public Transport(Network network) {
@@ -248,7 +248,7 @@ public class Transport {
             return service.handle(localDevice, from, linkService);
         }
         catch (NotImplementedException e) {
-            System.out.println("Unsupported confirmed request: invokeId=" + invokeId + ", from=" + from + ", request="
+            LOG.warning("Unsupported confirmed request: invokeId=" + invokeId + ", from=" + from + ", request="
                     + service.getClass().getName());
             throw new BACnetErrorException(ErrorClass.services, ErrorCode.serviceRequestDenied);
         }
@@ -292,20 +292,21 @@ public class Transport {
         return response;
     }
 
-    void sendResponse(Address address, OctetString linkService, ConfirmedRequest request,
-            AcknowledgementService response) throws BACnetException {
+    void sendResponse(final Address address, final OctetString linkService, final ConfirmedRequest request,
+            final AcknowledgementService response) throws BACnetException {
         if (response == null)
             network.sendAPDU(address, linkService, new SimpleACK(request.getInvokeId(), request.getServiceRequest()
                     .getChoiceId()), false);
         else {
             // A complex ack response. Serialize the data.
-            ByteQueue serviceData = new ByteQueue();
+            final ByteQueue serviceData = new ByteQueue();
             response.write(serviceData);
 
             // Check if we need to segment the message.
             if (serviceData.size() > request.getMaxApduLengthAccepted().getMaxLength()
                     - ComplexACK.getHeaderSize(false)) {
-                int maxServiceData = request.getMaxApduLengthAccepted().getMaxLength() - ComplexACK.getHeaderSize(true);
+                final int maxServiceData = request.getMaxApduLengthAccepted().getMaxLength()
+                        - ComplexACK.getHeaderSize(true);
                 // Check if the device can accept what we want to send.
                 if (!request.isSegmentedResponseAccepted())
                     throw new ServiceTooBigException("Response too big to send to device without segmentation");
@@ -313,19 +314,29 @@ public class Transport {
                 if (segmentsRequired > request.getMaxSegmentsAccepted().getMaxSegments() || segmentsRequired > 128)
                     throw new ServiceTooBigException("Response too big to send to device; too many segments required");
 
-                WaitingRoomKey key = waitingRoom.enterServer(address, linkService, request.getInvokeId());
-                try {
-                    ComplexACK template = new ComplexACK(true, true, key.getInvokeId(), (byte) 0, segWindow,
-                            response.getChoiceId(), (ByteQueue) null);
-                    AckAPDU ack = sendSegmented(key, request.getMaxApduLengthAccepted().getMaxLength(), maxServiceData,
-                            serviceData, template);
-                    if (ack != null)
-                        throw new BACnetException("Invalid response from client while sending segmented response: "
-                                + ack);
-                }
-                finally {
-                    waitingRoom.leave(key);
-                }
+                // This is the receive thread that is sending the response. To send segmented, we need to use 
+                // another thread.
+                localDevice.getExecutorService().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        WaitingRoomKey key = waitingRoom.enterServer(address, linkService, request.getInvokeId());
+                        try {
+                            ComplexACK template = new ComplexACK(true, true, key.getInvokeId(), (byte) 0, segWindow,
+                                    response.getChoiceId(), (ByteQueue) null);
+                            AckAPDU ack = sendSegmented(key, request.getMaxApduLengthAccepted().getMaxLength(),
+                                    maxServiceData, serviceData, template);
+                            if (ack != null)
+                                throw new BACnetException(
+                                        "Invalid response from client while sending segmented response: " + ack);
+                        }
+                        catch (BACnetException e) {
+                            LOG.log(Level.WARNING, "Error while sending segmented response", e);
+                        }
+                        finally {
+                            waitingRoom.leave(key);
+                        }
+                    }
+                });
             }
             else
                 // We can send the whole APDU in one shot.
@@ -334,9 +345,10 @@ public class Transport {
         }
     }
 
-    private AckAPDU sendSegmented(WaitingRoomKey key, int maxAPDULengthAccepted, int maxServiceData,
-            ByteQueue serviceData, Segmentable segmentTemplate) throws BACnetException {
-        // System.out.println("Send segmented: "+ (serviceData.size() / maxServiceData + 1) +" segments required");
+    AckAPDU sendSegmented(WaitingRoomKey key, int maxAPDULengthAccepted, int maxServiceData, ByteQueue serviceData,
+            Segmentable segmentTemplate) throws BACnetException {
+        if (LOG.isLoggable(Level.FINEST))
+            LOG.finest("Send segmented: " + (serviceData.size() / maxServiceData + 1) + " segments required");
 
         // Send an initial message to negotiate communication terms.
         ByteQueue segData = new ByteQueue(maxServiceData);
@@ -354,7 +366,7 @@ public class Transport {
         int actualSegWindow = ack.getActualWindowSize();
 
         // Create a queue of messages to send.
-        LinkedList<APDU> apduQueue = new LinkedList<APDU>();
+        LinkedList<APDU> apduQueue = new LinkedList<>();
         boolean finalMessage;
         byte sequenceNumber = 1;
         while (serviceData.size() > 0) {
@@ -495,62 +507,56 @@ public class Transport {
             LOG.finer("receiveSegmented: done");
     }
 
-    public void incomingApdu(APDU apdu, Address address, OctetString linkService) throws BACnetException {
+    public void incomingApdu(APDU apdu, final Address address, final OctetString linkService) throws BACnetException {
         // if (apdu.expectsReply() != npci.isExpectingReply())
         // throw new MessageValidationAssertionException("Inconsistent message: APDU expectsReply="+
         // apdu.expectsReply() +" while NPCI isExpectingReply="+ npci.isExpectingReply());
 
         if (apdu instanceof ConfirmedRequest) {
-            ConfirmedRequest confAPDU = (ConfirmedRequest) apdu;
-            byte invokeId = confAPDU.getInvokeId();
+            final ConfirmedRequest confAPDU = (ConfirmedRequest) apdu;
+            final byte invokeId = confAPDU.getInvokeId();
 
             if (confAPDU.isSegmentedMessage() && confAPDU.getSequenceNumber() > 0)
                 // This is a subsequent part of a segmented message. Notify the waiting room.
                 waitingRoom.notifyMember(address, linkService, invokeId, false, confAPDU);
             else {
                 if (confAPDU.isSegmentedMessage()) {
-                    // This is the initial part of a segmented message. Go and receive the subsequent parts.
-                    WaitingRoomKey key = waitingRoom.enterServer(address, linkService, invokeId);
-                    try {
-                        receiveSegmented(key, confAPDU);
-                    }
-                    finally {
-                        waitingRoom.leave(key);
-                    }
+                    // This is the receive thread that is receiving the request. To receive segmented, we need to use 
+                    // another thread.
+                    localDevice.getExecutorService().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                incomingConfRequest(confAPDU, address, linkService, invokeId);
+                            }
+                            catch (BACnetException e) {
+                                LOG.log(Level.WARNING, "Error while receiving segmented response", e);
+                            }
+                        }
+                    });
                 }
-
-                // Handle the request.
-                try {
-                    confAPDU.parseServiceData();
-                    AcknowledgementService ackService = handleConfirmedRequest(address, linkService, invokeId,
-                            confAPDU.getServiceRequest());
-                    sendResponse(address, linkService, confAPDU, ackService);
-                }
-                catch (BACnetErrorException e) {
-                    network.sendAPDU(address, linkService, new Error(invokeId, e.getError()), false);
-                }
-                catch (BACnetRejectException e) {
-                    network.sendAPDU(address, linkService, new Reject(invokeId, e.getRejectReason()), false);
-                }
-                catch (BACnetException e) {
-                    Error error = new Error(confAPDU.getInvokeId(), new BaseError((byte) 127, new BACnetError(
-                            ErrorClass.services, ErrorCode.inconsistentParameters)));
-                    network.sendAPDU(address, linkService, error, false);
-                    ExceptionDispatch.fireReceivedException(e);
-                }
+                else
+                    incomingConfRequest(confAPDU, address, linkService, invokeId);
             }
         }
         else if (apdu instanceof UnconfirmedRequest) {
             UnconfirmedRequest ur = (UnconfirmedRequest) apdu;
 
             try {
+                ur.parseServiceData();
                 ur.getService().handle(localDevice, address, linkService);
+            }
+            catch (BACnetRejectException e) {
+                // Ignore
             }
             catch (BACnetException e) {
                 ExceptionDispatch.fireReceivedException(e);
             }
         }
         else {
+            if (LOG.isLoggable(Level.FINE))
+                LOG.fine("incomingApdu: recieved an acknowledgement");
+
             // An acknowledgement.
             AckAPDU ack = (AckAPDU) apdu;
 
@@ -558,6 +564,41 @@ public class Transport {
             // ((ComplexACK) ack).parseServiceData();
 
             waitingRoom.notifyMember(address, linkService, ack.getOriginalInvokeId(), ack.isServer(), ack);
+        }
+    }
+
+    void incomingConfRequest(ConfirmedRequest confAPDU, Address address, OctetString linkService, byte invokeId)
+            throws BACnetException {
+        if (confAPDU.isSegmentedMessage()) {
+            // This is the initial part of a segmented message. Go and receive the subsequent parts.
+            WaitingRoomKey key = waitingRoom.enterServer(address, linkService, invokeId);
+            try {
+                receiveSegmented(key, confAPDU);
+            }
+            finally {
+                waitingRoom.leave(key);
+            }
+        }
+
+        // Handle the request.
+        try {
+            confAPDU.parseServiceData();
+            AcknowledgementService ackService = handleConfirmedRequest(address, linkService, invokeId,
+                    confAPDU.getServiceRequest());
+            sendResponse(address, linkService, confAPDU, ackService);
+        }
+        catch (BACnetErrorException e) {
+            network.sendAPDU(address, linkService, new Error(invokeId, e.getError()), false);
+        }
+        catch (BACnetRejectException e) {
+            network.sendAPDU(address, linkService, new Reject(invokeId, e.getRejectReason()), false);
+        }
+        catch (BACnetException e) {
+            LOG.log(Level.WARNING, "Error handling incoming request", e);
+            Error error = new Error(confAPDU.getInvokeId(), new BaseError((byte) 127, new BACnetError(
+                    ErrorClass.services, ErrorCode.inconsistentParameters)));
+            network.sendAPDU(address, linkService, error, false);
+            ExceptionDispatch.fireReceivedException(e);
         }
     }
 

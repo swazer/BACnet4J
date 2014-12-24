@@ -41,7 +41,7 @@ public class ShedLevel extends BaseType {
     private static final long serialVersionUID = 8550443800962401306L;
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(UnsignedInteger.class);
         classes.add(UnsignedInteger.class);
         classes.add(Real.class);

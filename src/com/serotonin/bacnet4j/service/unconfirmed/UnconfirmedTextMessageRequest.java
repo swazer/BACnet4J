@@ -47,7 +47,7 @@ public class UnconfirmedTextMessageRequest extends UnconfirmedRequestService {
 
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(UnsignedInteger.class);
         classes.add(CharacterString.class);
     }

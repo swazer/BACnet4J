@@ -41,7 +41,7 @@ public class TimeStamp extends BaseType {
 
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(Time.class);
         classes.add(UnsignedInteger.class);
         classes.add(DateTime.class);

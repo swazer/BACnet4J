@@ -31,13 +31,13 @@ import java.util.List;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 
 public class ThreadLocalObjectTypeStack {
-    private static ThreadLocal<List<ObjectType>> objType = new ThreadLocal<List<ObjectType>>();
+    private static ThreadLocal<List<ObjectType>> objType = new ThreadLocal<>();
 
     public static void set(ObjectType objectType) {
         List<ObjectType> stack = objType.get();
 
         if (stack == null) {
-            stack = new ArrayList<ObjectType>();
+            stack = new ArrayList<>();
             objType.set(stack);
         }
 

@@ -37,7 +37,7 @@ public class CalendarEntry extends BaseType {
     private static final long serialVersionUID = -4210434764578714766L;
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(Date.class);
         classes.add(DateRange.class);
         classes.add(WeekNDay.class);

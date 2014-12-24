@@ -55,14 +55,20 @@ public class AmbiguousValue extends Encodable {
         popEnd(queue, contextId);
     }
 
+    public AmbiguousValue(byte[] data) {
+        this.data = data;
+    }
+
     @Override
     public void write(ByteQueue queue, int contextId) {
-        throw new RuntimeException("Don't write ambigous values, convert to actual types first");
+        writeContextTag(queue, contextId, true);
+        queue.push(data);
+        writeContextTag(queue, contextId, false);
     }
 
     @Override
     public void write(ByteQueue queue) {
-        throw new RuntimeException("Don't write ambigous values, convert to actual types first");
+        queue.push(data);
     }
 
     private void readAmbiguousData(ByteQueue queue, TagData tagData) {

@@ -80,26 +80,26 @@ public class ReadPropertyMultipleRequest extends ConfirmedRequestService {
             throws BACnetException {
         BACnetObject obj;
         ObjectIdentifier oid;
-        List<ReadAccessResult> readAccessResults = new ArrayList<ReadAccessResult>();
+        List<ReadAccessResult> readAccessResults = new ArrayList<>();
         List<Result> results;
 
         try {
             for (ReadAccessSpecification req : listOfReadAccessSpecs) {
-                results = new ArrayList<Result>();
+                results = new ArrayList<>();
                 oid = req.getObjectIdentifier();
                 obj = localDevice.getObjectRequired(oid);
 
                 for (PropertyReference propRef : req.getListOfPropertyReferences())
                     addProperty(obj, results, propRef.getPropertyIdentifier(), propRef.getPropertyArrayIndex());
 
-                readAccessResults.add(new ReadAccessResult(oid, new SequenceOf<Result>(results)));
+                readAccessResults.add(new ReadAccessResult(oid, new SequenceOf<>(results)));
             }
         }
         catch (BACnetServiceException e) {
             throw new BACnetErrorException(getChoiceId(), e);
         }
 
-        return new ReadPropertyMultipleAck(new SequenceOf<ReadAccessResult>(readAccessResults));
+        return new ReadPropertyMultipleAck(new SequenceOf<>(readAccessResults));
     }
 
     @Override

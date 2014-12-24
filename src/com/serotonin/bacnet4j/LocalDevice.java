@@ -27,6 +27,7 @@ package com.serotonin.bacnet4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -43,6 +44,7 @@ import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
 import com.serotonin.bacnet4j.exception.BACnetServiceException;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
 import com.serotonin.bacnet4j.obj.BACnetObject;
+import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ConfirmedEventNotificationRequest;
@@ -55,6 +57,7 @@ import com.serotonin.bacnet4j.transport.ConfirmedSendItem;
 import com.serotonin.bacnet4j.transport.ConfirmedSendProcessor;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
+import com.serotonin.bacnet4j.type.SequenceDefinition;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Destination;
 import com.serotonin.bacnet4j.type.constructed.EventTransitionBits;
@@ -93,8 +96,8 @@ public class LocalDevice {
 
     private final Transport transport;
     private BACnetObject configuration;
-    private final List<BACnetObject> localObjects = new CopyOnWriteArrayList<BACnetObject>();
-    private final List<RemoteDevice> remoteDevices = new CopyOnWriteArrayList<RemoteDevice>();
+    private final List<BACnetObject> localObjects = new CopyOnWriteArrayList<>();
+    private final List<RemoteDevice> remoteDevices = new CopyOnWriteArrayList<>();
     private boolean initialized;
     private ExecutorService executorService;
     private boolean ownsExecutorService;
@@ -112,6 +115,9 @@ public class LocalDevice {
 
     //private final DeviceEventHandler eventHandler = new DeviceEventAsyncHandler();
 
+    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceRequestResolutions = new HashMap<>();
+    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceResultResolutions = new HashMap<>();
+
     public LocalDevice(int deviceId, Transport transport) {
         this.transport = transport;
         transport.setLocalDevice(this);
@@ -126,7 +132,7 @@ public class LocalDevice {
                     "Serotonin Software Technologies, Inc."));
             configuration.setProperty(PropertyIdentifier.segmentationSupported, Segmentation.segmentedBoth);
 
-            SequenceOf<ObjectIdentifier> objectList = new SequenceOf<ObjectIdentifier>();
+            SequenceOf<ObjectIdentifier> objectList = new SequenceOf<>();
             objectList.add(deviceIdentifier);
             configuration.setProperty(PropertyIdentifier.objectList, objectList);
 
@@ -231,8 +237,7 @@ public class LocalDevice {
         // For the async handler
         //eventHandler.initialize(executorService);
 
-        confirmedSendQueue = new WorkItemQueue<ConfirmedSendItem>(executorService, new ConfirmedSendProcessor(
-                transport, eventHandler));
+        confirmedSendQueue = new WorkItemQueue<>(executorService, new ConfirmedSendProcessor(transport, eventHandler));
 
         transport.initialize();
         initialized = true;
@@ -338,7 +343,7 @@ public class LocalDevice {
 
     public ObjectIdentifier getNextInstanceObjectIdentifier(ObjectType objectType) {
         // Make a list of existing ids.
-        List<Integer> ids = new ArrayList<Integer>();
+        List<Integer> ids = new ArrayList<>();
         int type = objectType.intValue();
         ObjectIdentifier id;
         for (BACnetObject obj : localObjects) {
@@ -589,7 +594,7 @@ public class LocalDevice {
 
         // Send the message to the destinations that are interested in it, while recording any exceptions in the result
         // list
-        List<BACnetException> sendExceptions = new ArrayList<BACnetException>();
+        List<BACnetException> sendExceptions = new ArrayList<>();
         for (Destination destination : recipientList) {
             if (destination.isSuitableForEvent(timeStamp, toState)) {
                 if (destination.getIssueConfirmedNotifications().booleanValue()) {

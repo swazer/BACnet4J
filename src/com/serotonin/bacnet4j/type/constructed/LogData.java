@@ -80,7 +80,7 @@ public class LogData extends BaseType {
 
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(Boolean.class);
         classes.add(Real.class);
         classes.add(Enumerated.class);

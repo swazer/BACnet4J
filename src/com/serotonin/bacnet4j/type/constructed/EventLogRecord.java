@@ -41,7 +41,7 @@ public class EventLogRecord extends BaseType {
     private static final long serialVersionUID = 7506599418976133752L;
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(LogStatus.class);
         classes.add(ConfirmedEventNotificationRequest.class);
         classes.add(Real.class);

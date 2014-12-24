@@ -35,7 +35,7 @@ public class SequenceDefinition implements Serializable {
     private final List<ElementSpecification> elements;
 
     public SequenceDefinition(ElementSpecification... specs) {
-        elements = new ArrayList<SequenceDefinition.ElementSpecification>();
+        elements = new ArrayList<>();
         for (ElementSpecification spec : specs)
             elements.add(spec);
     }

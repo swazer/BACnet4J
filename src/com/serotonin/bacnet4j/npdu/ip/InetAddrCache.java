@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InetAddrCache {
-    private static final Map<InetAddress, Map<Integer, InetSocketAddress>> socketCache = new HashMap<InetAddress, Map<Integer, InetSocketAddress>>();
+    private static final Map<InetAddress, Map<Integer, InetSocketAddress>> socketCache = new HashMap<>();
 
     public static InetSocketAddress get(String host, int port) {
         try {
@@ -32,7 +32,7 @@ public class InetAddrCache {
             synchronized (socketCache) {
                 ports = socketCache.get(addr);
                 if (ports == null) {
-                    ports = new HashMap<Integer, InetSocketAddress>();
+                    ports = new HashMap<>();
                     socketCache.put(addr, ports);
                 }
             }

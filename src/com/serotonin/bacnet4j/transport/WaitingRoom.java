@@ -27,6 +27,8 @@ package com.serotonin.bacnet4j.transport;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.serotonin.bacnet4j.apdu.APDU;
 import com.serotonin.bacnet4j.apdu.Abort;
@@ -41,7 +43,18 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 
 public class WaitingRoom {
-    private final HashMap<WaitingRoomKey, Member> waitHere = new HashMap<WaitingRoomKey, Member>();
+    private static final Logger LOG = Logger.getLogger(WaitingRoom.class.getName());
+    //    static {
+    //        LOG.setLevel(Level.FINEST);
+    //        LOG.finest("finest");
+    //        LOG.finer("finer");
+    //        LOG.fine("fine");
+    //        LOG.info("info");
+    //        LOG.warning("warning");
+    //        LOG.severe("severe");
+    //    }
+
+    private final HashMap<WaitingRoomKey, Member> waitHere = new HashMap<>();
     private byte nextInvokeId;
 
     synchronized public WaitingRoomKey enterClient(Address address, OctetString linkService) {
@@ -80,6 +93,8 @@ public class WaitingRoom {
             if (waitHere.get(key) != null)
                 throw new BACnetRuntimeException("Cannot enter a server into the waiting room. key=" + key);
             waitHere.put(key, member);
+            if (LOG.isLoggable(Level.FINEST))
+                LOG.finest("WaitingRoom.enterServer: key=" + key);
         }
 
         return key;
@@ -117,11 +132,12 @@ public class WaitingRoom {
     public void leave(WaitingRoomKey key) {
         synchronized (waitHere) {
             waitHere.remove(key);
+            if (LOG.isLoggable(Level.FINEST))
+                LOG.finest("WaitingRoom.leave: key=" + key);
         }
     }
 
-    public void notifyMember(Address address, OctetString linkService, byte id, boolean isFromServer, APDU apdu)
-            throws BACnetException {
+    public void notifyMember(Address address, OctetString linkService, byte id, boolean isFromServer, APDU apdu) {
         WaitingRoomKey key = new WaitingRoomKey(address, linkService, id, isFromServer);
         Member member = getMember(key);
         if (member != null) {
@@ -148,8 +164,12 @@ public class WaitingRoom {
                 // no op
             }
         }
-        //        throw new BACnetException("No waiting recipient for message: address=" + address + ", isFromServer="
-        //                + isFromServer + ", message=" + apdu);
+
+        synchronized (waitHere) {
+            if (LOG.isLoggable(Level.WARNING))
+                LOG.warning("WaitingRoom.notifyMember: no waiting recipient for message: key=" + key + ", message="
+                        + apdu + ", waiting room=" + waitHere);
+        }
     }
 
     private Member getMember(WaitingRoomKey key) {
@@ -167,7 +187,7 @@ public class WaitingRoom {
      * @author mlohbihler
      */
     static class Member {
-        private final LinkedList<APDU> apdus = new LinkedList<APDU>();
+        private final LinkedList<APDU> apdus = new LinkedList<>();
 
         synchronized void setAPDU(APDU apdu) {
             apdus.add(apdu);

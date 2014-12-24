@@ -25,21 +25,14 @@
  */
 package com.serotonin.bacnet4j.service.acknowledgement;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.type.Encodable;
-import com.serotonin.bacnet4j.type.SequenceDefinition;
-import com.serotonin.bacnet4j.type.constructed.BaseType;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.util.queue.ByteQueue;
 
 public class ConfirmedPrivateTransferAck extends AcknowledgementService {
     private static final long serialVersionUID = -2452028785449989142L;
-
-    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceResolutions = new HashMap<VendorServiceKey, SequenceDefinition>();
 
     public static final byte TYPE_ID = 18;
 
@@ -47,7 +40,7 @@ public class ConfirmedPrivateTransferAck extends AcknowledgementService {
     private final UnsignedInteger serviceNumber;
     private final Encodable resultBlock;
 
-    public ConfirmedPrivateTransferAck(UnsignedInteger vendorId, UnsignedInteger serviceNumber, BaseType resultBlock) {
+    public ConfirmedPrivateTransferAck(UnsignedInteger vendorId, UnsignedInteger serviceNumber, Encodable resultBlock) {
         this.vendorId = vendorId;
         this.serviceNumber = serviceNumber;
         this.resultBlock = resultBlock;
@@ -68,7 +61,7 @@ public class ConfirmedPrivateTransferAck extends AcknowledgementService {
     ConfirmedPrivateTransferAck(ByteQueue queue) throws BACnetException {
         vendorId = read(queue, UnsignedInteger.class, 0);
         serviceNumber = read(queue, UnsignedInteger.class, 1);
-        resultBlock = readVendorSpecific(queue, vendorId, serviceNumber, vendorServiceResolutions, 2);
+        resultBlock = readVendorSpecific(queue, vendorId, serviceNumber, LocalDevice.vendorServiceResultResolutions, 2);
     }
 
     public UnsignedInteger getVendorId() {

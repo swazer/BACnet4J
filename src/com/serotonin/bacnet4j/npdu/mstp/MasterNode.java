@@ -16,7 +16,7 @@ public class MasterNode extends MstpNode {
         idle, useToken, waitForReply, doneWithToken, passToken, noToken, pollForMaster, answerDataRequest
     }
 
-    private final List<Frame> framesToSend = new ArrayList<Frame>();
+    private final List<Frame> framesToSend = new ArrayList<>();
 
     /**
      * The MAC address of the node to which This Station passes the token. If the Next

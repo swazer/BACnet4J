@@ -113,7 +113,7 @@ import com.serotonin.bacnet4j.type.primitive.Unsigned16;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 
 public class ObjectProperties {
-    private static final Map<ObjectType, List<PropertyTypeDefinition>> propertyTypes = new HashMap<ObjectType, List<PropertyTypeDefinition>>();
+    private static final Map<ObjectType, List<PropertyTypeDefinition>> propertyTypes = new HashMap<>();
 
     public static PropertyTypeDefinition getPropertyTypeDefinition(ObjectType objectType,
             PropertyIdentifier propertyIdentifier) {
@@ -190,7 +190,7 @@ public class ObjectProperties {
      * @return
      */
     private static List<PropertyTypeDefinition> getPropertyTypeDefinitions(ObjectType objectType, int include) {
-        List<PropertyTypeDefinition> result = new ArrayList<PropertyTypeDefinition>();
+        List<PropertyTypeDefinition> result = new ArrayList<>();
         List<PropertyTypeDefinition> list = propertyTypes.get(objectType);
         if (list != null) {
             for (PropertyTypeDefinition def : list) {
@@ -205,7 +205,7 @@ public class ObjectProperties {
             boolean sequence, boolean required, Encodable defaultValue) {
         List<PropertyTypeDefinition> list = propertyTypes.get(type);
         if (list == null) {
-            list = new ArrayList<PropertyTypeDefinition>();
+            list = new ArrayList<>();
             propertyTypes.put(type, list);
         }
 

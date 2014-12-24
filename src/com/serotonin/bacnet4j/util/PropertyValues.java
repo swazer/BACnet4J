@@ -42,7 +42,7 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 public class PropertyValues implements Iterable<ObjectPropertyReference>, Serializable {
     private static final long serialVersionUID = 5880275533969236369L;
 
-    private final Map<ObjectPropertyReference, Encodable> values = new HashMap<ObjectPropertyReference, Encodable>();
+    private final Map<ObjectPropertyReference, Encodable> values = new HashMap<>();
 
     public void add(ObjectIdentifier oid, PropertyIdentifier pid, UnsignedInteger pin, Encodable value) {
         values.put(new ObjectPropertyReference(oid, pid, pin), value);

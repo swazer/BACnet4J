@@ -55,7 +55,7 @@ public class CreateObjectRequest extends ConfirmedRequestService {
 
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(ObjectType.class);
         classes.add(ObjectIdentifier.class);
     }

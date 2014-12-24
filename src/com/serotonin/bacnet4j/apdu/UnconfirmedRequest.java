@@ -35,12 +35,20 @@ public class UnconfirmedRequest extends APDU {
 
     public static final byte TYPE_ID = 1;
 
+    private byte serviceChoice;
+
+    /**
+     * This field is used to allow parsing of only the APDU so that those fields are available in case there is a
+     * problem parsing the service request.
+     */
+    private ByteQueue serviceData;
+
     /**
      * This parameter shall contain the parameters of the specific service that is being requested, encoded according to
      * the rules of 20.2. These parameters are defined in the individual service descriptions in this standard and are
      * represented in Clause 21 in accordance with the rules of ASN.1.
      */
-    private final UnconfirmedRequestService service;
+    private UnconfirmedRequestService service;
 
     public UnconfirmedRequest(UnconfirmedRequestService service) {
         this.service = service;
@@ -62,10 +70,18 @@ public class UnconfirmedRequest extends APDU {
         service.write(queue);
     }
 
-    public UnconfirmedRequest(ServicesSupported services, ByteQueue queue) throws BACnetException {
+    UnconfirmedRequest(ServicesSupported services, ByteQueue queue) throws BACnetException {
         queue.pop();
-        byte choiceId = queue.pop();
-        service = UnconfirmedRequestService.createUnconfirmedRequestService(services, choiceId, queue);
+        serviceChoice = queue.pop();
+        serviceData = new ByteQueue(queue.popAll());
+        UnconfirmedRequestService.checkUnconfirmedRequestService(services, serviceChoice);
+    }
+
+    public void parseServiceData() throws BACnetException {
+        if (serviceData != null) {
+            service = UnconfirmedRequestService.createUnconfirmedRequestService(serviceChoice, serviceData);
+            serviceData = null;
+        }
     }
 
     @Override
