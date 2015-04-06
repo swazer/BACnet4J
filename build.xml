@@ -84,20 +84,54 @@
 	        <property name="maven.local" value="~/maven-repo" /> 
 	        -->
 
-	    <target name="maven-deploy" depends="jar" description="Install library to Maven repository located at ${maven.local} if defined and install in user's local Maven">
+    <target name="maven-deploy" depends="jar,jar-src,jar-doc" description="Install library to Maven repository located at ${maven.local} if defined and install in user's local Maven">
 
-	        <if>
-	            <isset property="maven.local" />
-	            <then>
-	                <mvn:deploy file="release/${maven-pom.version}/${fullName}.jar">
-	                    <remoterepository url="file://${maven.local}" />
-	                    <pom refid="maven-pom" />
-	                </mvn:deploy>
-	            </then>
-	        </if>
+        <if>
+            <isset property="maven.local" />
+            <then>
+                <mvn:deploy file="release/${maven-pom.version}/${fullName}.jar">
+                    <remoterepository url="file://${maven.local}" />
+                    <pom refid="maven-pom" />
+                    <attach file="release/${maven-pom.version}/${fullName}-src.jar"
+                            type="jar"
+                            classifier="sources" />
+                    <attach file="release/${maven-pom.version}/${fullName}-doc.jar"
+                            type="jar"
+                            classifier="javadoc" />
+                </mvn:deploy>
+            </then>
+        </if>
 
-	        <mvn:install file="release/${maven-pom.version}/${fullName}.jar">
-	            <pom refid="maven-pom" />
-	        </mvn:install>
-	    </target>
+        <mvn:install file="release/${maven-pom.version}/${fullName}.jar">
+            <pom refid="maven-pom" />
+        </mvn:install>
+    </target>
+    <target name="jar-doc" depends="docs" description="Create a jar file of the javadocs">
+        <delete file="target/release/${fullName}-doc.jar" />
+        <jar destfile="target/release/${fullName}-doc.jar">
+            <fileset dir="target/java/doc">
+                <include name="**/*" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="jar-src" description="Create a jar file of the sources">
+        <delete file="target/release/${fullName}-src.jar" />
+        <jar destfile="target/release/${fullName}-src.jar">
+            <fileset dir="src">
+                <include name="**/*.java" />
+            </fileset>
+        </jar>
+    </target>
+	
+    <target name="docs" description="Generate Java Doc">
+        <mkdir dir="target/java/doc" />
+	    <javadoc destdir="target/javadoc" author="true" version="true" use="true" windowtitle="BACnet4j">
+	        <fileset dir="src" defaultexcludes="yes">
+	        </fileset>
+	         <doctitle><![CDATA[<h1>BACnet4j</h1>]]></doctitle>
+	         <bottom><![CDATA[<i>Copyright &#169; 2014 Infinite Automation Systems. All Rights Reserved.</i>]]></bottom>
+	    </javadoc>
+    </target>
+	
 </project>
