@@ -28,6 +28,7 @@ package com.serotonin.bacnet4j.type.error;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.type.Encodable;
@@ -40,7 +41,7 @@ import com.serotonin.util.queue.ByteQueue;
 public class ConfirmedPrivateTransferError extends BaseError {
     private static final long serialVersionUID = -4736829685989649711L;
 
-    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceResolutions = new HashMap<VendorServiceKey, SequenceDefinition>();
+    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceResolutions = new HashMap<>();
 
     private final UnsignedInteger vendorId;
     private final UnsignedInteger serviceNumber;
@@ -67,7 +68,8 @@ public class ConfirmedPrivateTransferError extends BaseError {
         super(choice, queue, 0);
         vendorId = read(queue, UnsignedInteger.class, 1);
         serviceNumber = read(queue, UnsignedInteger.class, 2);
-        errorParameters = readVendorSpecific(queue, vendorId, serviceNumber, vendorServiceResolutions, 3);
+        errorParameters = readVendorSpecific(queue, vendorId, serviceNumber,
+                LocalDevice.vendorServiceRequestResolutions, 3);
     }
 
     @Override

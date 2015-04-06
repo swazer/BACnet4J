@@ -25,15 +25,11 @@
  */
 package com.serotonin.bacnet4j.service.unconfirmed;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.type.Encodable;
-import com.serotonin.bacnet4j.type.SequenceDefinition;
 import com.serotonin.bacnet4j.type.constructed.Address;
+import com.serotonin.bacnet4j.type.constructed.Sequence;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.util.queue.ByteQueue;
@@ -41,13 +37,15 @@ import com.serotonin.util.queue.ByteQueue;
 public class UnconfirmedPrivateTransferRequest extends UnconfirmedRequestService {
     private static final long serialVersionUID = 2084345165686680966L;
 
-    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceResolutions = new HashMap<VendorServiceKey, SequenceDefinition>();
-
     public static final byte TYPE_ID = 4;
 
     private final UnsignedInteger vendorId;
     private final UnsignedInteger serviceNumber;
     private final Encodable serviceParameters;
+
+    public UnconfirmedPrivateTransferRequest(int vendorId, int serviceNumber, Encodable serviceParameters) {
+        this(new UnsignedInteger(vendorId), new UnsignedInteger(serviceNumber), serviceParameters);
+    }
 
     public UnconfirmedPrivateTransferRequest(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
             Encodable serviceParameters) {
@@ -58,7 +56,7 @@ public class UnconfirmedPrivateTransferRequest extends UnconfirmedRequestService
 
     @Override
     public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
-        localDevice.getEventHandler().firePrivateTransfer(vendorId, serviceNumber, serviceParameters);
+        localDevice.getEventHandler().firePrivateTransfer(vendorId, serviceNumber, (Sequence) serviceParameters);
     }
 
     @Override
@@ -76,7 +74,8 @@ public class UnconfirmedPrivateTransferRequest extends UnconfirmedRequestService
     UnconfirmedPrivateTransferRequest(ByteQueue queue) throws BACnetException {
         vendorId = read(queue, UnsignedInteger.class, 0);
         serviceNumber = read(queue, UnsignedInteger.class, 1);
-        serviceParameters = readVendorSpecific(queue, vendorId, serviceNumber, vendorServiceResolutions, 2);
+        serviceParameters = readVendorSpecific(queue, vendorId, serviceNumber,
+                LocalDevice.vendorServiceRequestResolutions, 2);
     }
 
     @Override

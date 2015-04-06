@@ -28,15 +28,19 @@ import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.event.DeviceEventListener;
+import com.serotonin.bacnet4j.exception.BACnetServiceException;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.obj.FileObject;
+import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
 import com.serotonin.bacnet4j.transport.Transport;
-import com.serotonin.bacnet4j.type.Encodable;
+import com.serotonin.bacnet4j.type.SequenceDefinition;
+import com.serotonin.bacnet4j.type.SequenceDefinition.ElementSpecification;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
+import com.serotonin.bacnet4j.type.constructed.Sequence;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.constructed.TimeStamp;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
@@ -63,6 +67,14 @@ public class SlaveDeviceTest {
         localDevice.getEventHandler().addListener(new Listener());
         // localDevice.getConfiguration().setProperty(PropertyIdentifier.segmentationSupported,
         // Segmentation.noSegmentation);
+
+        LocalDevice.vendorServiceRequestResolutions.put(new VendorServiceKey(25, 8), new SequenceDefinition( //
+                new ElementSpecification("value1", UnsignedInteger.class, false, false) //
+                , new ElementSpecification("value2", Real.class, false, false) //
+                ));
+
+        //        WARN  2014-12-09 13:26:34,608 (com.serotonin.ma.bacnet.BACnetDataSourceRT.unimplementedVendorService:611) - Received unimplemented vendor service: vendor id=8, service number=1, bytes (with context id)
+        //                =[2e,c,2,0,27,74,19,0,29,0,3e,c,0,0,0,9,19,55,3e,44,42,d7,ac,4a,3f,5b,4,0,0,3f,2f]
 
         // Set up a few objects.
         BACnetObject ai0 = new BACnetObject(localDevice,
@@ -128,6 +140,10 @@ public class SlaveDeviceTest {
         bv1.setProperty(PropertyIdentifier.activeText, new CharacterString("Up"));
         localDevice.addObject(bv1);
 
+        // Add a bunch more values.
+        for (int i = 0; i < 1000; i++)
+            addAnalogValue(localDevice, EngineeringUnits.newton, i);
+
         // Start the local device.
         localDevice.initialize();
 
@@ -158,6 +174,15 @@ public class SlaveDeviceTest {
 
             Thread.sleep(2500);
         }
+    }
+
+    static void addAnalogValue(LocalDevice localDevice, EngineeringUnits units, float value)
+            throws BACnetServiceException {
+        BACnetObject av = new BACnetObject(localDevice,
+                localDevice.getNextInstanceObjectIdentifier(ObjectType.analogValue));
+        av.setProperty(PropertyIdentifier.units, units);
+        av.setProperty(PropertyIdentifier.presentValue, new Real(value));
+        localDevice.addObject(av);
     }
 
     static class Listener implements DeviceEventListener {
@@ -209,8 +234,8 @@ public class SlaveDeviceTest {
 
         @Override
         public void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
-                Encodable serviceParameters) {
-            // no op
+                Sequence serviceParameters) {
+            System.out.println("Received private transfer service with params: " + serviceParameters.getValues());
         }
 
         @Override

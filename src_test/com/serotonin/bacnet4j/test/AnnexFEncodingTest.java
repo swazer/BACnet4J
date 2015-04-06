@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.apdu.APDU;
 import com.serotonin.bacnet4j.apdu.ComplexACK;
 import com.serotonin.bacnet4j.apdu.ConfirmedRequest;
@@ -1207,7 +1208,7 @@ public class AnnexFEncodingTest {
         values.put("value2", new OctetString(new byte[] { 0x16, 0x49 }));
         Sequence parameters = new Sequence(def, values);
 
-        ConfirmedPrivateTransferRequest.vendorServiceResolutions.put(new VendorServiceKey(new UnsignedInteger(25),
+        LocalDevice.vendorServiceRequestResolutions.put(new VendorServiceKey(new UnsignedInteger(25),
                 new UnsignedInteger(8)), def);
         ConfirmedRequestService service = new ConfirmedPrivateTransferRequest(new UnsignedInteger(25),
                 new UnsignedInteger(8), parameters);
@@ -1239,7 +1240,7 @@ public class AnnexFEncodingTest {
         values.put("value2", new OctetString(new byte[] { 0x16, 0x49 }));
         Sequence parameters = new Sequence(def, values);
 
-        UnconfirmedPrivateTransferRequest.vendorServiceResolutions.put(new VendorServiceKey(new UnsignedInteger(25),
+        LocalDevice.vendorServiceRequestResolutions.put(new VendorServiceKey(new UnsignedInteger(25),
                 new UnsignedInteger(8)), def);
         UnconfirmedRequestService service = new UnconfirmedPrivateTransferRequest(new UnsignedInteger(25),
                 new UnsignedInteger(8), parameters);

@@ -43,7 +43,7 @@ public class LogRecord extends BaseType {
     private static final long serialVersionUID = -158114439196293884L;
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(LogStatus.class);
         classes.add(Boolean.class);
         classes.add(Real.class);

@@ -1,3 +1,10 @@
+*Version 2.0.2
+* generic syntax update to version 1.7
+* fixes for private transfer handling
+* fixes for segmented message handling
+* changed system.out messages to log messages
+
+
 *Version 2.0.1*
 * Adding Maven for dependency management
 * Build for Java 7

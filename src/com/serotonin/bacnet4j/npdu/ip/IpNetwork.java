@@ -341,7 +341,7 @@ public class IpNetwork extends Network implements Runnable {
     @Override
     public Address[] getAllLocalAddresses() {
         try {
-            ArrayList<Address> result = new ArrayList<Address>();
+            ArrayList<Address> result = new ArrayList<>();
             for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
                     if (!addr.isLoopbackAddress() && addr.isSiteLocalAddress())

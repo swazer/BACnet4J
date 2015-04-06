@@ -103,7 +103,7 @@ public class DecodingTest {
 
         String s = "[c,2,0,0,7b,29,1,3d,14,3,54,68,69,73,20,69,73,20,74,68,65,20,6d,65,73,73,61,67,65]";
         byte[] b = toBytes(s);
-        UnconfirmedRequestService.createUnconfirmedRequestService(servicesSupported, (byte) 5, new ByteQueue(b));
+        UnconfirmedRequestService.createUnconfirmedRequestService((byte) 5, new ByteQueue(b));
     }
 
     static void test3() throws Exception {

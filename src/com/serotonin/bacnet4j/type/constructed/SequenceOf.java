@@ -41,7 +41,7 @@ public class SequenceOf<E extends Encodable> extends BaseType implements Iterabl
     private final List<E> values;
 
     public SequenceOf() {
-        values = new ArrayList<E>();
+        values = new ArrayList<>();
     }
 
     public SequenceOf(List<E> values) {
@@ -55,19 +55,19 @@ public class SequenceOf<E extends Encodable> extends BaseType implements Iterabl
     }
 
     public SequenceOf(ByteQueue queue, Class<E> clazz) throws BACnetException {
-        values = new ArrayList<E>();
+        values = new ArrayList<>();
         while (peekTagNumber(queue) != -1)
             values.add(read(queue, clazz));
     }
 
     public SequenceOf(ByteQueue queue, int count, Class<E> clazz) throws BACnetException {
-        values = new ArrayList<E>();
+        values = new ArrayList<>();
         while (count-- > 0)
             values.add(read(queue, clazz));
     }
 
     public SequenceOf(ByteQueue queue, Class<E> clazz, int contextId) throws BACnetException {
-        values = new ArrayList<E>();
+        values = new ArrayList<>();
         while (readEnd(queue) != contextId)
             values.add(read(queue, clazz));
     }
@@ -135,6 +135,7 @@ public class SequenceOf<E extends Encodable> extends BaseType implements Iterabl
         return false;
     }
 
+    @Override
     public Iterator<E> iterator() {
         return values.iterator();
     }

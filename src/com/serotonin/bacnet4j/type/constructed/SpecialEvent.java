@@ -38,7 +38,7 @@ public class SpecialEvent extends BaseType {
     private static final long serialVersionUID = -5828791384033258372L;
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(CalendarEntry.class);
         classes.add(ObjectIdentifier.class);
     }

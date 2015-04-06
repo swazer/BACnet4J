@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-
 <project name="BACnet4J" basedir="." default="deploy" xmlns:mvn="antlib:org.apache.maven.artifact.ant">
 
 	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="lib-opt/ant-contrib-1.0b3.jar" />
@@ -101,5 +100,4 @@
 	            <pom refid="maven-pom" />
 	        </mvn:install>
 	    </target>
-	
 </project>

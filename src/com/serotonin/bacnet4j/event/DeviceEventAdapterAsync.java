@@ -10,6 +10,7 @@ import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
+import com.serotonin.bacnet4j.type.constructed.Sequence;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.constructed.TimeStamp;
 import com.serotonin.bacnet4j.type.enumerated.EventState;
@@ -202,7 +203,7 @@ public class DeviceEventAdapterAsync implements DeviceEventListener {
 
     @Override
     public void privateTransferReceived(final UnsignedInteger vendorId, final UnsignedInteger serviceNumber,
-            final Encodable serviceParameters) {
+            final Sequence serviceParameters) {
         dispatch(new DispatchCallback() {
             @Override
             public void dispatch() {

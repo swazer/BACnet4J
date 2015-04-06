@@ -53,7 +53,7 @@ public class PropertyStates extends BaseType {
     private static final long serialVersionUID = 1112998027203005048L;
     private static List<Class<? extends Encodable>> classes;
     static {
-        classes = new ArrayList<Class<? extends Encodable>>();
+        classes = new ArrayList<>();
         classes.add(Boolean.class); // 0
         classes.add(BinaryPV.class); // 1
         classes.add(EventType.class); // 2

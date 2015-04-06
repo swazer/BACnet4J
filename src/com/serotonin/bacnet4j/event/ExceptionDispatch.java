@@ -7,7 +7,7 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.util.queue.ByteQueue;
 
 public class ExceptionDispatch {
-    private static final List<ExceptionListener> listeners = new CopyOnWriteArrayList<ExceptionListener>();
+    private static final List<ExceptionListener> listeners = new CopyOnWriteArrayList<>();
     private static final ExceptionListener defaultExceptionListener = new DefaultExceptionListener();
 
     static {

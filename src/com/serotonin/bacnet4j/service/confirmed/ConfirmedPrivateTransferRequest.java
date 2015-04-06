@@ -25,16 +25,14 @@
  */
 package com.serotonin.bacnet4j.service.confirmed;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
+import com.serotonin.bacnet4j.service.acknowledgement.ConfirmedPrivateTransferAck;
 import com.serotonin.bacnet4j.type.Encodable;
-import com.serotonin.bacnet4j.type.SequenceDefinition;
 import com.serotonin.bacnet4j.type.constructed.Address;
+import com.serotonin.bacnet4j.type.constructed.Sequence;
+import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.util.queue.ByteQueue;
@@ -42,13 +40,15 @@ import com.serotonin.util.queue.ByteQueue;
 public class ConfirmedPrivateTransferRequest extends ConfirmedRequestService {
     private static final long serialVersionUID = 621779506703151368L;
 
-    public static final Map<VendorServiceKey, SequenceDefinition> vendorServiceResolutions = new HashMap<VendorServiceKey, SequenceDefinition>();
-
     public static final byte TYPE_ID = 18;
 
     private final UnsignedInteger vendorId;
     private final UnsignedInteger serviceNumber;
     private final Encodable serviceParameters;
+
+    public ConfirmedPrivateTransferRequest(int vendorId, int serviceNumber, Encodable serviceParameters) {
+        this(new UnsignedInteger(vendorId), new UnsignedInteger(serviceNumber), serviceParameters);
+    }
 
     public ConfirmedPrivateTransferRequest(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
             Encodable serviceParameters) {
@@ -64,8 +64,9 @@ public class ConfirmedPrivateTransferRequest extends ConfirmedRequestService {
 
     @Override
     public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService) {
-        localDevice.getEventHandler().firePrivateTransfer(vendorId, serviceNumber, serviceParameters);
-        return null;
+        localDevice.getEventHandler().firePrivateTransfer(vendorId, serviceNumber, (Sequence) serviceParameters);
+        // TODO the handler should return the result block, rather than using null here.
+        return new ConfirmedPrivateTransferAck(vendorId, serviceNumber, new Null());
     }
 
     @Override
@@ -78,7 +79,20 @@ public class ConfirmedPrivateTransferRequest extends ConfirmedRequestService {
     ConfirmedPrivateTransferRequest(ByteQueue queue) throws BACnetException {
         vendorId = read(queue, UnsignedInteger.class, 0);
         serviceNumber = read(queue, UnsignedInteger.class, 1);
-        serviceParameters = readVendorSpecific(queue, vendorId, serviceNumber, vendorServiceResolutions, 2);
+        serviceParameters = readVendorSpecific(queue, vendorId, serviceNumber,
+                LocalDevice.vendorServiceRequestResolutions, 2);
+    }
+
+    public UnsignedInteger getVendorId() {
+        return vendorId;
+    }
+
+    public UnsignedInteger getServiceNumber() {
+        return serviceNumber;
+    }
+
+    public Encodable getServiceParameters() {
+        return serviceParameters;
     }
 
     @Override

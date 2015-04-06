@@ -79,7 +79,7 @@ public class Sequence extends BaseType {
 
     public Sequence(SequenceDefinition definition, ByteQueue queue) throws BACnetException {
         this.definition = definition;
-        values = new HashMap<String, Encodable>();
+        values = new HashMap<>();
         List<ElementSpecification> specs = definition.getElements();
         for (int i = 0; i < specs.size(); i++) {
             ElementSpecification spec = specs.get(i);

@@ -31,10 +31,10 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
-import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
+import com.serotonin.bacnet4j.type.constructed.Sequence;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.constructed.TimeStamp;
 import com.serotonin.bacnet4j.type.enumerated.EventState;
@@ -54,7 +54,7 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
  * @author Matthew Lohbihler
  */
 public class DeviceEventHandler {
-    final ConcurrentLinkedQueue<DeviceEventListener> listeners = new ConcurrentLinkedQueue<DeviceEventListener>();
+    final ConcurrentLinkedQueue<DeviceEventListener> listeners = new ConcurrentLinkedQueue<>();
 
     //
     //
@@ -166,7 +166,7 @@ public class DeviceEventHandler {
     }
 
     public void firePrivateTransfer(final UnsignedInteger vendorId, final UnsignedInteger serviceNumber,
-            final Encodable serviceParameters) {
+            final Sequence serviceParameters) {
         for (DeviceEventListener l : listeners) {
             try {
                 l.privateTransferReceived(vendorId, serviceNumber, serviceParameters);

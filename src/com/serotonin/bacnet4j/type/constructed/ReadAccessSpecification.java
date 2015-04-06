@@ -46,9 +46,9 @@ public class ReadAccessSpecification extends BaseType {
 
     public ReadAccessSpecification(ObjectIdentifier objectIdentifier, PropertyIdentifier pid) {
         this.objectIdentifier = objectIdentifier;
-        List<PropertyReference> refs = new ArrayList<PropertyReference>(1);
+        List<PropertyReference> refs = new ArrayList<>(1);
         refs.add(new PropertyReference(pid, null));
-        this.listOfPropertyReferences = new SequenceOf<PropertyReference>(refs);
+        this.listOfPropertyReferences = new SequenceOf<>(refs);
     }
 
     public SequenceOf<PropertyReference> getListOfPropertyReferences() {

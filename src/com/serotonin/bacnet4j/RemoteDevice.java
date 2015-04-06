@@ -53,7 +53,7 @@ public class RemoteDevice implements Serializable {
     private UnsignedInteger protocolVersion;
     private UnsignedInteger protocolRevision;
     private ServicesSupported servicesSupported;
-    private final Map<ObjectIdentifier, RemoteObject> objects = new HashMap<ObjectIdentifier, RemoteObject>();
+    private final Map<ObjectIdentifier, RemoteObject> objects = new HashMap<>();
     private Object userData;
     private int maxReadMultipleReferences = -1;
 
@@ -89,7 +89,7 @@ public class RemoteDevice implements Serializable {
     }
 
     public List<RemoteObject> getObjects() {
-        return new ArrayList<RemoteObject>(objects.values());
+        return new ArrayList<>(objects.values());
     }
 
     public void clearObjects() {
@@ -194,6 +194,10 @@ public class RemoteDevice implements Serializable {
 
     public void setUserData(Object userData) {
         this.userData = userData;
+    }
+
+    public void setMaxReadMultipleReferences(int maxReadMultipleReferences) {
+        this.maxReadMultipleReferences = maxReadMultipleReferences;
     }
 
     public int getMaxReadMultipleReferences() {
