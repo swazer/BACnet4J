@@ -281,7 +281,7 @@ public class Test {
 
     public static AcknowledgementService send(LocalDevice d, ConfirmedRequestService s) throws Exception {
         Address a = new Address(InetAddrCache.get("localhost", 0xbac1));
-        return d.send(a, null, MaxApduLength.UP_TO_50, Segmentation.segmentedBoth, s);
+        return d.send(a, null, MaxApduLength.UP_TO_50, Segmentation.segmentedBoth, s).get();
     }
 
     public static void test2(LocalDevice d) throws Exception {
@@ -313,7 +313,7 @@ public class Test {
 
     public static AcknowledgementService send(LocalDevice d, RemoteDevice rd, ConfirmedRequestService s)
             throws Exception {
-        return d.send(rd, s);
+        return d.send(rd, s).get();
     }
 
     // public static void main(String[] args) throws Exception {

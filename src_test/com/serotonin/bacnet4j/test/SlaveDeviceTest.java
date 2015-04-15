@@ -203,7 +203,7 @@ public class SlaveDeviceTest {
 
         @Override
         public void propertyWritten(BACnetObject obj, PropertyValue pv) {
-            System.out.println("Wrote " + pv + " to " + obj);
+            System.out.println("Wrote " + pv + " to " + obj.getId());
         }
 
         @Override

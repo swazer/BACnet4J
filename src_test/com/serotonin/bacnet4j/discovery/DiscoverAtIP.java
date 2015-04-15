@@ -17,7 +17,7 @@ import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.enumerated.Segmentation;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.util.concurrent.LimitedAsync;
+import com.serotonin.bacnet4j.util.LimitedAsync;
 
 public class DiscoverAtIP {
     static LocalDevice localDevice;
@@ -64,7 +64,7 @@ public class DiscoverAtIP {
             ObjectIdentifier deviceOid = new ObjectIdentifier(ObjectType.device, deviceId);
             ReadPropertyRequest req = new ReadPropertyRequest(deviceOid, PropertyIdentifier.maxApduLengthAccepted);
             try {
-                localDevice.send(address, null, MaxApduLength.UP_TO_50, Segmentation.noSegmentation, req);
+                localDevice.send(address, null, MaxApduLength.UP_TO_50, Segmentation.noSegmentation, req).get();
                 System.out.println("Response at deviceId " + deviceId);
             }
             catch (BACnetException e) {

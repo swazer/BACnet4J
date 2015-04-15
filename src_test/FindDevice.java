@@ -34,7 +34,7 @@ public class FindDevice {
             System.out.println(RequestUtils.getObjectList(localDevice, d));
 
             ObjectIdentifier ai3 = new ObjectIdentifier(ObjectType.analogInput, 3);
-            List<ObjectIdentifier> oids = new ArrayList<>();
+            List<ObjectIdentifier> oids = new ArrayList<ObjectIdentifier>();
             oids.add(ai3);
             for (int i = 0; i < 10; i++) {
                 PropertyValues pvs = RequestUtils.readOidPresentValues(localDevice, d, oids, null);

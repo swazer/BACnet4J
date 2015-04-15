@@ -20,7 +20,7 @@ import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
-import com.serotonin.util.queue.ByteQueue;
+import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class PrivateTransfer {
     static final SequenceDefinition def1 = new SequenceDefinition( //
@@ -42,7 +42,7 @@ public class PrivateTransfer {
     }
 
     static void encoding() throws Exception {
-        Map<String, Encodable> values = new HashMap<>();
+        Map<String, Encodable> values = new HashMap<String, Encodable>();
         values.put("value1", new Real(72.4f));
         values.put("value2", new OctetString(new byte[] { 0x16, 0x49 }));
         Sequence parameters = new Sequence(def1, values);

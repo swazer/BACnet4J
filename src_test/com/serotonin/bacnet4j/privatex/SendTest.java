@@ -46,7 +46,7 @@ public class SendTest {
     }
 
     static void sendConfirmed(RemoteDevice d, int serviceNumber) throws Exception {
-        Map<String, Encodable> values = new HashMap<>();
+        Map<String, Encodable> values = new HashMap<String, Encodable>();
         values.put("value1", new UnsignedInteger(1));
         values.put("value2", new Real(72.4f));
         Sequence parameters = new Sequence(DEF, values);
@@ -57,12 +57,12 @@ public class SendTest {
     }
 
     static void sendUnconfirmed(RemoteDevice d, int serviceNumber) throws Exception {
-        Map<String, Encodable> values = new HashMap<>();
+        Map<String, Encodable> values = new HashMap<String, Encodable>();
         values.put("value1", new UnsignedInteger(1));
         values.put("value2", new Real(72.4f));
         Sequence parameters = new Sequence(DEF, values);
         UnconfirmedPrivateTransferRequest req = new UnconfirmedPrivateTransferRequest(25, serviceNumber, parameters);
 
-        localDevice.sendUnconfirmed(d.getAddress(), req);
+        localDevice.send(d.getAddress(), req);
     }
 }

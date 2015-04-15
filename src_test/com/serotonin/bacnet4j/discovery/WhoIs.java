@@ -6,13 +6,12 @@ import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.Transport;
-import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 
 public class WhoIs {
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
         Transport transport = new Transport(network);
-        LocalDevice localDevice = new LocalDevice(45677, transport);
+        LocalDevice localDevice = new LocalDevice(0xBAC0, transport);
         localDevice.getEventHandler().addListener(new Listener());
 
         try {
@@ -35,8 +34,9 @@ public class WhoIs {
 
             int count = 10;
             while (count-- > 0) {
-                localDevice
-                        .sendGlobalBroadcast(new WhoIsRequest(new UnsignedInteger(76058), new UnsignedInteger(76058)));
+                localDevice.sendGlobalBroadcast(new WhoIsRequest());
+                //                localDevice
+                //                        .sendGlobalBroadcast(new WhoIsRequest(new UnsignedInteger(76058), new UnsignedInteger(76058)));
                 Thread.sleep(3000);
             }
 

@@ -7,13 +7,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates a hub that distributes all messages to all listeners except the sender.
  */
 public class HubServer implements Runnable {
-    private static final Logger LOG = Logger.getLogger(HubServer.class.toString());
+    static final Logger LOG = LoggerFactory.getLogger(HubServer.class);
 
     public static void main(String[] args) throws Exception {
         new HubServer();

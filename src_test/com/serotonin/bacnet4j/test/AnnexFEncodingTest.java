@@ -153,7 +153,7 @@ import com.serotonin.bacnet4j.type.primitive.SignedInteger;
 import com.serotonin.bacnet4j.type.primitive.Time;
 import com.serotonin.bacnet4j.type.primitive.Unsigned16;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
-import com.serotonin.util.queue.ByteQueue;
+import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class AnnexFEncodingTest {
     public static void main(String[] args) {

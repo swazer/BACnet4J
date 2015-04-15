@@ -5,7 +5,7 @@ import com.serotonin.bacnet4j.apdu.ComplexACK;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.service.unconfirmed.UnconfirmedRequestService;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
-import com.serotonin.util.queue.ByteQueue;
+import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class DecodingTest {
     public static void main(String[] args) throws Exception {
