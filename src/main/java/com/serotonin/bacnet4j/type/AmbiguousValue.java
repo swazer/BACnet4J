@@ -132,6 +132,18 @@ public class AmbiguousValue extends Encodable {
         return data.length == 1 && data[0] == 0;
     }
 
+    public Encodable attemptConversion() {
+        if (Primitive.isPrimitive(data[0])) {
+            try {
+                return convertTo(Primitive.class);
+            }
+            catch (BACnetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return this;
+    }
+
     public <T extends Encodable> T convertTo(Class<T> clazz) throws BACnetException {
         return read(new ByteQueue(data), clazz);
     }

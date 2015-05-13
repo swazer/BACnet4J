@@ -5,21 +5,20 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.serotonin.bacnet4j.apdu.APDU;
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.exception.BACnetServiceException;
+import com.serotonin.bacnet4j.npdu.MessageValidationAssertionException;
+import com.serotonin.bacnet4j.npdu.NPDU;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.constructed.Address;
-import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 import com.serotonin.bacnet4j.util.sero.ThreadUtils;
 
 public class TestNetwork extends Network implements Runnable {
-    public static final Address BROADCAST = new Address(new OctetString(new byte[0]));
+    public static final OctetString BROADCAST = new OctetString(new byte[0]);
 
     private static Map<Address, TestNetwork> instances = new ConcurrentHashMap<Address, TestNetwork>();
 
@@ -33,10 +32,13 @@ public class TestNetwork extends Network implements Runnable {
     private long bytesOut;
     private long bytesIn;
 
+    public TestNetwork(int address, int sendDelay) {
+        this(new Address(new byte[] { (byte) address }), sendDelay);
+    }
+
     public TestNetwork(Address address, int sendDelay) {
         this.address = address;
         this.sendDelay = sendDelay;
-        instances.put(address, this);
     }
 
     @Override
@@ -63,12 +65,21 @@ public class TestNetwork extends Network implements Runnable {
     public void initialize(Transport transport) throws Exception {
         super.initialize(transport);
 
-        thread = new Thread(this);
+        // Set the timeout/retries settings in the transport to something debugger friendly.
+        transport.setTimeout(1000 * 60); // one minute
+        transport.setRetries(0); // no retries, there's no network here after all
+        transport.setSegTimeout(1000 * 10); // 10 seconds.
+
+        thread = new Thread(this, "BACnet4J test network");
         thread.start();
+
+        instances.put(address, this);
     }
 
     @Override
     public void terminate() {
+        instances.remove(address);
+
         running = false;
         ThreadUtils.notifySync(queue);
         if (thread != null)
@@ -76,7 +87,7 @@ public class TestNetwork extends Network implements Runnable {
     }
 
     @Override
-    public Address getLocalBroadcastAddress() {
+    protected OctetString getBroadcastMAC() {
         return BROADCAST;
     }
 
@@ -86,22 +97,14 @@ public class TestNetwork extends Network implements Runnable {
     }
 
     @Override
-    public void sendAPDU(Address recipient, OctetString linkService, APDU apdu, boolean broadcast)
-            throws BACnetException {
+    protected void sendNPDU(Address recipient, OctetString router, ByteQueue npdu, boolean broadcast,
+            boolean expectsReply) throws BACnetException {
         SendData d = new SendData();
         d.recipient = recipient;
-
-        ByteQueue bq = new ByteQueue();
-        apdu.write(bq);
-        d.data = bq.popAll();
+        d.data = npdu.popAll();
 
         queue.add(d);
         ThreadUtils.notifySync(queue);
-    }
-
-    @Override
-    public void checkSendThread() {
-        // no op
     }
 
     @Override
@@ -115,34 +118,27 @@ public class TestNetwork extends Network implements Runnable {
                 // Pause before handing off the message.
                 ThreadUtils.sleep(sendDelay);
 
-                try {
-                    if (d.recipient.equals(BROADCAST) || d.recipient.equals(Address.GLOBAL)) {
-                        for (TestNetwork network : instances.values())
-                            receive(network, d.data);
-                    }
-                    else {
-                        TestNetwork network = instances.get(d.recipient);
-                        if (network != null)
-                            receive(network, d.data);
-                    }
+                if (d.recipient.equals(getLocalBroadcastAddress()) || d.recipient.equals(Address.GLOBAL)) {
+                    for (TestNetwork network : instances.values())
+                        receive(network, d.data);
                 }
-                catch (BACnetException e) {
-                    e.printStackTrace();
+                else {
+                    TestNetwork network = instances.get(d.recipient);
+                    if (network != null)
+                        receive(network, d.data);
                 }
             }
         }
     }
 
-    private void receive(TestNetwork network, byte[] data) throws BACnetException {
-        ServicesSupported servicesSupported;
-        try {
-            servicesSupported = network.getTransport().getLocalDevice().getServicesSupported();
-        }
-        catch (BACnetServiceException e) {
-            throw new RuntimeException(e);
-        }
-        APDU apdu = APDU.createAPDU(servicesSupported, new ByteQueue(data));
-        network.getTransport().incoming(apdu, address, null);
+    private void receive(TestNetwork network, byte[] data) {
+        network.handleIncomingData(new ByteQueue(data), address.getMacAddress());
+    }
+
+    @Override
+    protected NPDU handleIncomingDataImpl(ByteQueue queue, OctetString linkService)
+            throws MessageValidationAssertionException {
+        return parseNpduData(queue, linkService);
     }
 
     static class SendData {

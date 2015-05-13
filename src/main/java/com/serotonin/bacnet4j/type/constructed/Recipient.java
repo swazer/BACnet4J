@@ -53,11 +53,11 @@ public class Recipient extends BaseType {
         choice = new Choice(1, address);
     }
 
-    public boolean isObjectIdentifier() {
+    public boolean isDevice() {
         return choice.getContextId() == 0;
     }
 
-    public ObjectIdentifier getObjectIdentifier() {
+    public ObjectIdentifier getDevice() {
         return (ObjectIdentifier) choice.getDatum();
     }
 

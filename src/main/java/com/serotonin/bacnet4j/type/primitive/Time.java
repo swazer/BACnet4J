@@ -33,6 +33,8 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 public class Time extends Primitive {
     private static final long serialVersionUID = -5256831366663750858L;
 
+    public static final Time UNSPECIFIED = new Time(255, 255, 255, 255);
+
     public static final byte TYPE_ID = 11;
 
     private final int hour;

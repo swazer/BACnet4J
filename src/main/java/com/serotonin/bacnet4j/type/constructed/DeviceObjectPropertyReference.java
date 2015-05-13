@@ -33,6 +33,7 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class DeviceObjectPropertyReference extends BaseType {
     private static final long serialVersionUID = 7213978555689308091L;
+
     private final ObjectIdentifier objectIdentifier; // 0
     private final PropertyIdentifier propertyIdentifier; // 1
     private final UnsignedInteger propertyArrayIndex; // 2 optional

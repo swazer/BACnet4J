@@ -25,10 +25,7 @@
  */
 package com.serotonin.bacnet4j.type.constructed;
 
-import java.net.InetSocketAddress;
-
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.npdu.ip.InetAddrCache;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Unsigned16;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
@@ -36,22 +33,23 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class Address extends BaseType {
     public static final int LOCAL_NETWORK = 0;
-    public static final Address GLOBAL = new Address(new Unsigned16(0xFFFF), null);
+    public static final int ALL_NETWORKS = 0xFFFF;
+    public static final Address GLOBAL = new Address(new Unsigned16(ALL_NETWORKS), null);
 
     private static final long serialVersionUID = -3376358193474831753L;
     private final Unsigned16 networkNumber;
     private final OctetString macAddress;
 
+    public Address(byte[] macAddress) {
+        this(new Unsigned16(LOCAL_NETWORK), new OctetString(macAddress));
+    }
+
     public Address(int networkNumber, byte[] macAddress) {
         this(new Unsigned16(networkNumber), new OctetString(macAddress));
     }
 
-    public Address(int networkNumber, String dottedString) {
-        this(new Unsigned16(networkNumber), new OctetString(dottedString));
-    }
-
     public Address(OctetString macAddress) {
-        this(LOCAL_NETWORK, macAddress);
+        this(new Unsigned16(LOCAL_NETWORK), macAddress);
     }
 
     public Address(int networkNumber, OctetString macAddress) {
@@ -61,70 +59,6 @@ public class Address extends BaseType {
     public Address(Unsigned16 networkNumber, OctetString macAddress) {
         this.networkNumber = networkNumber;
         this.macAddress = macAddress;
-    }
-
-    /**
-     * Convenience constructor for MS/TP addresses local to this network.
-     * 
-     * @param station
-     *            the station id
-     */
-    public Address(byte station) {
-        this(LOCAL_NETWORK, station);
-    }
-
-    /**
-     * Convenience constructor for MS/TP addresses remote to this network.
-     * 
-     * @param network
-     * @param station
-     */
-    public Address(int networkNumber, byte station) {
-        this.networkNumber = new Unsigned16(networkNumber);
-        macAddress = new OctetString(new byte[] { station });
-    }
-
-    /**
-     * Convenience constructor for IP addresses local to this network.
-     * 
-     * @param ipAddress
-     * @param port
-     */
-    public Address(byte[] ipAddress, int port) {
-        this(LOCAL_NETWORK, ipAddress, port);
-    }
-
-    /**
-     * Convenience constructor for IP addresses remote to this network.
-     * 
-     * @param network
-     * @param ipAddress
-     * @param port
-     */
-    public Address(int networkNumber, byte[] ipAddress, int port) {
-        this.networkNumber = new Unsigned16(networkNumber);
-
-        byte[] ipMacAddress = new byte[ipAddress.length + 2];
-        System.arraycopy(ipAddress, 0, ipMacAddress, 0, ipAddress.length);
-        ipMacAddress[ipAddress.length] = (byte) (port >> 8);
-        ipMacAddress[ipAddress.length + 1] = (byte) port;
-        macAddress = new OctetString(ipMacAddress);
-    }
-
-    public Address(String host, int port) {
-        this(LOCAL_NETWORK, host, port);
-    }
-
-    public Address(int networkNumber, String host, int port) {
-        this(networkNumber, InetAddrCache.get(host, port));
-    }
-
-    public Address(InetSocketAddress addr) {
-        this(LOCAL_NETWORK, addr.getAddress().getAddress(), addr.getPort());
-    }
-
-    public Address(int networkNumber, InetSocketAddress addr) {
-        this(networkNumber, addr.getAddress().getAddress(), addr.getPort());
     }
 
     @Override

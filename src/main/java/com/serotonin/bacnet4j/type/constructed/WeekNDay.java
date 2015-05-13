@@ -25,13 +25,19 @@
  */
 package com.serotonin.bacnet4j.type.constructed;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import com.serotonin.bacnet4j.enums.DayOfWeek;
 import com.serotonin.bacnet4j.enums.Month;
+import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
+import com.serotonin.bacnet4j.type.DateMatchable;
+import com.serotonin.bacnet4j.type.primitive.Date;
 import com.serotonin.bacnet4j.type.primitive.Enumerated;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
-public class WeekNDay extends OctetString {
+public class WeekNDay extends OctetString implements DateMatchable {
     private static final long serialVersionUID = -2836161294089567458L;
 
     public static class WeekOfMonth extends Enumerated {
@@ -73,7 +79,7 @@ public class WeekNDay extends OctetString {
     }
 
     public WeekNDay(Month month, WeekOfMonth weekOfMonth, DayOfWeek dayOfWeek) {
-        super(new byte[] { month.getId(), weekOfMonth.byteValue(), dayOfWeek.getId() });
+        super(new byte[] { month.getId(), weekOfMonth.byteValue(), (byte) dayOfWeek.getId() });
     }
 
     public Month getMonth() {
@@ -90,5 +96,44 @@ public class WeekNDay extends OctetString {
 
     public WeekNDay(ByteQueue queue) {
         super(queue);
+    }
+
+    @Override
+    public boolean matches(Date that) {
+        if (!that.isSpecific())
+            throw new BACnetRuntimeException("Dates for matching must be completely specified: " + that);
+
+        if (!getMonth().matches(that.getMonth()))
+            return false;
+
+        if (!matchWeekOfMonth(that))
+            return false;
+
+        if (!getDayOfWeek().matches(that))
+            return false;
+
+        return true;
+    }
+
+    private boolean matchWeekOfMonth(Date that) {
+        WeekOfMonth wom = getWeekOfMonth();
+        if (wom.equals(WeekOfMonth.any))
+            return true;
+        int day = that.getDay();
+        if (wom.equals(WeekOfMonth.days1to7))
+            return day >= 1 && day <= 7;
+        if (wom.equals(WeekOfMonth.days8to14))
+            return day >= 8 && day <= 14;
+        if (wom.equals(WeekOfMonth.days15to21))
+            return day >= 15 && day <= 21;
+        if (wom.equals(WeekOfMonth.days22to28))
+            return day >= 22 && day <= 28;
+        if (wom.equals(WeekOfMonth.days29to31))
+            return day >= 29 && day <= 31;
+
+        // Calculate the last day of the month.
+        GregorianCalendar gc = that.calculateGC();
+        int lastDay = gc.getActualMaximum(Calendar.DATE);
+        return day >= (lastDay - 6) && day <= lastDay;
     }
 }

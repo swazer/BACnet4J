@@ -34,13 +34,12 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
 import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 abstract public class ConfirmedRequestService extends Service {
     private static final long serialVersionUID = -7443765811741238314L;
 
-    public static void checkConfirmedRequestService(ServicesSupported services, byte type) throws BACnetException {
+    public static void checkConfirmedRequestService(ServicesSupported services, byte type) throws BACnetErrorException {
         if (type == AcknowledgeAlarmRequest.TYPE_ID && services.isAcknowledgeAlarm()) // 0
             return;
         if (type == ConfirmedCovNotificationRequest.TYPE_ID && services.isConfirmedCovNotification()) // 1
@@ -67,8 +66,6 @@ abstract public class ConfirmedRequestService extends Service {
             return;
         if (type == ReadPropertyRequest.TYPE_ID && services.isReadProperty()) // 12
             return;
-        if (type == ReadPropertyConditionalRequest.TYPE_ID && services.isReadPropertyConditional()) // 13
-            return;
         if (type == ReadPropertyMultipleRequest.TYPE_ID && services.isReadPropertyMultiple()) // 14
             return;
         if (type == WritePropertyRequest.TYPE_ID && services.isWriteProperty()) // 15
@@ -89,20 +86,16 @@ abstract public class ConfirmedRequestService extends Service {
             return;
         if (type == VtDataRequest.TYPE_ID && services.isVtData()) // 23
             return;
-        if (type == AuthenticateRequest.TYPE_ID && services.isAuthenticate()) // 24
-            return;
-        if (type == RequestKeyRequest.TYPE_ID && services.isRequestKey()) // 25
-            return;
         if (type == ReadRangeRequest.TYPE_ID && services.isReadRange()) // 26
             return;
         if (type == LifeSafetyOperationRequest.TYPE_ID && services.isLifeSafetyOperation()) // 27
             return;
         if (type == SubscribeCOVPropertyRequest.TYPE_ID && services.isSubscribeCovProperty()) // 28
             return;
-        if (type == GetEventInformation.TYPE_ID && services.isGetEventInformation()) // 29
+        if (type == GetEventInformationRequest.TYPE_ID && services.isGetEventInformation()) // 29
             return;
 
-        throw new BACnetErrorException(ErrorClass.device, ErrorCode.serviceRequestDenied);
+        throw new BACnetErrorException(ErrorClass.device, ErrorCode.operationalProblem);
     }
 
     public static ConfirmedRequestService createConfirmedRequestService(byte type, ByteQueue queue)
@@ -134,8 +127,6 @@ abstract public class ConfirmedRequestService extends Service {
             return new DeleteObjectRequest(queue);
         if (type == ReadPropertyRequest.TYPE_ID) // 12
             return new ReadPropertyRequest(queue);
-        if (type == ReadPropertyConditionalRequest.TYPE_ID) // 13
-            return new ReadPropertyConditionalRequest(queue);
         if (type == ReadPropertyMultipleRequest.TYPE_ID) // 14
             return new ReadPropertyMultipleRequest(queue);
         if (type == WritePropertyRequest.TYPE_ID) // 15
@@ -156,22 +147,17 @@ abstract public class ConfirmedRequestService extends Service {
             return new VtCloseRequest(queue);
         if (type == VtDataRequest.TYPE_ID) // 23
             return new VtDataRequest(queue);
-        if (type == AuthenticateRequest.TYPE_ID) // 24
-            return new AuthenticateRequest(queue);
-        if (type == RequestKeyRequest.TYPE_ID) // 25
-            return new RequestKeyRequest(queue);
         if (type == ReadRangeRequest.TYPE_ID) // 26
             return new ReadRangeRequest(queue);
         if (type == LifeSafetyOperationRequest.TYPE_ID) // 27
             return new LifeSafetyOperationRequest(queue);
         if (type == SubscribeCOVPropertyRequest.TYPE_ID) // 28
             return new SubscribeCOVPropertyRequest(queue);
-        if (type == GetEventInformation.TYPE_ID) // 29
-            return new GetEventInformation(queue);
+        if (type == GetEventInformationRequest.TYPE_ID) // 29
+            return new GetEventInformationRequest(queue);
 
         throw new BACnetErrorException(ErrorClass.device, ErrorCode.serviceRequestDenied);
     }
 
-    abstract public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException;
+    abstract public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException;
 }

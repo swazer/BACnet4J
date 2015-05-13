@@ -30,13 +30,13 @@ import java.util.List;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.npdu.NPCI.NetworkPriority;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.enumerated.MessagePriority;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -85,10 +85,15 @@ public class UnconfirmedTextMessageRequest extends UnconfirmedRequestService {
     }
 
     @Override
-    public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
+    public NetworkPriority getNetworkPriority() {
+        return messagePriority.getNetworkPriority();
+    }
+
+    @Override
+    public void handle(LocalDevice localDevice, Address from) {
         localDevice.getEventHandler().fireTextMessage(
-                localDevice.getRemoteDeviceCreate(textMessageSourceDevice.getInstanceNumber(), from, linkService),
-                messageClass, messagePriority, message);
+                localDevice.getRemoteDeviceCreate(textMessageSourceDevice.getInstanceNumber(), from), messageClass,
+                messagePriority, message);
     }
 
     @Override

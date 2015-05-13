@@ -29,11 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
+import com.serotonin.bacnet4j.type.DateMatchable;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.primitive.Date;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
-public class CalendarEntry extends BaseType {
+public class CalendarEntry extends BaseType implements DateMatchable {
     private static final long serialVersionUID = -4210434764578714766L;
     private static List<Class<? extends Encodable>> classes;
     static {
@@ -88,6 +90,20 @@ public class CalendarEntry extends BaseType {
 
     public WeekNDay getWeekNDay() {
         return (WeekNDay) entry.getDatum();
+    }
+
+    @Override
+    public boolean matches(Date date) {
+        DateMatchable matcher;
+        if (isDate())
+            matcher = getDate();
+        else if (isDateRange())
+            matcher = getDateRange();
+        else if (isWeekNDay())
+            matcher = getWeekNDay();
+        else
+            throw new BACnetRuntimeException("Unhandled calendar entry type");
+        return matcher.matches(date);
     }
 
     @Override

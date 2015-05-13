@@ -29,22 +29,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
 import com.serotonin.bacnet4j.type.Encodable;
+import com.serotonin.bacnet4j.type.enumerated.AccessCredentialDisable;
+import com.serotonin.bacnet4j.type.enumerated.AccessCredentialDisableReason;
+import com.serotonin.bacnet4j.type.enumerated.AccessEvent;
+import com.serotonin.bacnet4j.type.enumerated.AccessZoneOccupancyState;
+import com.serotonin.bacnet4j.type.enumerated.Action;
+import com.serotonin.bacnet4j.type.enumerated.AuthenticationStatus;
 import com.serotonin.bacnet4j.type.enumerated.BackupState;
 import com.serotonin.bacnet4j.type.enumerated.BinaryPV;
 import com.serotonin.bacnet4j.type.enumerated.DeviceStatus;
 import com.serotonin.bacnet4j.type.enumerated.DoorAlarmState;
+import com.serotonin.bacnet4j.type.enumerated.DoorSecuredStatus;
+import com.serotonin.bacnet4j.type.enumerated.DoorStatus;
+import com.serotonin.bacnet4j.type.enumerated.DoorValue;
 import com.serotonin.bacnet4j.type.enumerated.EngineeringUnits;
 import com.serotonin.bacnet4j.type.enumerated.EventState;
 import com.serotonin.bacnet4j.type.enumerated.EventType;
+import com.serotonin.bacnet4j.type.enumerated.FileAccessMethod;
 import com.serotonin.bacnet4j.type.enumerated.LifeSafetyMode;
+import com.serotonin.bacnet4j.type.enumerated.LifeSafetyOperation;
 import com.serotonin.bacnet4j.type.enumerated.LifeSafetyState;
+import com.serotonin.bacnet4j.type.enumerated.LightingInProgress;
+import com.serotonin.bacnet4j.type.enumerated.LightingOperation;
+import com.serotonin.bacnet4j.type.enumerated.LightingTransition;
+import com.serotonin.bacnet4j.type.enumerated.LockStatus;
+import com.serotonin.bacnet4j.type.enumerated.Maintenance;
+import com.serotonin.bacnet4j.type.enumerated.NodeType;
+import com.serotonin.bacnet4j.type.enumerated.NotifyType;
 import com.serotonin.bacnet4j.type.enumerated.Polarity;
 import com.serotonin.bacnet4j.type.enumerated.ProgramError;
 import com.serotonin.bacnet4j.type.enumerated.ProgramRequest;
 import com.serotonin.bacnet4j.type.enumerated.ProgramState;
 import com.serotonin.bacnet4j.type.enumerated.Reliability;
 import com.serotonin.bacnet4j.type.enumerated.RestartReason;
+import com.serotonin.bacnet4j.type.enumerated.SecurityLevel;
+import com.serotonin.bacnet4j.type.enumerated.ShedState;
+import com.serotonin.bacnet4j.type.enumerated.SilencedState;
+import com.serotonin.bacnet4j.type.enumerated.WriteStatus;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
@@ -70,52 +93,47 @@ public class PropertyStates extends BaseType {
         classes.add(LifeSafetyState.class); // 13
         classes.add(RestartReason.class); // 14
         classes.add(DoorAlarmState.class); // 15
-        classes.add(Encodable.class); // 16
-        classes.add(Encodable.class); // 17
-        classes.add(Encodable.class); // 18
-        classes.add(Encodable.class); // 19
-        classes.add(Encodable.class); // 20
-        classes.add(Encodable.class); // 21
-        classes.add(Encodable.class); // 22
-        classes.add(Encodable.class); // 23
-        classes.add(Encodable.class); // 24
-        classes.add(Encodable.class); // 25
-        classes.add(Encodable.class); // 26
-        classes.add(Encodable.class); // 27
-        classes.add(Encodable.class); // 28
-        classes.add(Encodable.class); // 29
-        classes.add(Encodable.class); // 30
-        classes.add(Encodable.class); // 31
-        classes.add(Encodable.class); // 32
-        classes.add(Encodable.class); // 33
-        classes.add(Encodable.class); // 34
-        classes.add(Encodable.class); // 35
+        classes.add(Action.class); // 16
+        classes.add(DoorSecuredStatus.class); // 17
+        classes.add(DoorStatus.class); // 18
+        classes.add(DoorValue.class); // 19
+        classes.add(FileAccessMethod.class); // 20
+        classes.add(LockStatus.class); // 21
+        classes.add(LifeSafetyOperation.class); // 22
+        classes.add(Maintenance.class); // 23
+        classes.add(NodeType.class); // 24
+        classes.add(NotifyType.class); // 25
+        classes.add(SecurityLevel.class); // 26
+        classes.add(ShedState.class); // 27
+        classes.add(SilencedState.class); // 28
+        classes.add(Encodable.class); // 29 - reserved
+        classes.add(AccessEvent.class); // 30
+        classes.add(AccessZoneOccupancyState.class); // 31
+        classes.add(AccessCredentialDisableReason.class); // 32
+        classes.add(AccessCredentialDisable.class); // 33
+        classes.add(AuthenticationStatus.class); // 34
+        classes.add(Encodable.class); // 35 - undefined
         classes.add(BackupState.class); // 36
-    }
-
-    public interface Types {
-        int BOOLEAN = 0;
-        int BINARY_PV = 1;
-        int EVENT_TYPE = 2;
-        int POLARITY = 3;
-        int PROGRAM_REQUEST = 4;
-        int PROGRAM_STATE = 5;
-        int PROGRAM_ERROR = 6;
-        int RELIABILITY = 7;
-        int EVENT_STATE = 8;
-        int DEVICE_STATUS = 9;
-        int ENGINEERING_UNITS = 10;
-        int UNSIGNED = 11;
-        int LIFE_SAFETY_MODE = 12;
-        int LIFE_SAFETY_STATE = 13;
-        int RESTART_REASON = 14;
-        int DOOR_ALARM_STATE = 15;
-        int BACKUP_STATE = 36;
+        classes.add(WriteStatus.class); // 37
+        classes.add(LightingInProgress.class); // 38
+        classes.add(LightingOperation.class); // 39
+        classes.add(LightingTransition.class); // 40
     }
 
     private final Choice state;
 
-    public PropertyStates(int type, BaseType state) {
+    public PropertyStates(Encodable state) {
+        int type = -1;
+        for (int i = 0; i < classes.size(); i++) {
+            if (classes.get(i) == state.getClass()) {
+                type = i;
+                break;
+            }
+        }
+
+        if (type == -1)
+            throw new BACnetRuntimeException("Unhandled property type: " + state.getClass());
+
         this.state = new Choice(type, state);
     }
 
@@ -123,8 +141,9 @@ public class PropertyStates extends BaseType {
         return state.getContextId();
     }
 
-    public BaseType getState() {
-        return (BaseType) state.getDatum();
+    @SuppressWarnings("unchecked")
+    public <T extends Encodable> T getState() {
+        return (T) state.getDatum();
     }
 
     @Override
@@ -134,5 +153,36 @@ public class PropertyStates extends BaseType {
 
     public PropertyStates(ByteQueue queue) throws BACnetException {
         state = new Choice(queue, classes);
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyStates [state=" + state + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((state == null) ? 0 : state.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PropertyStates other = (PropertyStates) obj;
+        if (state == null) {
+            if (other.state != null)
+                return false;
+        }
+        else if (!state.equals(other.state))
+            return false;
+        return true;
     }
 }

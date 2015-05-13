@@ -149,7 +149,7 @@ abstract public class Primitive extends Encodable {
                 queue.push(length);
             else if (length < 65536) {
                 queue.push(254);
-                BACnetUtils.pushShort(queue, length);
+                queue.pushU2B((int) length);
             }
             else {
                 queue.push(255);

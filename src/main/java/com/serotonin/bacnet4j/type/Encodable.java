@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.serotonin.bacnet4j.base.BACnetUtils;
-import com.serotonin.bacnet4j.event.ExceptionDispatch;
 import com.serotonin.bacnet4j.exception.BACnetErrorException;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.exception.BACnetRejectException;
@@ -39,6 +38,7 @@ import com.serotonin.bacnet4j.exception.ReflectionException;
 import com.serotonin.bacnet4j.obj.ObjectProperties;
 import com.serotonin.bacnet4j.obj.PropertyTypeDefinition;
 import com.serotonin.bacnet4j.service.VendorServiceKey;
+import com.serotonin.bacnet4j.type.constructed.BACnetArray;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.Sequence;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
@@ -304,6 +304,14 @@ abstract public class Encodable implements Serializable {
         return readSequenceOf(queue, clazz, contextId);
     }
 
+    protected static <T extends Encodable> BACnetArray<T> readArray(ByteQueue queue, Class<T> clazz, int contextId)
+            throws BACnetException {
+        popStart(queue, contextId);
+        BACnetArray<T> result = new BACnetArray<T>(queue, clazz, contextId);
+        popEnd(queue, contextId);
+        return result;
+    }
+
     // Read and write encodable
     protected static void writeEncodable(ByteQueue queue, Encodable type, int contextId) {
         if (Primitive.class.isAssignableFrom(type.getClass()))
@@ -324,7 +332,7 @@ abstract public class Encodable implements Serializable {
 
         PropertyTypeDefinition def = ObjectProperties.getPropertyTypeDefinition(objectType, propertyIdentifier);
         if (def == null)
-            return new AmbiguousValue(queue, contextId);
+            return new AmbiguousValue(queue, contextId).attemptConversion();
 
         if (ObjectProperties.isCommandable(objectType, propertyIdentifier)) {
             // If the object is commandable, it could be set to Null, so we need to treat it as ambiguous.
@@ -377,10 +385,8 @@ abstract public class Encodable implements Serializable {
 
         VendorServiceKey key = new VendorServiceKey(vendorId, serviceNumber);
         SequenceDefinition def = resolutions.get(key);
-        if (def == null) {
-            ExceptionDispatch.fireUnimplementedVendorService(vendorId, serviceNumber, queue);
+        if (def == null)
             throw new BACnetRejectException(RejectReason.unrecognizedService);
-        }
 
         return new Sequence(def, queue, contextId);
     }

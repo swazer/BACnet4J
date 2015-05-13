@@ -27,6 +27,7 @@ package com.serotonin.bacnet4j.service.confirmed;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.npdu.NPCI.NetworkPriority;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.TimeStamp;
@@ -37,7 +38,6 @@ import com.serotonin.bacnet4j.type.notificationParameters.NotificationParameters
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -86,9 +86,14 @@ public class ConfirmedEventNotificationRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService) {
+    public NetworkPriority getNetworkPriority() {
+        return NetworkPriority.forEventPriority(priority.intValue());
+    }
+
+    @Override
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) {
         localDevice.getEventHandler().fireEventNotification(processIdentifier,
-                localDevice.getRemoteDeviceCreate(initiatingDeviceIdentifier.getInstanceNumber(), from, linkService),
+                localDevice.getRemoteDeviceCreate(initiatingDeviceIdentifier.getInstanceNumber(), from),
                 eventObjectIdentifier, timeStamp, notificationClass, priority, eventType, messageText, notifyType,
                 ackRequired, fromState, toState, eventValues);
         return null;

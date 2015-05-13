@@ -49,14 +49,41 @@ public class BitString extends Primitive {
         }
     }
 
+    public BitString(BitString that) {
+        this(Arrays.copyOf(that.value, that.value.length));
+    }
+
     public boolean[] getValue() {
         return value;
     }
 
-    public void setAll(boolean value) {
-        boolean[] values = getValue();
-        for (int i = 0; i < values.length; i++)
-            values[i] = value;
+    public boolean getValue(int indexBase1) {
+        return value[indexBase1 - 1];
+    }
+
+    public void setAll(boolean b) {
+        for (int i = 0; i < value.length; i++)
+            value[i] = b;
+    }
+
+    public void setValue(int indexBase1, boolean b) {
+        value[indexBase1 - 1] = b;
+    }
+
+    public boolean allFalse() {
+        for (int i = 0; i < value.length; i++) {
+            if (value[i])
+                return false;
+        }
+        return true;
+    }
+
+    public boolean allTrue() {
+        for (int i = 0; i < value.length; i++) {
+            if (!value[i])
+                return false;
+        }
+        return true;
     }
 
     //

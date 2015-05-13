@@ -31,6 +31,7 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
+import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
@@ -76,10 +77,10 @@ public class DeviceEventHandler {
     //
     // Checks and notifications
     //
-    public boolean checkAllowPropertyWrite(BACnetObject obj, PropertyValue pv) {
+    public boolean checkAllowPropertyWrite(Address from, BACnetObject obj, PropertyValue pv) {
         for (DeviceEventListener l : listeners) {
             try {
-                if (!l.allowPropertyWrite(obj, pv))
+                if (!l.allowPropertyWrite(from, obj, pv))
                     return false;
             }
             catch (Throwable e) {
@@ -100,10 +101,10 @@ public class DeviceEventHandler {
         }
     }
 
-    public void propertyWritten(final BACnetObject obj, final PropertyValue pv) {
+    public void propertyWritten(final Address from, final BACnetObject obj, final PropertyValue pv) {
         for (DeviceEventListener l : listeners) {
             try {
-                l.propertyWritten(obj, pv);
+                l.propertyWritten(from, obj, pv);
             }
             catch (Throwable e) {
                 handleException(l, e);
@@ -165,11 +166,11 @@ public class DeviceEventHandler {
         }
     }
 
-    public void firePrivateTransfer(final UnsignedInteger vendorId, final UnsignedInteger serviceNumber,
-            final Sequence serviceParameters) {
+    public void firePrivateTransfer(final Address from, final UnsignedInteger vendorId,
+            final UnsignedInteger serviceNumber, final Sequence serviceParameters) {
         for (DeviceEventListener l : listeners) {
             try {
-                l.privateTransferReceived(vendorId, serviceNumber, serviceParameters);
+                l.privateTransferReceived(from, vendorId, serviceNumber, serviceParameters);
             }
             catch (Throwable e) {
                 handleException(l, e);
@@ -177,10 +178,10 @@ public class DeviceEventHandler {
         }
     }
 
-    public void reinitializeDevice(final ReinitializedStateOfDevice reinitializedStateOfDevice) {
+    public void reinitializeDevice(final Address from, final ReinitializedStateOfDevice reinitializedStateOfDevice) {
         for (DeviceEventListener l : listeners) {
             try {
-                l.reinitializeDevice(reinitializedStateOfDevice);
+                l.reinitializeDevice(from, reinitializedStateOfDevice);
             }
             catch (Throwable e) {
                 handleException(l, e);
@@ -188,10 +189,10 @@ public class DeviceEventHandler {
         }
     }
 
-    public void synchronizeTime(final DateTime dateTime, final boolean utc) {
+    public void synchronizeTime(final Address from, final DateTime dateTime, final boolean utc) {
         for (DeviceEventListener l : listeners) {
             try {
-                l.synchronizeTime(dateTime, utc);
+                l.synchronizeTime(from, dateTime, utc);
             }
             catch (Throwable e) {
                 handleException(l, e);

@@ -6,19 +6,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
-public class ExceptionDispatch {
-    private static final List<ExceptionListener> listeners = new CopyOnWriteArrayList<ExceptionListener>();
-    private static final ExceptionListener defaultExceptionListener = new DefaultExceptionListener();
+public class ExceptionDispatcher {
+    private final List<ExceptionListener> listeners = new CopyOnWriteArrayList<ExceptionListener>();
+    private final ExceptionListener defaultExceptionListener = new DefaultExceptionListener();
 
-    static {
+    public ExceptionDispatcher() {
         listeners.add(defaultExceptionListener);
     }
 
-    public static void addListener(ExceptionListener l) {
+    public void addListener(ExceptionListener l) {
         listeners.add(l);
     }
 
-    public static void removeListener(ExceptionListener l) {
+    public void removeListener(ExceptionListener l) {
         listeners.remove(l);
     }
 
@@ -26,18 +26,17 @@ public class ExceptionDispatch {
         listeners.remove(defaultExceptionListener);
     }
 
-    public static void fireUnimplementedVendorService(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
-            ByteQueue queue) {
+    public void fireUnimplementedVendorService(UnsignedInteger vendorId, UnsignedInteger serviceNumber, ByteQueue queue) {
         for (ExceptionListener l : listeners)
             l.unimplementedVendorService(vendorId, serviceNumber, queue);
     }
 
-    public static void fireReceivedException(Exception e) {
+    public void fireReceivedException(Exception e) {
         for (ExceptionListener l : listeners)
             l.receivedException(e);
     }
 
-    public static void fireReceivedThrowable(Throwable t) {
+    public void fireReceivedThrowable(Throwable t) {
         for (ExceptionListener l : listeners)
             l.receivedThrowable(t);
     }

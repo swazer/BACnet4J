@@ -32,7 +32,6 @@ import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class IHaveRequest extends UnconfirmedRequestService {
@@ -57,8 +56,8 @@ public class IHaveRequest extends UnconfirmedRequestService {
     }
 
     @Override
-    public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
-        RemoteDevice d = localDevice.getRemoteDeviceCreate(deviceIdentifier.getInstanceNumber(), from, linkService);
+    public void handle(LocalDevice localDevice, Address from) {
+        RemoteDevice d = localDevice.getRemoteDeviceCreate(deviceIdentifier.getInstanceNumber(), from);
         RemoteObject o = new RemoteObject(objectIdentifier);
         o.setObjectName(objectName.toString());
         d.setObject(o);

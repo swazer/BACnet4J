@@ -29,12 +29,7 @@ import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.constructed.BaseType;
 import com.serotonin.bacnet4j.type.constructed.DeviceObjectPropertyReference;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
-import com.serotonin.bacnet4j.type.primitive.BitString;
-import com.serotonin.bacnet4j.type.primitive.Enumerated;
-import com.serotonin.bacnet4j.type.primitive.Null;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Primitive;
-import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -88,35 +83,7 @@ public class Extended extends EventParameter {
         private Primitive primitive;
         private DeviceObjectPropertyReference reference;
 
-        public Parameter(Null primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(Real primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(UnsignedInteger primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(com.serotonin.bacnet4j.type.primitive.Boolean primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(com.serotonin.bacnet4j.type.primitive.Double primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(OctetString primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(BitString primitive) {
-            this.primitive = primitive;
-        }
-
-        public Parameter(Enumerated primitive) {
+        public Parameter(Primitive primitive) {
             this.primitive = primitive;
         }
 

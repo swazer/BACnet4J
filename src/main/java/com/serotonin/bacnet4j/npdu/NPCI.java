@@ -36,6 +36,27 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
  * @author mlohbihler
  */
 public class NPCI {
+    public static enum NetworkPriority {
+        lifeSafety(3), criticalEquipment(2), urgent(1), normal(0);
+
+        public final int value;
+
+        private NetworkPriority(int value) {
+            this.value = value;
+        }
+
+        // 13.2.5.4
+        public static NetworkPriority forEventPriority(int eventPriority) {
+            if (eventPriority < 64)
+                return lifeSafety;
+            if (eventPriority < 128)
+                return criticalEquipment;
+            if (eventPriority < 192)
+                return urgent;
+            return normal;
+        }
+    }
+
     private final int version;
     private BigInteger control;
     private int destinationNetwork;
@@ -90,6 +111,24 @@ public class NPCI {
         control = control.setBit(7);
         this.messageType = messageType;
         this.vendorId = vendorId;
+    }
+
+    public NPCI priority(NetworkPriority priority) {
+        return priority(priority.value);
+    }
+
+    public NPCI priority(int priority) {
+        if ((priority & 1) == 1)
+            control = control.setBit(0);
+        else
+            control = control.clearBit(0);
+
+        if ((priority & 2) == 2)
+            control = control.setBit(1);
+        else
+            control = control.clearBit(1);
+
+        return this;
     }
 
     private void setSourceAddress(Address source) {

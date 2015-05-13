@@ -36,7 +36,6 @@ import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
 import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.Enumerated;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class ReinitializeDeviceRequest extends ConfirmedRequestService {
@@ -88,8 +87,7 @@ public class ReinitializeDeviceRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
         String password = null;
         if (this.password != null)
             password = this.password.getValue();
@@ -98,7 +96,7 @@ public class ReinitializeDeviceRequest extends ConfirmedRequestService {
 
         // Check the password
         if (StringUtils.equals(localDevice.getPassword(), password)) {
-            localDevice.getEventHandler().reinitializeDevice(reinitializedStateOfDevice);
+            localDevice.getEventHandler().reinitializeDevice(from, reinitializedStateOfDevice);
             return null;
         }
 

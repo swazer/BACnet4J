@@ -43,6 +43,55 @@ public enum Month {
         return valueOf((byte) id);
     }
 
+    public boolean isSpecific() {
+        switch (this) {
+        case ODD_MONTHS:
+        case EVEN_MONTHS:
+        case UNSPECIFIED:
+            return false;
+        default:
+            return true;
+        }
+    }
+
+    public boolean isOdd() {
+        switch (this) {
+        case JANUARY:
+        case MARCH:
+        case MAY:
+        case JULY:
+        case SEPTEMBER:
+        case NOVEMBER:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    public boolean isEven() {
+        switch (this) {
+        case FEBRUARY:
+        case APRIL:
+        case JUNE:
+        case AUGUST:
+        case OCTOBER:
+        case DECEMBER:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    public boolean matches(Month that) {
+        if (this == Month.UNSPECIFIED)
+            return true;
+        if (this == Month.ODD_MONTHS)
+            return that.isOdd();
+        if (this == Month.EVEN_MONTHS)
+            return that.isEven();
+        return this == that;
+    }
+
     public static Month valueOf(byte id) {
         if (id == JANUARY.id)
             return JANUARY;

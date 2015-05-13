@@ -35,6 +35,9 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class DateTime extends BaseType {
     private static final long serialVersionUID = -5792783146879193344L;
+
+    public static final DateTime UNSPECIFIED = new DateTime(Date.UNSPECIFIED, Time.UNSPECIFIED);
+
     private final Date date;
     private final Time time;
 
@@ -78,11 +81,11 @@ public class DateTime extends BaseType {
         return time;
     }
 
-    public long getTimeMillis() {
+    public GregorianCalendar getGC() {
         GregorianCalendar gc = new GregorianCalendar(date.getCenturyYear(), date.getMonth().getId() - 1, date.getDay(),
                 time.getHour(), time.getMinute(), time.getSecond());
         gc.set(Calendar.MILLISECOND, time.getHundredth() * 10);
-        return gc.getTimeInMillis();
+        return gc;
     }
 
     @Override

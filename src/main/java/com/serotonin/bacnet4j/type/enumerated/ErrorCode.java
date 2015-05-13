@@ -30,22 +30,19 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class ErrorCode extends Enumerated {
     private static final long serialVersionUID = -6627023845995429296L;
+
     public static final ErrorCode other = new ErrorCode(0);
-    public static final ErrorCode authenticationFailed = new ErrorCode(1);
     public static final ErrorCode configurationInProgress = new ErrorCode(2);
     public static final ErrorCode deviceBusy = new ErrorCode(3);
     public static final ErrorCode dynamicCreationNotSupported = new ErrorCode(4);
     public static final ErrorCode fileAccessDenied = new ErrorCode(5);
-    public static final ErrorCode incompatibleSecurityLevels = new ErrorCode(6);
     public static final ErrorCode inconsistentParameters = new ErrorCode(7);
     public static final ErrorCode inconsistentSelectionCriterion = new ErrorCode(8);
     public static final ErrorCode invalidDataType = new ErrorCode(9);
     public static final ErrorCode invalidFileAccessMethod = new ErrorCode(10);
     public static final ErrorCode invalidFileStartPosition = new ErrorCode(11);
-    public static final ErrorCode invalidOperatorName = new ErrorCode(12);
     public static final ErrorCode invalidParameterDataType = new ErrorCode(13);
     public static final ErrorCode invalidTimeStamp = new ErrorCode(14);
-    public static final ErrorCode keyGenerationError = new ErrorCode(15);
     public static final ErrorCode missingRequiredParameter = new ErrorCode(16);
     public static final ErrorCode noObjectsOfSpecifiedType = new ErrorCode(17);
     public static final ErrorCode noSpaceForObject = new ErrorCode(18);
@@ -58,7 +55,6 @@ public class ErrorCode extends Enumerated {
     public static final ErrorCode operationalProblem = new ErrorCode(25);
     public static final ErrorCode passwordFailure = new ErrorCode(26);
     public static final ErrorCode readAccessDenied = new ErrorCode(27);
-    public static final ErrorCode securityNotSupported = new ErrorCode(28);
     public static final ErrorCode serviceRequestDenied = new ErrorCode(29);
     public static final ErrorCode timeout = new ErrorCode(30);
     public static final ErrorCode unknownObject = new ErrorCode(31);
@@ -108,19 +104,74 @@ public class ErrorCode extends Enumerated {
     public static final ErrorCode loggedValuePurged = new ErrorCode(76);
     public static final ErrorCode noPropertySpecified = new ErrorCode(77);
     public static final ErrorCode notConfiguredForTriggeredLogging = new ErrorCode(78);
+    public static final ErrorCode unknownSubscription = new ErrorCode(79);
+    public static final ErrorCode parameterOutOfRange = new ErrorCode(80);
+    public static final ErrorCode listElementNotFound = new ErrorCode(81);
+    public static final ErrorCode busy = new ErrorCode(82);
     public static final ErrorCode communicationDisabled = new ErrorCode(83);
+    public static final ErrorCode success = new ErrorCode(84);
+    public static final ErrorCode accessDenied = new ErrorCode(85);
+    public static final ErrorCode badDestinationAddress = new ErrorCode(86);
+    public static final ErrorCode badDestinationDeviceId = new ErrorCode(87);
+    public static final ErrorCode badSignature = new ErrorCode(88);
+    public static final ErrorCode badSourceAddress = new ErrorCode(89);
+    public static final ErrorCode badTimestamp = new ErrorCode(90);
+    public static final ErrorCode cannotUseKey = new ErrorCode(91);
+    public static final ErrorCode cannotVerifyMessageId = new ErrorCode(92);
+    public static final ErrorCode correctKeyRevision = new ErrorCode(93);
+    public static final ErrorCode destinationDeviceIdRequired = new ErrorCode(94);
+    public static final ErrorCode duplicateMessage = new ErrorCode(95);
+    public static final ErrorCode encryptionNotConfigured = new ErrorCode(96);
+    public static final ErrorCode encryptionRequired = new ErrorCode(97);
+    public static final ErrorCode incorrectKey = new ErrorCode(98);
+    public static final ErrorCode invalidKeyData = new ErrorCode(99);
+    public static final ErrorCode keyUpdateInProgress = new ErrorCode(100);
+    public static final ErrorCode malformedMessage = new ErrorCode(101);
+    public static final ErrorCode notKeyServer = new ErrorCode(102);
+    public static final ErrorCode securityNotConfigured = new ErrorCode(103);
+    public static final ErrorCode sourceSecurityRequired = new ErrorCode(104);
+    public static final ErrorCode tooManyKeys = new ErrorCode(105);
+    public static final ErrorCode unknownAuthenticationType = new ErrorCode(106);
+    public static final ErrorCode unknownKey = new ErrorCode(107);
+    public static final ErrorCode unknownKeyRevision = new ErrorCode(108);
+    public static final ErrorCode unknownSourceMessage = new ErrorCode(109);
+    public static final ErrorCode notRouterToDnet = new ErrorCode(110);
+    public static final ErrorCode routerBusy = new ErrorCode(111);
+    public static final ErrorCode unknownNetworkMessage = new ErrorCode(112);
+    public static final ErrorCode messageTooLong = new ErrorCode(113);
+    public static final ErrorCode securityError = new ErrorCode(114);
+    public static final ErrorCode addressingError = new ErrorCode(115);
+    public static final ErrorCode writeBdtFailed = new ErrorCode(116);
+    public static final ErrorCode readBdtFailed = new ErrorCode(117);
+    public static final ErrorCode registerForeignDeviceFailed = new ErrorCode(118);
+    public static final ErrorCode readFdtFailed = new ErrorCode(119);
+    public static final ErrorCode deleteFdtEntryFailed = new ErrorCode(120);
+    public static final ErrorCode distributeBroadcastFailed = new ErrorCode(121);
     public static final ErrorCode unknownFileSize = new ErrorCode(122);
+    public static final ErrorCode abortApduTooLong = new ErrorCode(123);
+    public static final ErrorCode abortApplicationExceededReplyTime = new ErrorCode(124);
+    public static final ErrorCode abortOutOfResources = new ErrorCode(125);
+    public static final ErrorCode abortTsmTimeout = new ErrorCode(126);
+    public static final ErrorCode abortWindowSizeOutOfRange = new ErrorCode(127);
+    public static final ErrorCode fileFull = new ErrorCode(128);
+    public static final ErrorCode inconsistentConfiguration = new ErrorCode(129);
+    public static final ErrorCode inconsistentObjectType = new ErrorCode(130);
+    public static final ErrorCode internalError = new ErrorCode(131);
+    public static final ErrorCode notConfigured = new ErrorCode(132);
+    public static final ErrorCode outOfMemory = new ErrorCode(133);
+    public static final ErrorCode valueTooLong = new ErrorCode(134);
+    public static final ErrorCode abortInsufficientSecurity = new ErrorCode(135);
+    public static final ErrorCode abortSecurityError = new ErrorCode(136);
 
-    public static final ErrorCode[] ALL = { other, authenticationFailed, configurationInProgress, deviceBusy,
-            dynamicCreationNotSupported, fileAccessDenied, incompatibleSecurityLevels, inconsistentParameters,
-            inconsistentSelectionCriterion, invalidDataType, invalidFileAccessMethod, invalidFileStartPosition,
-            invalidOperatorName, invalidParameterDataType, invalidTimeStamp, keyGenerationError,
+    public static final ErrorCode[] ALL = { other, configurationInProgress, deviceBusy, dynamicCreationNotSupported,
+            fileAccessDenied, inconsistentParameters, inconsistentSelectionCriterion, invalidDataType,
+            invalidFileAccessMethod, invalidFileStartPosition, invalidParameterDataType, invalidTimeStamp,
             missingRequiredParameter, noObjectsOfSpecifiedType, noSpaceForObject, noSpaceToAddListElement,
             noSpaceToWriteProperty, noVtSessionsAvailable, propertyIsNotAList, objectDeletionNotPermitted,
-            objectIdentifierAlreadyExists, operationalProblem, passwordFailure, readAccessDenied, securityNotSupported,
-            serviceRequestDenied, timeout, unknownObject, unknownProperty, unknownVtClass, unknownVtSession,
-            unsupportedObjectType, valueOutOfRange, vtSessionAlreadyClosed, vtSessionTerminationFailure,
-            writeAccessDenied, characterSetNotSupported, invalidArrayIndex, covSubscriptionFailed, notCovProperty,
+            objectIdentifierAlreadyExists, operationalProblem, passwordFailure, readAccessDenied, serviceRequestDenied,
+            timeout, unknownObject, unknownProperty, unknownVtClass, unknownVtSession, unsupportedObjectType,
+            valueOutOfRange, vtSessionAlreadyClosed, vtSessionTerminationFailure, writeAccessDenied,
+            characterSetNotSupported, invalidArrayIndex, covSubscriptionFailed, notCovProperty,
             optionalFunctionalityNotSupported, invalidConfigurationData, datatypeNotSupported, duplicateName,
             duplicateObjectId, propertyIsNotAnArray, abortBufferOverflow, abortInvalidApduInThisState,
             abortPreemptedByHigherPriorityTask, abortSegmentationNotSupported, abortProprietary, abortOther,
@@ -129,7 +180,17 @@ public class ErrorCode extends Enumerated {
             rejectParameterOutOfRange, rejectTooManyArguments, rejectUndefinedEnumeration, rejectUnrecognizedService,
             rejectProprietary, rejectOther, unknownDevice, unknownRoute, valueNotInitialized, invalidEventState,
             noAlarmConfigured, logBufferFull, loggedValuePurged, noPropertySpecified, notConfiguredForTriggeredLogging,
-            communicationDisabled, unknownFileSize, };
+            unknownSubscription, parameterOutOfRange, listElementNotFound, busy, communicationDisabled, success,
+            accessDenied, badDestinationAddress, badDestinationDeviceId, badSignature, badSourceAddress, badTimestamp,
+            cannotUseKey, cannotVerifyMessageId, correctKeyRevision, destinationDeviceIdRequired, duplicateMessage,
+            encryptionNotConfigured, encryptionRequired, incorrectKey, invalidKeyData, keyUpdateInProgress,
+            malformedMessage, notKeyServer, securityNotConfigured, sourceSecurityRequired, tooManyKeys,
+            unknownAuthenticationType, unknownKey, unknownKeyRevision, unknownSourceMessage, notRouterToDnet,
+            routerBusy, unknownNetworkMessage, messageTooLong, securityError, addressingError, writeBdtFailed,
+            readBdtFailed, registerForeignDeviceFailed, readFdtFailed, deleteFdtEntryFailed, distributeBroadcastFailed,
+            unknownFileSize, abortApduTooLong, abortApplicationExceededReplyTime, abortOutOfResources, abortTsmTimeout,
+            abortWindowSizeOutOfRange, fileFull, inconsistentConfiguration, inconsistentObjectType, internalError,
+            notConfigured, outOfMemory, valueTooLong, abortInsufficientSecurity, abortSecurityError, };
 
     public ErrorCode(int value) {
         super(value);
@@ -143,165 +204,267 @@ public class ErrorCode extends Enumerated {
     public String toString() {
         int type = intValue();
         if (type == other.intValue())
-            return "Other";
-        if (type == authenticationFailed.intValue())
-            return "Authentication failed";
+            return "other";
         if (type == configurationInProgress.intValue())
-            return "Configuration in progress";
+            return "configurationInProgress";
         if (type == deviceBusy.intValue())
-            return "Device busy";
+            return "deviceBusy";
         if (type == dynamicCreationNotSupported.intValue())
-            return "Dynamic creation not supported";
+            return "dynamicCreationNotSupported";
         if (type == fileAccessDenied.intValue())
-            return "File access denied";
-        if (type == incompatibleSecurityLevels.intValue())
-            return "Incompatible security levels";
+            return "fileAccessDenied";
         if (type == inconsistentParameters.intValue())
-            return "Inconsistent parameters";
+            return "inconsistentParameters";
         if (type == inconsistentSelectionCriterion.intValue())
-            return "Inconsistent selection criterion";
+            return "inconsistentSelectionCriterion";
         if (type == invalidDataType.intValue())
-            return "Invalid data type";
+            return "invalidDataType";
         if (type == invalidFileAccessMethod.intValue())
-            return "Invalid file access method";
+            return "invalidFileAccessMethod";
         if (type == invalidFileStartPosition.intValue())
-            return "Invalid file start position";
-        if (type == invalidOperatorName.intValue())
-            return "Invalid operator name";
+            return "invalidFileStartPosition";
         if (type == invalidParameterDataType.intValue())
-            return "Invalid parameter data type";
+            return "invalidParameterDataType";
         if (type == invalidTimeStamp.intValue())
-            return "Invalid time stamp";
-        if (type == keyGenerationError.intValue())
-            return "Key generation error";
+            return "invalidTimeStamp";
         if (type == missingRequiredParameter.intValue())
-            return "Missing required parameter";
+            return "missingRequiredParameter";
         if (type == noObjectsOfSpecifiedType.intValue())
-            return "No objects of specified type";
+            return "noObjectsOfSpecifiedType";
         if (type == noSpaceForObject.intValue())
-            return "No space for object";
+            return "noSpaceForObject";
         if (type == noSpaceToAddListElement.intValue())
-            return "No space to add list element";
+            return "noSpaceToAddListElement";
         if (type == noSpaceToWriteProperty.intValue())
-            return "No space to write property";
+            return "noSpaceToWriteProperty";
         if (type == noVtSessionsAvailable.intValue())
-            return "No VT sessions available";
+            return "noVtSessionsAvailable";
         if (type == propertyIsNotAList.intValue())
-            return "Property is not a list";
+            return "propertyIsNotAList";
         if (type == objectDeletionNotPermitted.intValue())
-            return "Object deletion not permitted";
+            return "objectDeletionNotPermitted";
         if (type == objectIdentifierAlreadyExists.intValue())
-            return "Object identifier already exists";
+            return "objectIdentifierAlreadyExists";
         if (type == operationalProblem.intValue())
-            return "Operational problem";
+            return "operationalProblem";
         if (type == passwordFailure.intValue())
-            return "Password failure";
+            return "passwordFailure";
         if (type == readAccessDenied.intValue())
-            return "Read access denied";
-        if (type == securityNotSupported.intValue())
-            return "Security not supported";
+            return "readAccessDenied";
         if (type == serviceRequestDenied.intValue())
-            return "Service request denied";
+            return "serviceRequestDenied";
         if (type == timeout.intValue())
-            return "Timeout";
+            return "timeout";
         if (type == unknownObject.intValue())
-            return "Unknown object";
+            return "unknownObject";
         if (type == unknownProperty.intValue())
-            return "Unknown property";
+            return "unknownProperty";
         if (type == unknownVtClass.intValue())
-            return "Unknown VT class";
+            return "unknownVtClass";
         if (type == unknownVtSession.intValue())
-            return "Unknown VT session";
+            return "unknownVtSession";
         if (type == unsupportedObjectType.intValue())
-            return "Unsupported object type";
+            return "unsupportedObjectType";
         if (type == valueOutOfRange.intValue())
-            return "Value out of range";
+            return "valueOutOfRange";
         if (type == vtSessionAlreadyClosed.intValue())
-            return "VT session already closed";
+            return "vtSessionAlreadyClosed";
         if (type == vtSessionTerminationFailure.intValue())
-            return "VT session termination failure";
+            return "vtSessionTerminationFailure";
         if (type == writeAccessDenied.intValue())
-            return "Write access denied";
+            return "writeAccessDenied";
         if (type == characterSetNotSupported.intValue())
-            return "Character set not supported";
+            return "characterSetNotSupported";
         if (type == invalidArrayIndex.intValue())
-            return "Invalid array index";
+            return "invalidArrayIndex";
         if (type == covSubscriptionFailed.intValue())
-            return "Cov subscription failed";
+            return "covSubscriptionFailed";
         if (type == notCovProperty.intValue())
-            return "Not COV property";
+            return "notCovProperty";
         if (type == optionalFunctionalityNotSupported.intValue())
-            return "Optional functionality not supported";
+            return "optionalFunctionalityNotSupported";
         if (type == invalidConfigurationData.intValue())
-            return "Invalid configuration data";
+            return "invalidConfigurationData";
         if (type == datatypeNotSupported.intValue())
-            return "Data type not supported";
+            return "datatypeNotSupported";
         if (type == duplicateName.intValue())
-            return "Duplicate name";
+            return "duplicateName";
         if (type == duplicateObjectId.intValue())
-            return "Duplicate object id";
+            return "duplicateObjectId";
         if (type == propertyIsNotAnArray.intValue())
-            return "Property is not an array";
+            return "propertyIsNotAnArray";
         if (type == abortBufferOverflow.intValue())
-            return "Abort Buffer Overflow";
+            return "abortBufferOverflow";
         if (type == abortInvalidApduInThisState.intValue())
-            return "Abort Invalid Apdu In This State";
+            return "abortInvalidApduInThisState";
         if (type == abortPreemptedByHigherPriorityTask.intValue())
-            return "Abort Preempted By Higher Priority Task";
+            return "abortPreemptedByHigherPriorityTask";
         if (type == abortSegmentationNotSupported.intValue())
-            return "Abort Segmentation Not Supported";
+            return "abortSegmentationNotSupported";
         if (type == abortProprietary.intValue())
-            return "Abort Proprietary";
+            return "abortProprietary";
         if (type == abortOther.intValue())
-            return "Abort Other";
+            return "abortOther";
         if (type == invalidTag.intValue())
-            return "Invalid Tag";
+            return "invalidTag";
         if (type == networkDown.intValue())
-            return "Network Down";
+            return "networkDown";
         if (type == rejectBufferOverflow.intValue())
-            return "Reject Buffer Overflow";
+            return "rejectBufferOverflow";
         if (type == rejectInconsistentParameters.intValue())
-            return "Reject Inconsistent Parameters";
+            return "rejectInconsistentParameters";
         if (type == rejectInvalidParameterDataType.intValue())
-            return "Reject Invalid Parameter Data Type";
+            return "rejectInvalidParameterDataType";
         if (type == rejectInvalidTag.intValue())
-            return "Reject Invalid Tag";
+            return "rejectInvalidTag";
         if (type == rejectMissingRequiredParameter.intValue())
-            return "Reject Missing Required Parameter";
+            return "rejectMissingRequiredParameter";
         if (type == rejectParameterOutOfRange.intValue())
-            return "Reject Parameter Out Of Range";
+            return "rejectParameterOutOfRange";
         if (type == rejectTooManyArguments.intValue())
-            return "Reject Too Many Arguments";
+            return "rejectTooManyArguments";
         if (type == rejectUndefinedEnumeration.intValue())
-            return "Reject Undefined Enumeration";
+            return "rejectUndefinedEnumeration";
         if (type == rejectUnrecognizedService.intValue())
-            return "Reject Unrecognized Service";
+            return "rejectUnrecognizedService";
         if (type == rejectProprietary.intValue())
-            return "Reject Proprietary";
+            return "rejectProprietary";
         if (type == rejectOther.intValue())
-            return "Reject Other";
+            return "rejectOther";
         if (type == unknownDevice.intValue())
-            return "Unknown Device";
+            return "unknownDevice";
         if (type == unknownRoute.intValue())
-            return "Unknown Route";
+            return "unknownRoute";
         if (type == valueNotInitialized.intValue())
-            return "Value Not Initialized";
+            return "valueNotInitialized";
         if (type == invalidEventState.intValue())
-            return "Invalid Event State";
+            return "invalidEventState";
         if (type == noAlarmConfigured.intValue())
-            return "No Alarm Configured";
+            return "noAlarmConfigured";
         if (type == logBufferFull.intValue())
-            return "Log Buffer Full";
+            return "logBufferFull";
         if (type == loggedValuePurged.intValue())
-            return "Logged Value Purged";
+            return "loggedValuePurged";
         if (type == noPropertySpecified.intValue())
-            return "No Property Specified";
+            return "noPropertySpecified";
         if (type == notConfiguredForTriggeredLogging.intValue())
-            return "Not Configured For Triggered Logging";
+            return "notConfiguredForTriggeredLogging";
+        if (type == unknownSubscription.intValue())
+            return "unknownSubscription";
+        if (type == parameterOutOfRange.intValue())
+            return "parameterOutOfRange";
+        if (type == listElementNotFound.intValue())
+            return "listElementNotFound";
+        if (type == busy.intValue())
+            return "busy";
         if (type == communicationDisabled.intValue())
-            return "Communication Disabled";
+            return "communicationDisabled";
+        if (type == success.intValue())
+            return "success";
+        if (type == accessDenied.intValue())
+            return "accessDenied";
+        if (type == badDestinationAddress.intValue())
+            return "badDestinationAddress";
+        if (type == badDestinationDeviceId.intValue())
+            return "badDestinationDeviceId";
+        if (type == badSignature.intValue())
+            return "badSignature";
+        if (type == badSourceAddress.intValue())
+            return "badSourceAddress";
+        if (type == badTimestamp.intValue())
+            return "badTimestamp";
+        if (type == cannotUseKey.intValue())
+            return "cannotUseKey";
+        if (type == cannotVerifyMessageId.intValue())
+            return "cannotVerifyMessageId";
+        if (type == correctKeyRevision.intValue())
+            return "correctKeyRevision";
+        if (type == destinationDeviceIdRequired.intValue())
+            return "destinationDeviceIdRequired";
+        if (type == duplicateMessage.intValue())
+            return "duplicateMessage";
+        if (type == encryptionNotConfigured.intValue())
+            return "encryptionNotConfigured";
+        if (type == encryptionRequired.intValue())
+            return "encryptionRequired";
+        if (type == incorrectKey.intValue())
+            return "incorrectKey";
+        if (type == invalidKeyData.intValue())
+            return "invalidKeyData";
+        if (type == keyUpdateInProgress.intValue())
+            return "keyUpdateInProgress";
+        if (type == malformedMessage.intValue())
+            return "malformedMessage";
+        if (type == notKeyServer.intValue())
+            return "notKeyServer";
+        if (type == securityNotConfigured.intValue())
+            return "securityNotConfigured";
+        if (type == sourceSecurityRequired.intValue())
+            return "sourceSecurityRequired";
+        if (type == tooManyKeys.intValue())
+            return "tooManyKeys";
+        if (type == unknownAuthenticationType.intValue())
+            return "unknownAuthenticationType";
+        if (type == unknownKey.intValue())
+            return "unknownKey";
+        if (type == unknownKeyRevision.intValue())
+            return "unknownKeyRevision";
+        if (type == unknownSourceMessage.intValue())
+            return "unknownSourceMessage";
+        if (type == notRouterToDnet.intValue())
+            return "notRouterToDnet";
+        if (type == routerBusy.intValue())
+            return "routerBusy";
+        if (type == unknownNetworkMessage.intValue())
+            return "unknownNetworkMessage";
+        if (type == messageTooLong.intValue())
+            return "messageTooLong";
+        if (type == securityError.intValue())
+            return "securityError";
+        if (type == addressingError.intValue())
+            return "addressingError";
+        if (type == writeBdtFailed.intValue())
+            return "writeBdtFailed";
+        if (type == readBdtFailed.intValue())
+            return "readBdtFailed";
+        if (type == registerForeignDeviceFailed.intValue())
+            return "registerForeignDeviceFailed";
+        if (type == readFdtFailed.intValue())
+            return "readFdtFailed";
+        if (type == deleteFdtEntryFailed.intValue())
+            return "deleteFdtEntryFailed";
+        if (type == distributeBroadcastFailed.intValue())
+            return "distributeBroadcastFailed";
         if (type == unknownFileSize.intValue())
-            return "Unknown File Size";
+            return "unknownFileSize";
+        if (type == abortApduTooLong.intValue())
+            return "abortApduTooLong";
+        if (type == abortApplicationExceededReplyTime.intValue())
+            return "abortApplicationExceededReplyTime";
+        if (type == abortOutOfResources.intValue())
+            return "abortOutOfResources";
+        if (type == abortTsmTimeout.intValue())
+            return "abortTsmTimeout";
+        if (type == abortWindowSizeOutOfRange.intValue())
+            return "abortWindowSizeOutOfRange";
+        if (type == fileFull.intValue())
+            return "fileFull";
+        if (type == inconsistentConfiguration.intValue())
+            return "inconsistentConfiguration";
+        if (type == inconsistentObjectType.intValue())
+            return "inconsistentObjectType";
+        if (type == internalError.intValue())
+            return "internalError";
+        if (type == notConfigured.intValue())
+            return "notConfigured";
+        if (type == outOfMemory.intValue())
+            return "outOfMemory";
+        if (type == valueTooLong.intValue())
+            return "valueTooLong";
+        if (type == abortInsufficientSecurity.intValue())
+            return "abortInsufficientSecurity";
+        if (type == abortSecurityError.intValue())
+            return "abortSecurityError";
         return "Unknown: " + type;
     }
 }

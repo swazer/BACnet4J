@@ -65,7 +65,7 @@ public class ActionCommand extends BaseType {
         write(queue, objectIdentifier, 1);
         write(queue, propertyIdentifier, 2);
         writeOptional(queue, propertyArrayIndex, 3);
-        write(queue, propertyValue, 4);
+        writeEncodable(queue, propertyValue, 4);
         writeOptional(queue, priority, 5);
         writeOptional(queue, postDelay, 6);
         write(queue, quitOnFailure, 7);

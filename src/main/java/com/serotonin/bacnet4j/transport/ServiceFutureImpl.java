@@ -12,41 +12,47 @@ import com.serotonin.bacnet4j.exception.RejectAPDUException;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.util.sero.ThreadUtils;
 
-public class ServiceFutureImpl<T extends AcknowledgementService> implements ServiceFuture<T>, ResponseConsumer<T> {
-    private T ack;
+public class ServiceFutureImpl implements ServiceFuture, ResponseConsumer {
+    private AcknowledgementService ack;
+    private AckAPDU fail;
     private BACnetException ex;
     private volatile boolean done;
 
+    @SuppressWarnings("unchecked")
     @Override
-    public synchronized T get() throws BACnetException {
+    public synchronized <T extends AcknowledgementService> T get() throws BACnetException {
         if (done) {
             if (ex != null)
                 throw ex;
-            return ack;
+            return (T) ack;
         }
 
         ThreadUtils.wait(this);
 
         if (ex != null)
             throw ex;
-        return ack;
+
+        if (fail != null) {
+            if (fail instanceof com.serotonin.bacnet4j.apdu.Error)
+                throw new ErrorAPDUException((com.serotonin.bacnet4j.apdu.Error) fail);
+            else if (fail instanceof Reject)
+                throw new RejectAPDUException((Reject) fail);
+            else if (fail instanceof Abort)
+                throw new AbortAPDUException((Abort) fail);
+        }
+
+        return (T) ack;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public synchronized void success(AcknowledgementService ack) {
-        this.ack = (T) ack;
+        this.ack = ack;
         complete();
     }
 
     @Override
     public synchronized void fail(AckAPDU ack) {
-        if (ack instanceof com.serotonin.bacnet4j.apdu.Error)
-            ex = new ErrorAPDUException((com.serotonin.bacnet4j.apdu.Error) ack);
-        else if (ack instanceof Reject)
-            ex = new RejectAPDUException((Reject) ack);
-        else if (ack instanceof Abort)
-            ex = new AbortAPDUException((Abort) ack);
+        fail = ack;
         complete();
     }
 

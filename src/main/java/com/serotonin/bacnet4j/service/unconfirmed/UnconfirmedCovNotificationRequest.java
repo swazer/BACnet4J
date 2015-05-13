@@ -32,7 +32,6 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -63,9 +62,9 @@ public class UnconfirmedCovNotificationRequest extends UnconfirmedRequestService
     }
 
     @Override
-    public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
+    public void handle(LocalDevice localDevice, Address from) {
         localDevice.getEventHandler().fireCovNotification(subscriberProcessIdentifier,
-                localDevice.getRemoteDeviceCreate(initiatingDeviceIdentifier.getInstanceNumber(), from, linkService),
+                localDevice.getRemoteDeviceCreate(initiatingDeviceIdentifier.getInstanceNumber(), from),
                 monitoredObjectIdentifier, timeRemaining, listOfValues);
     }
 

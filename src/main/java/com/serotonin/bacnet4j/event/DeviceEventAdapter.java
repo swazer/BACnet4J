@@ -4,6 +4,7 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
+import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
@@ -33,7 +34,7 @@ public class DeviceEventAdapter implements DeviceEventListener {
     }
 
     @Override
-    public boolean allowPropertyWrite(BACnetObject obj, PropertyValue pv) {
+    public boolean allowPropertyWrite(final Address from, BACnetObject obj, PropertyValue pv) {
         return true;
     }
 
@@ -43,7 +44,7 @@ public class DeviceEventAdapter implements DeviceEventListener {
     }
 
     @Override
-    public void propertyWritten(final BACnetObject obj, final PropertyValue pv) {
+    public void propertyWritten(final Address from, final BACnetObject obj, final PropertyValue pv) {
         // Override as required
     }
 
@@ -76,18 +77,18 @@ public class DeviceEventAdapter implements DeviceEventListener {
     }
 
     @Override
-    public void privateTransferReceived(final UnsignedInteger vendorId, final UnsignedInteger serviceNumber,
-            final Sequence serviceParameters) {
+    public void privateTransferReceived(final Address from, final UnsignedInteger vendorId,
+            final UnsignedInteger serviceNumber, final Sequence serviceParameters) {
         // Override as required
     }
 
     @Override
-    public void reinitializeDevice(final ReinitializedStateOfDevice reinitializedStateOfDevice) {
+    public void reinitializeDevice(final Address from, final ReinitializedStateOfDevice reinitializedStateOfDevice) {
         // Override as required
     }
 
     @Override
-    public void synchronizeTime(final DateTime dateTime, final boolean utc) {
+    public void synchronizeTime(final Address from, final DateTime dateTime, final boolean utc) {
         // Override as required
     }
 }

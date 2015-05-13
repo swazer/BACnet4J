@@ -27,19 +27,26 @@ package com.serotonin.bacnet4j.type.enumerated;
 
 import com.serotonin.bacnet4j.type.notificationParameters.BufferReady;
 import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfBitString;
+import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfCharacterString;
 import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfLifeSafety;
+import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfReliability;
 import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfState;
+import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfStatusFlags;
 import com.serotonin.bacnet4j.type.notificationParameters.ChangeOfValue;
 import com.serotonin.bacnet4j.type.notificationParameters.CommandFailure;
+import com.serotonin.bacnet4j.type.notificationParameters.DoubleOutOfRange;
 import com.serotonin.bacnet4j.type.notificationParameters.Extended;
 import com.serotonin.bacnet4j.type.notificationParameters.FloatingLimit;
 import com.serotonin.bacnet4j.type.notificationParameters.OutOfRange;
+import com.serotonin.bacnet4j.type.notificationParameters.SignedOutOfRange;
+import com.serotonin.bacnet4j.type.notificationParameters.UnsignedOutOfRange;
 import com.serotonin.bacnet4j.type.notificationParameters.UnsignedRange;
 import com.serotonin.bacnet4j.type.primitive.Enumerated;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class EventType extends Enumerated {
-    private static final long serialVersionUID = -3342337624733065326L;
+    private static final long serialVersionUID = 6120299002647986138L;
+
     public static final EventType changeOfBitstring = new EventType(ChangeOfBitString.TYPE_ID);
     public static final EventType changeOfState = new EventType(ChangeOfState.TYPE_ID);
     public static final EventType changeOfValue = new EventType(ChangeOfValue.TYPE_ID);
@@ -50,9 +57,20 @@ public class EventType extends Enumerated {
     public static final EventType extended = new EventType(Extended.TYPE_ID);
     public static final EventType bufferReady = new EventType(BufferReady.TYPE_ID);
     public static final EventType unsignedRange = new EventType(UnsignedRange.TYPE_ID);
+    public static final EventType accessEvent = new EventType(
+            com.serotonin.bacnet4j.type.notificationParameters.AccessEvent.TYPE_ID);
+    public static final EventType doubleOutOfRange = new EventType(DoubleOutOfRange.TYPE_ID);
+    public static final EventType signedOutOfRange = new EventType(SignedOutOfRange.TYPE_ID);
+    public static final EventType unsignedOutOfRange = new EventType(UnsignedOutOfRange.TYPE_ID);
+    public static final EventType changeOfCharacterstring = new EventType(ChangeOfCharacterString.TYPE_ID);
+    public static final EventType changeOfStatusFlags = new EventType(ChangeOfStatusFlags.TYPE_ID);
+    public static final EventType changeOfReliability = new EventType(ChangeOfReliability.TYPE_ID);
+    public static final EventType none = new EventType(20);
 
     public static final EventType[] ALL = { changeOfBitstring, changeOfState, changeOfValue, commandFailure,
-            floatingLimit, outOfRange, changeOfLifeSafety, extended, bufferReady, unsignedRange, };
+            floatingLimit, outOfRange, changeOfLifeSafety, extended, bufferReady, unsignedRange, accessEvent,
+            doubleOutOfRange, signedOutOfRange, unsignedOutOfRange, changeOfCharacterstring, changeOfStatusFlags,
+            changeOfReliability, none, };
 
     public EventType(int value) {
         super(value);

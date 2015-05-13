@@ -42,9 +42,13 @@ public class Reliability extends Enumerated {
     public static final Reliability multiStateFault = new Reliability(9);
     public static final Reliability configurationError = new Reliability(10);
     public static final Reliability communicationFailure = new Reliability(12);
+    public static final Reliability memberFault = new Reliability(13);
+    public static final Reliability monitoredObjectFault = new Reliability(14);
+    public static final Reliability tripped = new Reliability(15);
 
     public static final Reliability[] ALL = { noFaultDetected, noSensor, overRange, underRange, openLoop, shortedLoop,
-            noOutput, unreliableOther, processError, multiStateFault, configurationError, communicationFailure, };
+            noOutput, unreliableOther, processError, multiStateFault, configurationError, communicationFailure,
+            memberFault, monitoredObjectFault, tripped };
 
     public Reliability(int value) {
         super(value);
@@ -58,29 +62,35 @@ public class Reliability extends Enumerated {
     public String toString() {
         int type = intValue();
         if (type == noFaultDetected.intValue())
-            return "No fault detected";
+            return "noFaultDetected";
         if (type == noSensor.intValue())
-            return "No sensor";
+            return "noSensor";
         if (type == overRange.intValue())
-            return "Over range";
+            return "overRange";
         if (type == underRange.intValue())
-            return "Under range";
+            return "underRange";
         if (type == openLoop.intValue())
-            return "Open loop";
+            return "openLoop";
         if (type == shortedLoop.intValue())
-            return "Shorted loop";
+            return "shortedLoop";
         if (type == noOutput.intValue())
-            return "No output";
+            return "noOutput";
         if (type == unreliableOther.intValue())
-            return "Unreliable other";
+            return "unreliableOther";
         if (type == processError.intValue())
-            return "Process error";
+            return "processError";
         if (type == multiStateFault.intValue())
-            return "Multi state fault";
+            return "multiStateFault";
         if (type == configurationError.intValue())
-            return "Configuration error";
+            return "configurationError";
         if (type == communicationFailure.intValue())
-            return "Communication failure";
+            return "communicationFailure";
+        if (type == memberFault.intValue())
+            return "memberFault";
+        if (type == monitoredObjectFault.intValue())
+            return "monitoredObjectFault";
+        if (type == tripped.intValue())
+            return "tripped";
         return "Unknown (" + type + ")";
     }
 }

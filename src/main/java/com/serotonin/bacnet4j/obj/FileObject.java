@@ -32,14 +32,12 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 
-import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
-import com.serotonin.bacnet4j.exception.BACnetServiceException;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.enumerated.FileAccessMethod;
+import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
-import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.StreamUtils;
@@ -55,8 +53,8 @@ public class FileObject extends BACnetObject {
      */
     private final File file;
 
-    public FileObject(LocalDevice localDevice, ObjectIdentifier oid, File file, FileAccessMethod fileAccessMethod) {
-        super(localDevice, oid);
+    public FileObject(int instanceNumber, File file, FileAccessMethod fileAccessMethod) {
+        super(ObjectType.file, instanceNumber, file.getName());
         this.file = file;
 
         if (file.isDirectory())
@@ -64,26 +62,14 @@ public class FileObject extends BACnetObject {
 
         updateProperties();
 
-        try {
-            setProperty(PropertyIdentifier.fileAccessMethod, fileAccessMethod);
-        }
-        catch (BACnetServiceException e) {
-            // Should never happen, but wrap in an unchecked just in case.
-            throw new BACnetRuntimeException(e);
-        }
+        writePropertyImpl(PropertyIdentifier.fileAccessMethod, fileAccessMethod);
     }
 
     public void updateProperties() {
-        try {
-            // TODO this is only a snapshot. Property read methods need to be overridden to report real time values.
-            setProperty(PropertyIdentifier.fileSize, new UnsignedInteger(new BigInteger(Long.toString(length()))));
-            setProperty(PropertyIdentifier.modificationDate, new DateTime(file.lastModified()));
-            setProperty(PropertyIdentifier.readOnly, new Boolean(!file.canWrite()));
-        }
-        catch (BACnetServiceException e) {
-            // Should never happen, but wrap in an unchecked just in case.
-            throw new BACnetRuntimeException(e);
-        }
+        // NOTE: This is only a snapshot. Property read methods need to be overridden to report real time values.
+        writePropertyImpl(PropertyIdentifier.fileSize, new UnsignedInteger(new BigInteger(Long.toString(length()))));
+        writePropertyImpl(PropertyIdentifier.modificationDate, new DateTime(file.lastModified()));
+        writePropertyImpl(PropertyIdentifier.readOnly, new Boolean(!file.canWrite()));
     }
 
     public long length() {

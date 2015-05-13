@@ -30,9 +30,12 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 public class Boolean extends Primitive {
     private static final long serialVersionUID = -161562645674050036L;
 
+    public static final Boolean FALSE = new Boolean(false);
+    public static final Boolean TRUE = new Boolean(true);
+
     public static final byte TYPE_ID = 1;
 
-    protected boolean value;
+    protected final boolean value;
 
     public Boolean(boolean value) {
         this.value = value;

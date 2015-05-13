@@ -43,4 +43,16 @@ public class NotifyType extends Enumerated {
     public NotifyType(ByteQueue queue) {
         super(queue);
     }
+
+    @Override
+    public String toString() {
+        int type = intValue();
+        if (type == alarm.intValue())
+            return "alarm";
+        if (type == event.intValue())
+            return "event";
+        if (type == ackNotification.intValue())
+            return "ackNotification";
+        return "Unknown(" + type + ")";
+    }
 }

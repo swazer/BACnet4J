@@ -26,6 +26,7 @@
 package com.serotonin.bacnet4j.apdu;
 
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.npdu.NPCI.NetworkPriority;
 import com.serotonin.bacnet4j.service.unconfirmed.UnconfirmedRequestService;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
@@ -61,6 +62,11 @@ public class UnconfirmedRequest extends APDU {
 
     public UnconfirmedRequestService getService() {
         return service;
+    }
+
+    @Override
+    public NetworkPriority getNetworkPriority() {
+        return service.getNetworkPriority();
     }
 
     @Override

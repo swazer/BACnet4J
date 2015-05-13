@@ -32,7 +32,6 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class TimeSynchronizationRequest extends UnconfirmedRequestService {
@@ -61,12 +60,12 @@ public class TimeSynchronizationRequest extends UnconfirmedRequestService {
     }
 
     @Override
-    public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
+    public void handle(LocalDevice localDevice, Address from) {
         try {
             ServicesSupported servicesSupported = (ServicesSupported) localDevice.getConfiguration().getProperty(
                     PropertyIdentifier.protocolServicesSupported);
             if (servicesSupported.isTimeSynchronization())
-                localDevice.getEventHandler().synchronizeTime(time, false);
+                localDevice.getEventHandler().synchronizeTime(from, time, false);
         }
         catch (BACnetServiceException e) {
             // no op

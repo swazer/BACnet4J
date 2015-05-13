@@ -27,10 +27,12 @@ package com.serotonin.bacnet4j.service.confirmed;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.exception.NotImplementedException;
+import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
+import com.serotonin.bacnet4j.service.acknowledgement.GetAlarmSummaryAck;
+import com.serotonin.bacnet4j.service.acknowledgement.GetAlarmSummaryAck.AlarmSummary;
 import com.serotonin.bacnet4j.type.constructed.Address;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
+import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class GetAlarmSummaryRequest extends ConfirmedRequestService {
@@ -47,9 +49,16 @@ public class GetAlarmSummaryRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
-        throw new NotImplementedException();
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
+        SequenceOf<AlarmSummary> summaries = new SequenceOf<AlarmSummary>();
+
+        for (BACnetObject bo : localDevice.getLocalObjects()) {
+            AlarmSummary alarmSummary = bo.getAlarmSummary();
+            if (alarmSummary != null)
+                summaries.add(alarmSummary);
+        }
+
+        return new GetAlarmSummaryAck(summaries);
     }
 
     @Override

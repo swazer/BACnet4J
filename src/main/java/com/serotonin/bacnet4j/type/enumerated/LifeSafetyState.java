@@ -121,5 +121,4 @@ public class LifeSafetyState extends Enumerated {
 
         return "Unknown: " + type;
     }
-
 }

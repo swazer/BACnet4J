@@ -26,15 +26,18 @@
 package com.serotonin.bacnet4j.service.confirmed;
 
 import com.serotonin.bacnet4j.LocalDevice;
+import com.serotonin.bacnet4j.exception.BACnetErrorException;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.exception.NotImplementedException;
+import com.serotonin.bacnet4j.exception.BACnetServiceException;
+import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.TimeStamp;
+import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
+import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.bacnet4j.type.enumerated.EventState;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -67,9 +70,20 @@ public class AcknowledgeAlarmRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
-        throw new NotImplementedException();
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
+        BACnetObject obj = localDevice.getObject(eventObjectIdentifier);
+        if (obj == null)
+            throw new BACnetErrorException(getChoiceId(), ErrorClass.object, ErrorCode.unknownObject);
+
+        try {
+            obj.acknowledgeAlarm(acknowledgingProcessIdentifier, eventStateAcknowledged, timeStamp,
+                    acknowledgmentSource, timeOfAcknowledgment);
+        }
+        catch (BACnetServiceException e) {
+            throw new BACnetErrorException(getChoiceId(), e);
+        }
+
+        return null;
     }
 
     @Override

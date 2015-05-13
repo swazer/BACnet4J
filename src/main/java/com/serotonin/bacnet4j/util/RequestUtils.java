@@ -14,6 +14,7 @@ import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.exception.AbortAPDUException;
+import com.serotonin.bacnet4j.exception.BACnetErrorException;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.exception.BACnetTimeoutException;
 import com.serotonin.bacnet4j.exception.ErrorAPDUException;
@@ -50,7 +51,7 @@ public class RequestUtils {
     /**
      * Does not work with aggregate PIDs like "all".
      */
-    public static Encodable getProperty(LocalDevice localDevice, RemoteDevice d, PropertyIdentifier pid)
+    public static <T extends Encodable> T getProperty(LocalDevice localDevice, RemoteDevice d, PropertyIdentifier pid)
             throws BACnetException {
         return getProperty(localDevice, d, d.getObjectIdentifier(), pid);
     }
@@ -58,10 +59,27 @@ public class RequestUtils {
     /**
      * Does not work with aggregate PIDs like "all".
      */
-    public static Encodable getProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,
+    @SuppressWarnings("unchecked")
+    public static <T extends Encodable> T getProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,
             PropertyIdentifier pid) throws BACnetException {
         Map<PropertyIdentifier, Encodable> map = getProperties(localDevice, d, oid, null, pid);
-        return map.get(pid);
+
+        Encodable value = map.get(pid);
+        if (value instanceof BACnetError) {
+            BACnetError e = (BACnetError) value;
+            throw new BACnetErrorException(e.getErrorClass(), e.getErrorCode());
+        }
+
+        return (T) value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Encodable> T getProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,
+            PropertyIdentifier pid, int indexBase1) throws BACnetException {
+        List<ObjectPropertyReference> refs = new ArrayList<ObjectPropertyReference>();
+        refs.add(new ObjectPropertyReference(oid, pid, new UnsignedInteger(indexBase1)));
+        Map<PropertyIdentifier, Encodable> map = getProperties(localDevice, d, null, refs);
+        return (T) map.get(pid);
     }
 
     public static Map<PropertyIdentifier, Encodable> getProperties(LocalDevice localDevice, RemoteDevice d,
@@ -191,7 +209,7 @@ public class RequestUtils {
             RemoteDevice d, List<ObjectPropertyReference> oprs, RequestListener callback) throws BACnetException {
         PropertyReferences refs = new PropertyReferences();
         for (ObjectPropertyReference opr : oprs)
-            refs.add(opr.getObjectIdentifier(), opr.getPropertyIdentifier());
+            refs.add(opr.getObjectIdentifier(), opr.getPropertyIdentifier(), opr.getPropertyArrayIndex());
 
         PropertyValues pvs = readProperties(localDevice, d, refs, callback);
 
@@ -386,6 +404,11 @@ public class RequestUtils {
         localDevice.send(d, new WritePropertyRequest(oid, pid, null, value, null)).get();
     }
 
+    public static void writeProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,
+            PropertyIdentifier pid, Encodable value, int priority) throws BACnetException {
+        localDevice.send(d, new WritePropertyRequest(oid, pid, null, value, new UnsignedInteger(priority))).get();
+    }
+
     public static void writePresentValue(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid, Encodable value)
             throws BACnetException {
         writeProperty(localDevice, d, oid, PropertyIdentifier.presentValue, value);
@@ -395,6 +418,17 @@ public class RequestUtils {
             throws BACnetException {
         writeProperty(localDevice, d, oid, pv.getPropertyIdentifier(), pv.getPropertyArrayIndex(), pv.getValue(),
                 pv.getPriority());
+    }
+
+    public static void writeProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,
+            PropertyIdentifier pid, int propertyArrayIndex, Encodable value) throws BACnetException {
+        writeProperty(localDevice, d, oid, pid, new UnsignedInteger(propertyArrayIndex), value, null);
+    }
+
+    public static void writeProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,
+            PropertyIdentifier pid, int propertyArrayIndex, Encodable value, int priority) throws BACnetException {
+        writeProperty(localDevice, d, oid, pid, new UnsignedInteger(propertyArrayIndex), value, new UnsignedInteger(
+                priority));
     }
 
     public static void writeProperty(LocalDevice localDevice, RemoteDevice d, ObjectIdentifier oid,

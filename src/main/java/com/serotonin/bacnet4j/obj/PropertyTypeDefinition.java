@@ -37,16 +37,14 @@ public class PropertyTypeDefinition {
     private final Class<? extends Encodable> clazz;
     private final boolean sequence;
     private final boolean required;
-    private final Encodable defaultValue;
 
     PropertyTypeDefinition(ObjectType objectType, PropertyIdentifier propertyIdentifier,
-            Class<? extends Encodable> clazz, boolean sequence, boolean required, Encodable defaultValue) {
+            Class<? extends Encodable> clazz, boolean sequence, boolean required) {
         this.objectType = objectType;
         this.propertyIdentifier = propertyIdentifier;
         this.clazz = clazz;
         this.sequence = sequence;
         this.required = required;
-        this.defaultValue = defaultValue;
     }
 
     public ObjectType getObjectType() {
@@ -71,10 +69,6 @@ public class PropertyTypeDefinition {
 
     public boolean isOptional() {
         return !required;
-    }
-
-    public Encodable getDefaultValue() {
-        return defaultValue;
     }
 
     public Class<? extends Encodable> getInnerType() {

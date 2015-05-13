@@ -30,7 +30,6 @@ import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Sequence;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -55,8 +54,8 @@ public class UnconfirmedPrivateTransferRequest extends UnconfirmedRequestService
     }
 
     @Override
-    public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
-        localDevice.getEventHandler().firePrivateTransfer(vendorId, serviceNumber, (Sequence) serviceParameters);
+    public void handle(LocalDevice localDevice, Address from) {
+        localDevice.getEventHandler().firePrivateTransfer(from, vendorId, serviceNumber, (Sequence) serviceParameters);
     }
 
     @Override

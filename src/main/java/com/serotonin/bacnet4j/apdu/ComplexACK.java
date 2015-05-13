@@ -142,10 +142,12 @@ public class ComplexACK extends AckAPDU implements Segmentable {
         return sequenceNumber;
     }
 
-    public AcknowledgementService getService() {
-        return service;
+    @SuppressWarnings("unchecked")
+    public <T extends AcknowledgementService> T getService() {
+        return (T) service;
     }
 
+    @Override
     public void appendServiceData(ByteQueue data) {
         this.serviceData.push(data);
     }
@@ -205,6 +207,7 @@ public class ComplexACK extends AckAPDU implements Segmentable {
         }
     }
 
+    @Override
     public APDU clone(boolean moreFollows, int sequenceNumber, int actualSegWindow, ByteQueue serviceData) {
         return new ComplexACK(this.segmentedMessage, moreFollows, this.originalInvokeId, sequenceNumber,
                 actualSegWindow, this.serviceChoice, serviceData);

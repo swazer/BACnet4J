@@ -81,8 +81,7 @@ public class AtomicWriteFileRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
         AtomicWriteFileAck response;
 
         BACnetObject obj;

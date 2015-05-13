@@ -35,7 +35,6 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.Segmentation;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -64,7 +63,7 @@ public class IAmRequest extends UnconfirmedRequestService {
     }
 
     @Override
-    public void handle(LocalDevice localDevice, Address from, OctetString linkService) {
+    public void handle(LocalDevice localDevice, Address from) {
         if (!ObjectType.device.equals(iAmDeviceIdentifier.getObjectType())) {
             LOG.warn("Received IAm from an object that is not a device.");
             return;
@@ -84,7 +83,7 @@ public class IAmRequest extends UnconfirmedRequestService {
         }
 
         // Register the device in the list of known devices.
-        RemoteDevice d = localDevice.getRemoteDeviceCreate(remoteDoi, from, linkService);
+        RemoteDevice d = localDevice.getRemoteDeviceCreate(remoteDoi, from);
         d.setMaxAPDULengthAccepted(maxAPDULengthAccepted.intValue());
         d.setSegmentationSupported(segmentationSupported);
         d.setVendorId(vendorId.intValue());

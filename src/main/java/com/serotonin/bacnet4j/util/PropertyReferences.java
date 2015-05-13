@@ -34,6 +34,7 @@ import java.util.Map;
 import com.serotonin.bacnet4j.type.constructed.PropertyReference;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
+import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 
 public class PropertyReferences implements Serializable {
     private static final long serialVersionUID = -1512876955215003611L;
@@ -50,6 +51,11 @@ public class PropertyReferences implements Serializable {
         List<PropertyReference> list = getOidList(oid);
         for (PropertyIdentifier pid : pids)
             list.add(new PropertyReference(pid));
+    }
+
+    public void add(ObjectIdentifier oid, PropertyIdentifier pid, UnsignedInteger propertyArrayIndex) {
+        List<PropertyReference> list = getOidList(oid);
+        list.add(new PropertyReference(pid, propertyArrayIndex));
     }
 
     private List<PropertyReference> getOidList(ObjectIdentifier oid) {

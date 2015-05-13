@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -58,6 +59,11 @@ public class PriorityArray extends SequenceOf<PriorityValue> {
             super.remove(getCount());
     }
 
+    public PriorityArray put(int indexBase1, Encodable value) {
+        set(indexBase1, new PriorityValue(value));
+        return this;
+    }
+
     @Override
     public void set(int indexBase1, PriorityValue value) {
         if (indexBase1 < 1 || indexBase1 > LENGTH)
@@ -85,5 +91,26 @@ public class PriorityArray extends SequenceOf<PriorityValue> {
     @Override
     public void removeAll(PriorityValue value) {
         throw new RuntimeException("Use set method instead");
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("PriorityArray[");
+
+        boolean first = true;
+        for (int i = 1; i < LENGTH + 1; i++) {
+            Encodable e = get(i).getValue();
+            if (!(e instanceof Null)) {
+                if (first)
+                    first = false;
+                else
+                    sb.append(',');
+                sb.append(i).append('=').append(e);
+            }
+        }
+
+        sb.append("]");
+        return sb.toString();
     }
 }

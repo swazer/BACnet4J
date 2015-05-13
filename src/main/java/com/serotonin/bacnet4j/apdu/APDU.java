@@ -29,6 +29,7 @@ import java.io.Serializable;
 
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.exception.IllegalPduTypeException;
+import com.serotonin.bacnet4j.npdu.NPCI.NetworkPriority;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -41,7 +42,7 @@ abstract public class APDU implements Serializable {
         type = (byte) ((type & 0xff) >> 4);
 
         if (type == ConfirmedRequest.TYPE_ID)
-            return new ConfirmedRequest(services, queue);
+            return new ConfirmedRequest(queue);
         if (type == UnconfirmedRequest.TYPE_ID)
             return new UnconfirmedRequest(services, queue);
         if (type == SimpleACK.TYPE_ID)
@@ -68,4 +69,8 @@ abstract public class APDU implements Serializable {
     }
 
     abstract public boolean expectsReply();
+
+    public NetworkPriority getNetworkPriority() {
+        return null;
+    }
 }

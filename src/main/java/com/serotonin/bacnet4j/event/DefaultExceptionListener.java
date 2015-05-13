@@ -25,22 +25,28 @@
  */
 package com.serotonin.bacnet4j.event;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class DefaultExceptionListener implements ExceptionListener {
+    static final Logger LOG = LoggerFactory.getLogger(DefaultExceptionListener.class);
+
+    @Override
     public void unimplementedVendorService(UnsignedInteger vendorId, UnsignedInteger serviceNumber, ByteQueue queue) {
-        System.out.println("Received unimplemented vendor service: vendor id=" + vendorId + ", service number="
-                + serviceNumber + ", bytes (with context id)=" + queue);
+        LOG.warn("Received unimplemented vendor service: vendor id={}, service number={}, bytes (with context id)=",
+                vendorId, serviceNumber, queue);
     }
 
     @Override
     public void receivedException(Exception e) {
-        e.printStackTrace();
+        LOG.error("", e);
     }
 
     @Override
     public void receivedThrowable(Throwable t) {
-        t.printStackTrace();
+        LOG.error("", t);
     }
 }

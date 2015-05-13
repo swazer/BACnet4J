@@ -38,13 +38,13 @@ public class OutOfRange extends NotificationParameters {
     private final Real exceedingValue;
     private final StatusFlags statusFlags;
     private final Real deadband;
-    private final Real exceedingLimit;
+    private final Real exceededLimit;
 
-    public OutOfRange(Real exceedingValue, StatusFlags statusFlags, Real deadband, Real exceedingLimit) {
+    public OutOfRange(Real exceedingValue, StatusFlags statusFlags, Real deadband, Real exceededLimit) {
         this.exceedingValue = exceedingValue;
         this.statusFlags = statusFlags;
         this.deadband = deadband;
-        this.exceedingLimit = exceedingLimit;
+        this.exceededLimit = exceededLimit;
     }
 
     @Override
@@ -52,14 +52,14 @@ public class OutOfRange extends NotificationParameters {
         write(queue, exceedingValue, 0);
         write(queue, statusFlags, 1);
         write(queue, deadband, 2);
-        write(queue, exceedingLimit, 3);
+        write(queue, exceededLimit, 3);
     }
 
     public OutOfRange(ByteQueue queue) throws BACnetException {
         exceedingValue = read(queue, Real.class, 0);
         statusFlags = read(queue, StatusFlags.class, 1);
         deadband = read(queue, Real.class, 2);
-        exceedingLimit = read(queue, Real.class, 3);
+        exceededLimit = read(queue, Real.class, 3);
     }
 
     @Override
@@ -79,8 +79,14 @@ public class OutOfRange extends NotificationParameters {
         return deadband;
     }
 
-    public Real getExceedingLimit() {
-        return exceedingLimit;
+    public Real getExceededLimit() {
+        return exceededLimit;
+    }
+
+    @Override
+    public String toString() {
+        return "OutOfRange [exceedingValue=" + exceedingValue + ", statusFlags=" + statusFlags + ", deadband="
+                + deadband + ", exceededLimit=" + exceededLimit + "]";
     }
 
     @Override
@@ -88,7 +94,7 @@ public class OutOfRange extends NotificationParameters {
         final int PRIME = 31;
         int result = 1;
         result = PRIME * result + ((deadband == null) ? 0 : deadband.hashCode());
-        result = PRIME * result + ((exceedingLimit == null) ? 0 : exceedingLimit.hashCode());
+        result = PRIME * result + ((exceededLimit == null) ? 0 : exceededLimit.hashCode());
         result = PRIME * result + ((exceedingValue == null) ? 0 : exceedingValue.hashCode());
         result = PRIME * result + ((statusFlags == null) ? 0 : statusFlags.hashCode());
         return result;
@@ -109,11 +115,11 @@ public class OutOfRange extends NotificationParameters {
         }
         else if (!deadband.equals(other.deadband))
             return false;
-        if (exceedingLimit == null) {
-            if (other.exceedingLimit != null)
+        if (exceededLimit == null) {
+            if (other.exceededLimit != null)
                 return false;
         }
-        else if (!exceedingLimit.equals(other.exceedingLimit))
+        else if (!exceededLimit.equals(other.exceededLimit))
             return false;
         if (exceedingValue == null) {
             if (other.exceedingValue != null)

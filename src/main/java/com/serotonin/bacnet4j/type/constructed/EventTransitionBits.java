@@ -40,6 +40,10 @@ public class EventTransitionBits extends BitString {
         super(queue);
     }
 
+    public EventTransitionBits(EventTransitionBits that) {
+        super(that);
+    }
+
     public boolean isToOffnormal() {
         return getValue()[0];
     }
@@ -53,13 +57,6 @@ public class EventTransitionBits extends BitString {
     }
 
     public boolean contains(EventState toState) {
-        if (toState.equals(EventState.normal) && isToNormal())
-            return true;
-
-        if (toState.equals(EventState.fault) && isToFault())
-            return true;
-
-        // All other event states are considered off-normal
-        return isToOffnormal();
+        return getValue(toState.getTransitionIndex());
     }
 }

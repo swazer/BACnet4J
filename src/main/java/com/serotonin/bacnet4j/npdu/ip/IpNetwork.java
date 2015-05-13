@@ -36,12 +36,11 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.serotonin.bacnet4j.apdu.APDU;
 import com.serotonin.bacnet4j.base.BACnetUtils;
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.npdu.IncomingRequestParser;
 import com.serotonin.bacnet4j.npdu.MessageValidationAssertionException;
+import com.serotonin.bacnet4j.npdu.NPDU;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
 import com.serotonin.bacnet4j.transport.Transport;
@@ -50,6 +49,7 @@ import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class IpNetwork extends Network implements Runnable {
+    public static final byte BVLC_TYPE = (byte) 0x81;
     public static final String DEFAULT_BROADCAST_IP = "255.255.255.255";
     public static final int DEFAULT_PORT = 0xBAC0; // == 47808
     public static final String DEFAULT_BIND_IP = "0.0.0.0";
@@ -65,7 +65,7 @@ public class IpNetwork extends Network implements Runnable {
     // Runtime
     private Thread thread;
     private DatagramSocket socket;
-    private Address broadcastAddress;
+    private OctetString broadcastMAC;
     private long bytesOut;
     private long bytesIn;
 
@@ -128,8 +128,6 @@ public class IpNetwork extends Network implements Runnable {
     public void initialize(Transport transport) throws Exception {
         super.initialize(transport);
 
-        //        this.localDevice = transport.getLocalDevice();
-
         if (localBindAddress.equals("0.0.0.0"))
             socket = new DatagramSocket(port);
         else
@@ -137,9 +135,9 @@ public class IpNetwork extends Network implements Runnable {
         socket.setBroadcast(true);
 
         //        broadcastAddress = new Address(broadcastIp, port, new Network(0xffff, new byte[0]));
-        broadcastAddress = new Address(BACnetUtils.dottedStringToBytes(broadcastIp), port);
+        broadcastMAC = IpNetworkUtils.toOctetString(broadcastIp, port);
 
-        thread = new Thread(this);
+        thread = new Thread(this, "BACnet4J IP socket listener");
         thread.start();
     }
 
@@ -150,22 +148,13 @@ public class IpNetwork extends Network implements Runnable {
     }
 
     @Override
-    public Address getLocalBroadcastAddress() {
-        return broadcastAddress;
+    protected OctetString getBroadcastMAC() {
+        return broadcastMAC;
     }
 
     public Address getBroadcastAddress(int port) {
-        return new Address(BACnetUtils.dottedStringToBytes(broadcastIp), port);
+        return IpNetworkUtils.toAddress(broadcastIp, port);
     }
-
-    @Override
-    public void checkSendThread() {
-        if (Thread.currentThread() == thread)
-            throw new IllegalStateException("Cannot send a request in the socket listener thread.");
-    }
-
-    /** The total length of the foreign device registration package. */
-    private static final int REGISTER_FOREIGN_DEVICE_LENGTH = 6;
 
     /**
      * Sends a foreign device registration request to addr. On successful registration (AKN), we are added
@@ -179,51 +168,33 @@ public class IpNetwork extends Network implements Runnable {
      */
     public void sendRegisterForeignDeviceMessage(InetSocketAddress addr, int timeToLive) throws BACnetException {
         ByteQueue queue = new ByteQueue();
-
-        // BACnet/IP
-        queue.push(0x81);
-
-        // Register foreign device
-        queue.push(0x05);
-
-        BACnetUtils.pushShort(queue, REGISTER_FOREIGN_DEVICE_LENGTH);
-        BACnetUtils.pushShort(queue, timeToLive);
-
+        queue.push(BVLC_TYPE);
+        queue.push(0x05); // Register foreign device
+        queue.pushU2B(6); // Length
+        queue.pushU2B(timeToLive); // TTL
         sendPacket(addr, queue.popAll());
     }
 
     @Override
-    public void sendAPDU(Address recipient, OctetString link, APDU apdu, boolean broadcast) throws BACnetException {
+    protected void sendNPDU(Address recipient, OctetString router, ByteQueue npdu, boolean broadcast,
+            boolean expectsReply) throws BACnetException {
         ByteQueue queue = new ByteQueue();
 
         // BACnet virtual link layer detail
-
-        // BACnet/IP
-        queue.push(0x81);
+        queue.push(BVLC_TYPE);
 
         // Original-Unicast-NPDU, or Original-Broadcast-NPDU
         queue.push(broadcast ? 0xb : 0xa);
 
-        // NPCI
-        ByteQueue postLength = new ByteQueue();
-        writeNpci(postLength, recipient, link, apdu);
-
-        // APDU
-        apdu.write(postLength);
-
         // Length
-        BACnetUtils.pushShort(queue, queue.size() + postLength.size() + 2);
+        queue.pushU2B(queue.size() + npdu.size() + 2);
 
         // Combine the queues
-        queue.push(postLength);
+        queue.push(npdu);
 
-        InetSocketAddress isa;
-        if (recipient.isGlobal())
-            isa = getLocalBroadcastAddress().getMacAddress().getInetSocketAddress();
-        else if (link != null)
-            isa = link.getInetSocketAddress();
-        else
-            isa = recipient.getMacAddress().getInetSocketAddress();
+        OctetString dest = getDestination(recipient, router);
+        InetSocketAddress isa = IpNetworkUtils.getInetSocketAddress(dest);
+
         sendPacket(isa, queue.popAll());
     }
 
@@ -251,8 +222,11 @@ public class IpNetwork extends Network implements Runnable {
 
                 bytesIn += p.getLength();
                 ByteQueue queue = new ByteQueue(p.getData(), 0, p.getLength());
-                OctetString link = new OctetString(p.getAddress().getAddress(), p.getPort());
-                new IncomingMessageExecutor(this, queue, link).run();
+                OctetString link = IpNetworkUtils.toOctetString(p.getAddress().getAddress(), p.getPort());
+
+                handleIncomingData(queue, link);
+
+                // Reset the packet.
                 p.setData(buffer);
             }
             catch (IOException e) {
@@ -261,55 +235,40 @@ public class IpNetwork extends Network implements Runnable {
         }
     }
 
-    public void testDecoding(byte[] message) {
-        IncomingMessageExecutor ime = new IncomingMessageExecutor(null, new ByteQueue(message), null);
-        ime.run();
-    }
+    @Override
+    protected NPDU handleIncomingDataImpl(ByteQueue queue, OctetString linkService) throws Exception {
+        // Initial parsing of IP message.
+        // BACnet/IP
+        if (queue.pop() != BVLC_TYPE)
+            throw new MessageValidationAssertionException("Protocol id is not BACnet/IP (0x81)");
 
-    public APDU createApdu(byte[] message) throws Exception {
-        IncomingMessageExecutor ime = new IncomingMessageExecutor(null, new ByteQueue(message), null);
-        return ime.parseApdu();
-    }
+        byte function = queue.pop();
 
-    class IncomingMessageExecutor extends IncomingRequestParser {
-        public IncomingMessageExecutor(Network network, ByteQueue queue, OctetString localFrom) {
-            super(network, queue, localFrom);
+        int length = BACnetUtils.popShort(queue);
+        if (length != queue.size() + 4)
+            throw new MessageValidationAssertionException("Length field does not match data: given=" + length
+                    + ", expected=" + (queue.size() + 4));
+
+        NPDU npdu = null;
+        // Answer to foreign device registration
+        if (function == 0x0) {
+            int result = BACnetUtils.popShort(queue);
+            if (result != 0)
+                throw new BACnetException("Foreign device registration not successful! result: " + result);
         }
-
-        @Override
-        protected void parseFrame() throws MessageValidationAssertionException {
-            // Initial parsing of IP message.
-            // BACnet/IP
-            if (queue.pop() != (byte) 0x81)
-                throw new MessageValidationAssertionException("Protocol id is not BACnet/IP (0x81)");
-
-            byte function = queue.pop();
-            if (function != 0xa && function != 0xb && function != 0x4 && function != 0x0)
-                throw new MessageValidationAssertionException("Function is not unicast, broadcast, forward"
-                        + " or foreign device reg anwser (0xa, 0xb, 0x4 or 0x0)");
-
-            int length = BACnetUtils.popShort(queue);
-            if (length != queue.size() + 4)
-                throw new MessageValidationAssertionException("Length field does not match data: given=" + length
-                        + ", expected=" + (queue.size() + 4));
-
-            // answer to foreign device registration
-            if (function == 0x0) {
-                int result = BACnetUtils.popShort(queue);
-                if (result != 0)
-                    System.out.println("Foreign device registration not successful! result: " + result);
-
-                // not APDU received, bail
-                return;
-            }
-
-            if (function == 0x4) {
-                // A forward. Use the address/port as the link service address.
-                byte[] addr = new byte[6];
-                queue.pop(addr);
-                linkService = new OctetString(addr);
-            }
+        else if (function == 0x4) {
+            // A forward. Use the address/port as the link service address.
+            byte[] addr = new byte[6];
+            queue.pop(addr);
+            npdu = parseNpduData(queue, new OctetString(addr));
         }
+        else if (function == 0xa || function == 0xb)
+            npdu = parseNpduData(queue, linkService);
+        else
+            throw new MessageValidationAssertionException("Unhandled BVLC function type: 0x"
+                    + Integer.toHexString(function & 0xff));
+
+        return npdu;
     }
 
     //
@@ -318,7 +277,7 @@ public class IpNetwork extends Network implements Runnable {
     //
     public Address getAddress(InetAddress inetAddress) {
         try {
-            return new Address(getLocalNetworkNumber(), inetAddress.getAddress(), port);
+            return IpNetworkUtils.toAddress(getLocalNetworkNumber(), inetAddress.getAddress(), port);
         }
         catch (Exception e) {
             // Should never happen, so just wrap in a RuntimeException

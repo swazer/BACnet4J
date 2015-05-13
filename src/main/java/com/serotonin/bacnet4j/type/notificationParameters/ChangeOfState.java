@@ -68,6 +68,11 @@ public class ChangeOfState extends NotificationParameters {
     }
 
     @Override
+    public String toString() {
+        return "ChangeOfState [newState=" + newState + ", statusFlags=" + statusFlags + "]";
+    }
+
+    @Override
     public int hashCode() {
         final int PRIME = 31;
         int result = 1;

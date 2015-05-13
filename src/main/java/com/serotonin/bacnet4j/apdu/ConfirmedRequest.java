@@ -28,8 +28,8 @@ package com.serotonin.bacnet4j.apdu;
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.enums.MaxSegments;
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.npdu.NPCI.NetworkPriority;
 import com.serotonin.bacnet4j.service.confirmed.ConfirmedRequestService;
-import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class ConfirmedRequest extends APDU implements Segmentable {
@@ -138,6 +138,8 @@ public class ConfirmedRequest extends APDU implements Segmentable {
      */
     private ByteQueue serviceData;
 
+    private final NetworkPriority networkPriority;
+
     public ConfirmedRequest(boolean segmentedMessage, boolean moreFollows, boolean segmentedResponseAccepted,
             MaxSegments maxSegmentsAccepted, MaxApduLength maxApduLengthAccepted, byte invokeId, int sequenceNumber,
             int proposedWindowSize, ConfirmedRequestService serviceRequest) {
@@ -146,16 +148,18 @@ public class ConfirmedRequest extends APDU implements Segmentable {
                 invokeId, sequenceNumber, proposedWindowSize, serviceRequest.getChoiceId());
 
         this.serviceRequest = serviceRequest;
+        networkPriority = serviceRequest.getNetworkPriority();
     }
 
     public ConfirmedRequest(boolean segmentedMessage, boolean moreFollows, boolean segmentedResponseAccepted,
             MaxSegments maxSegmentsAccepted, MaxApduLength maxApduLengthAccepted, byte invokeId, int sequenceNumber,
-            int proposedWindowSize, byte serviceChoice, ByteQueue serviceData) {
+            int proposedWindowSize, byte serviceChoice, ByteQueue serviceData, NetworkPriority networkPriority) {
 
         setFields(segmentedMessage, moreFollows, segmentedResponseAccepted, maxSegmentsAccepted, maxApduLengthAccepted,
                 invokeId, sequenceNumber, proposedWindowSize, serviceChoice);
 
         this.serviceData = serviceData;
+        this.networkPriority = networkPriority;
     }
 
     private void setFields(boolean segmentedMessage, boolean moreFollows, boolean segmentedResponseAccepted,
@@ -228,6 +232,15 @@ public class ConfirmedRequest extends APDU implements Segmentable {
         return serviceData;
     }
 
+    public byte getServiceChoice() {
+        return serviceChoice;
+    }
+
+    @Override
+    public NetworkPriority getNetworkPriority() {
+        return networkPriority;
+    }
+
     @Override
     public void write(ByteQueue queue) {
         queue.push(getShiftedTypeId(TYPE_ID) | (segmentedMessage ? 8 : 0) | (moreFollows ? 4 : 0)
@@ -245,7 +258,7 @@ public class ConfirmedRequest extends APDU implements Segmentable {
             queue.push(serviceData);
     }
 
-    ConfirmedRequest(ServicesSupported servicesSupported, ByteQueue queue) throws BACnetException {
+    ConfirmedRequest(ByteQueue queue) {
         byte b = queue.pop();
         segmentedMessage = (b & 8) != 0;
         moreFollows = (b & 4) != 0;
@@ -261,8 +274,8 @@ public class ConfirmedRequest extends APDU implements Segmentable {
         }
         serviceChoice = queue.pop();
         serviceData = new ByteQueue(queue.popAll());
-
-        ConfirmedRequestService.checkConfirmedRequestService(servicesSupported, serviceChoice);
+        // This is called due to an incoming request, so setting to null here should be ok.
+        networkPriority = null;
     }
 
     @Override
@@ -277,7 +290,7 @@ public class ConfirmedRequest extends APDU implements Segmentable {
     public APDU clone(boolean moreFollows, int sequenceNumber, int actualSegWindow, ByteQueue serviceData) {
         return new ConfirmedRequest(this.segmentedMessage, moreFollows, this.segmentedResponseAccepted,
                 this.maxSegmentsAccepted, this.maxApduLengthAccepted, this.invokeId, sequenceNumber, actualSegWindow,
-                this.serviceChoice, serviceData);
+                this.serviceChoice, serviceData, networkPriority);
     }
 
     @Override

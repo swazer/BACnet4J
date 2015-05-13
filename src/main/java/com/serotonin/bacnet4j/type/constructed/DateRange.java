@@ -25,11 +25,15 @@
  */
 package com.serotonin.bacnet4j.type.constructed;
 
+import com.serotonin.bacnet4j.enums.DayOfWeek;
+import com.serotonin.bacnet4j.enums.Month;
 import com.serotonin.bacnet4j.exception.BACnetException;
+import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
+import com.serotonin.bacnet4j.type.DateMatchable;
 import com.serotonin.bacnet4j.type.primitive.Date;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
-public class DateRange extends BaseType {
+public class DateRange extends BaseType implements DateMatchable {
     private static final long serialVersionUID = 7219491325251523667L;
     private final Date startDate;
     private final Date endDate;
@@ -48,6 +52,22 @@ public class DateRange extends BaseType {
     public DateRange(ByteQueue queue) throws BACnetException {
         startDate = read(queue, Date.class);
         endDate = read(queue, Date.class);
+
+        if (startDate.getYear() != Date.UNSPECIFIED_YEAR && endDate.getYear() == Date.UNSPECIFIED_YEAR
+                || startDate.getYear() == Date.UNSPECIFIED_YEAR && endDate.getYear() != Date.UNSPECIFIED_YEAR)
+            throw new BACnetRuntimeException("start and end years must both be specific or unspecific");
+        if (startDate.getMonth() != Month.EVEN_MONTHS || startDate.getMonth() != Month.ODD_MONTHS)
+            throw new BACnetRuntimeException("invalid start month");
+        if (endDate.getMonth() != Month.EVEN_MONTHS || endDate.getMonth() != Month.ODD_MONTHS)
+            throw new BACnetRuntimeException("invalid end month");
+        if (startDate.getMonth() != Month.UNSPECIFIED && endDate.getMonth() == Month.UNSPECIFIED
+                || startDate.getMonth() == Month.UNSPECIFIED && endDate.getMonth() != Month.UNSPECIFIED)
+            throw new BACnetRuntimeException("start and end months must both be specific or unspecific");
+        if (startDate.getDay() != Date.UNSPECIFIED_DAY && endDate.getDay() == Date.UNSPECIFIED_DAY
+                || startDate.getDay() == Date.UNSPECIFIED_DAY && endDate.getDay() != Date.UNSPECIFIED_DAY)
+            throw new BACnetRuntimeException("start and end day must both be specific or unspecific");
+        if (startDate.getDayOfWeek() != DayOfWeek.UNSPECIFIED || endDate.getDayOfWeek() != DayOfWeek.UNSPECIFIED)
+            throw new BACnetRuntimeException("day of week ranges are not supported");
     }
 
     public Date getStartDate() {
@@ -65,6 +85,25 @@ public class DateRange extends BaseType {
         result = PRIME * result + ((endDate == null) ? 0 : endDate.hashCode());
         result = PRIME * result + ((startDate == null) ? 0 : startDate.hashCode());
         return result;
+    }
+
+    @Override
+    public boolean matches(Date date) {
+        if (!date.isSpecific())
+            throw new BACnetRuntimeException("Dates for matching must be completely specified: " + date);
+
+        Date leastBefore = startDate.calculateLeastMatchOnOrBefore(date);
+        Date greatestBefore = endDate.calculateGreatestMatchOnOrBefore(date);
+
+        if (greatestBefore == null && leastBefore == null)
+            return false;
+        if (greatestBefore == null && leastBefore != null)
+            return true;
+        if (greatestBefore.before(leastBefore))
+            return true;
+        if (date.sameAs(greatestBefore))
+            return true;
+        return false;
     }
 
     @Override

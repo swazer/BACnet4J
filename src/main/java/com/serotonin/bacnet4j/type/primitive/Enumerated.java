@@ -46,6 +46,8 @@ public class Enumerated extends UnsignedInteger {
     }
 
     public boolean equals(Enumerated that) {
+        if (that == null)
+            return false;
         return intValue() == that.intValue();
     }
 

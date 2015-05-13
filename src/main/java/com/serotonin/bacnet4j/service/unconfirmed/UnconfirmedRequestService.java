@@ -33,7 +33,6 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
 import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
 import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 abstract public class UnconfirmedRequestService extends Service {
@@ -59,6 +58,8 @@ abstract public class UnconfirmedRequestService extends Service {
         if (type == WhoIsRequest.TYPE_ID && services.isWhoIs()) // 8
             return;
         if (type == UTCTimeSynchronizationRequest.TYPE_ID && services.isUtcTimeSynchronization()) // 9
+            return;
+        if (type == WriteGroupRequest.TYPE_ID && services.isWriteGroup()) // 10
             return;
 
         throw new BACnetErrorException(ErrorClass.device, ErrorCode.serviceRequestDenied);
@@ -86,9 +87,11 @@ abstract public class UnconfirmedRequestService extends Service {
             return new WhoIsRequest(queue);
         if (type == UTCTimeSynchronizationRequest.TYPE_ID)
             return new UTCTimeSynchronizationRequest(queue);
+        if (type == WriteGroupRequest.TYPE_ID)
+            return new WriteGroupRequest(queue);
 
         throw new BACnetException("Unsupported unconfirmed service: " + (type & 0xff));
     }
 
-    abstract public void handle(LocalDevice localDevice, Address from, OctetString linkService) throws BACnetException;
+    abstract public void handle(LocalDevice localDevice, Address from) throws BACnetException;
 }

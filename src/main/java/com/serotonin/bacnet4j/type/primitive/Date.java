@@ -30,25 +30,41 @@ import java.util.GregorianCalendar;
 
 import com.serotonin.bacnet4j.enums.DayOfWeek;
 import com.serotonin.bacnet4j.enums.Month;
+import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
+import com.serotonin.bacnet4j.type.DateMatchable;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
-public class Date extends Primitive {
+public class Date extends Primitive implements Comparable<Date>, DateMatchable {
     private static final long serialVersionUID = -5981590660136837990L;
+
+    public static final Date MINIMUM_DATE = new Date(0, Month.JANUARY, 1, null);
+    public static final Date MAXIMUM_DATE = new Date(254, Month.DECEMBER, 31, null);
+
+    public static final int UNSPECIFIED_YEAR = 255;
+    public static final int UNSPECIFIED_DAY = 255;
+    public static final int LAST_DAY_OF_MONTH = 32;
+    public static final Date UNSPECIFIED = new Date(-1, Month.UNSPECIFIED, -1, DayOfWeek.UNSPECIFIED);
 
     public static final byte TYPE_ID = 10;
 
-    private final int year;
-    private final Month month;
-    private final int day;
-    private final DayOfWeek dayOfWeek;
+    private int year;
+    private Month month;
+    private int day;
+    private DayOfWeek dayOfWeek;
 
     public Date(int year, Month month, int day, DayOfWeek dayOfWeek) {
-        if (year > 1900)
+        if (year >= 1900)
             year -= 1900;
         else if (year == -1)
-            year = 255;
+            year = UNSPECIFIED_YEAR;
         if (day == -1)
-            day = 255;
+            day = UNSPECIFIED_DAY;
+        if ((day < 1 || day > LAST_DAY_OF_MONTH) && day != UNSPECIFIED_DAY)
+            throw new BACnetRuntimeException("Invalid day value");
+        if (month == null)
+            month = Month.UNSPECIFIED;
+        if (dayOfWeek == null)
+            dayOfWeek = DayOfWeek.UNSPECIFIED;
 
         this.year = year;
         this.month = month;
@@ -60,15 +76,15 @@ public class Date extends Primitive {
         this(new GregorianCalendar());
     }
 
-    public Date(GregorianCalendar now) {
-        this.year = now.get(Calendar.YEAR) - 1900;
-        this.month = Month.valueOf((byte) (now.get(Calendar.MONTH) + 1));
-        this.day = now.get(Calendar.DATE);
-        this.dayOfWeek = DayOfWeek.valueOf((byte) (((now.get(Calendar.DAY_OF_WEEK) + 5) % 7) + 1));
+    public Date(GregorianCalendar gc) {
+        resetTo(gc);
     }
 
-    public boolean isYearUnspecified() {
-        return year == 255;
+    private void resetTo(GregorianCalendar gc) {
+        this.year = gc.get(Calendar.YEAR) - 1900;
+        this.month = Month.valueOf((byte) (gc.get(Calendar.MONTH) + 1));
+        this.day = gc.get(Calendar.DATE);
+        this.dayOfWeek = DayOfWeek.valueOf((byte) (((gc.get(Calendar.DAY_OF_WEEK) + 5) % 7) + 1));
     }
 
     public int getYear() {
@@ -84,11 +100,7 @@ public class Date extends Primitive {
     }
 
     public boolean isLastDayOfMonth() {
-        return day == 32;
-    }
-
-    public boolean isDayUnspecified() {
-        return day == 255;
+        return day == LAST_DAY_OF_MONTH;
     }
 
     public int getDay() {
@@ -97,6 +109,208 @@ public class Date extends Primitive {
 
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
+    }
+
+    public GregorianCalendar calculateGC() {
+        if (!isSpecific())
+            throw new BACnetRuntimeException("Date must be completely specified to calculate calendar");
+        return new GregorianCalendar(year + 1900, (month.getId() & 0xff) - 1, day, 12, 0);
+    }
+
+    /**
+     * @return true if the date has been completely specified, false if any fields is unspecified.
+     */
+    public boolean isSpecific() {
+        if (year == UNSPECIFIED_YEAR)
+            return false;
+        if (!month.isSpecific())
+            return false;
+        if (day == UNSPECIFIED_DAY || day == LAST_DAY_OF_MONTH)
+            return false;
+        return true;
+    }
+
+    /**
+     * Matches this presumably wildcard date with a (that) necessarily specifically defined date to determine if (true)
+     * the given date is one of this' defined dates or (false) not.
+     * 
+     * @param that
+     *            the specific date with which to compare.
+     * @return
+     */
+    @Override
+    public boolean matches(Date that) {
+        if (!that.isSpecific())
+            throw new BACnetRuntimeException("Dates for matching must be completely specified: " + that);
+
+        if (!matchYear(that.year))
+            return false;
+
+        if (!month.matches(that.month))
+            return false;
+
+        if (!matchDay(that))
+            return false;
+
+        if (!dayOfWeek.matches(that))
+            return false;
+
+        return true;
+    }
+
+    private boolean matchYear(int that) {
+        if (year == UNSPECIFIED_YEAR)
+            return true;
+        return year == that;
+    }
+
+    private boolean matchDay(Date that) {
+        if (day == UNSPECIFIED_DAY)
+            return true;
+        if (day == LAST_DAY_OF_MONTH) {
+            GregorianCalendar gc = that.calculateGC();
+            int lastDay = gc.getActualMaximum(Calendar.DATE);
+            return lastDay == that.day;
+        }
+        return day == that.day;
+    }
+
+    @Override
+    public int compareTo(Date that) {
+        if (!isSpecific())
+            throw new BACnetRuntimeException("Comparisons can only be made between specific dates: " + this);
+        if (!that.isSpecific())
+            throw new BACnetRuntimeException("Comparisons can only be made between specific dates: " + that);
+
+        if (year == that.year) {
+            if (month == that.month)
+                return day - that.day;
+            return month.ordinal() - that.month.ordinal();
+        }
+        return year - that.year;
+    }
+
+    public boolean before(Date that) {
+        return compareTo(that) < 0;
+    }
+
+    public boolean after(Date that) {
+        return compareTo(that) > 0;
+    }
+
+    public boolean sameAs(Date that) {
+        return compareTo(that) == 0;
+    }
+
+    public Date calculateLeastMatchOnOrBefore(Date that) {
+        if (equals(UNSPECIFIED)) // Performance improvement
+            return MINIMUM_DATE;
+
+        boolean matched = matches(that);
+        GregorianCalendar gc = that.calculateGC();
+
+        if (year != UNSPECIFIED_YEAR && year < that.year) // Performance improvement
+            gc.add(Calendar.YEAR, year - that.year + 1);
+
+        Date date = new Date(gc);
+        while (true) {
+            if (date.sameAs(MINIMUM_DATE))
+                return matched ? date : null;
+            gc.add(Calendar.DATE, -1);
+            date.resetTo(gc);
+            boolean b = matches(date);
+            if (b && !matched)
+                matched = true;
+            else if (matched && !b)
+                break;
+            if (year != UNSPECIFIED_YEAR && year > date.year) // Performance improvement
+                return null;
+        }
+
+        gc.add(Calendar.DATE, 1);
+        date.resetTo(gc);
+        return date;
+    }
+
+    public Date calculateGreatestMatchOnOrBefore(Date that) {
+        if (equals(UNSPECIFIED)) // Performance improvement
+            return null;
+
+        GregorianCalendar gc = that.calculateGC();
+        if (year != UNSPECIFIED_YEAR && year < that.year) // Performance improvement
+            gc.add(Calendar.YEAR, year - that.year + 1);
+
+        if (!that.sameAs(MAXIMUM_DATE)) {
+            // Start a day ahead
+            gc.add(Calendar.DATE, 1);
+        }
+        Date date = new Date(gc);
+
+        boolean matched = matches(date);
+        while (true) {
+            gc.add(Calendar.DATE, -1);
+            date.resetTo(gc);
+            boolean b = matches(date);
+            if (!b && matched)
+                matched = false;
+            else if (!matched && b)
+                break;
+            if (date.sameAs(MINIMUM_DATE))
+                return null;
+            if (year != UNSPECIFIED_YEAR && year > date.year) // Performance improvement
+                return null;
+        }
+
+        return date;
+    }
+
+    public Date calculateLeastMatchOnOrAfter(Date that) {
+        GregorianCalendar gc = that.calculateGC();
+        if (!that.sameAs(MINIMUM_DATE)) {
+            // Start a day behind
+            gc.add(Calendar.DATE, -1);
+        }
+        Date date = new Date(gc);
+
+        boolean matched = matches(date);
+        while (true) {
+            gc.add(Calendar.DATE, 1);
+            date.resetTo(gc);
+            boolean b = matches(date);
+            if (!b && matched)
+                matched = false;
+            else if (!matched && b)
+                break;
+            if (date.sameAs(MAXIMUM_DATE))
+                return null;
+        }
+
+        return date;
+    }
+
+    public Date calculateGreatestMatchOnOrAfter(Date that) {
+        if (equals(UNSPECIFIED))
+            return MAXIMUM_DATE;
+
+        boolean matched = matches(that);
+        GregorianCalendar gc = that.calculateGC();
+
+        Date date = new Date(gc);
+        while (true) {
+            gc.add(Calendar.DATE, 1);
+            date.resetTo(gc);
+            boolean b = matches(date);
+            if (b && !matched)
+                matched = true;
+            else if (matched && !b)
+                break;
+            if (date.sameAs(MAXIMUM_DATE))
+                return date;
+        }
+
+        gc.add(Calendar.DATE, -1);
+        date.resetTo(gc);
+        return date;
     }
 
     //
@@ -169,6 +383,6 @@ public class Date extends Primitive {
 
     @Override
     public String toString() {
-        return dayOfWeek + " " + month + " " + day + ", " + year;
+        return "Date [year=" + year + ", month=" + month + ", day=" + day + ", dayOfWeek=" + dayOfWeek + "]";
     }
 }

@@ -47,20 +47,33 @@ public class EventState extends Enumerated {
         super(queue);
     }
 
+    public boolean isOffNormal() {
+        return equals(offnormal) || equals(highLimit) || equals(lowLimit) || equals(lifeSafetyAlarm);
+    }
+
+    public int getTransitionIndex() {
+        if (isOffNormal())
+            return 1;
+        if (equals(EventState.fault))
+            return 2;
+        return 3;
+    }
+
     @Override
     public String toString() {
-        if (intValue() == 0)
+        int value = intValue();
+        if (value == 0)
             return "normal";
-        if (intValue() == 1)
+        if (value == 1)
             return "fault";
-        if (intValue() == 2)
-            return "off normal";
-        if (intValue() == 3)
-            return "high limit";
-        if (intValue() == 4)
-            return "low limit";
-        if (intValue() == 5)
-            return "life safety alarm";
-        return "Unknown";
+        if (value == 2)
+            return "offnormal";
+        if (value == 3)
+            return "highLimit";
+        if (value == 4)
+            return "lowLimit";
+        if (value == 5)
+            return "lifeSafetyAlarm";
+        return "Unknown(" + value + ")";
     }
 }

@@ -25,6 +25,7 @@
  */
 package com.serotonin.bacnet4j.type.enumerated;
 
+import com.serotonin.bacnet4j.npdu.NPCI.NetworkPriority;
 import com.serotonin.bacnet4j.type.primitive.Enumerated;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -41,5 +42,12 @@ public class MessagePriority extends Enumerated {
 
     public MessagePriority(ByteQueue queue) {
         super(queue);
+    }
+
+    public NetworkPriority getNetworkPriority() {
+        int type = intValue();
+        if (type == urgent.intValue())
+            return NetworkPriority.urgent;
+        return NetworkPriority.normal;
     }
 }

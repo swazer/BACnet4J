@@ -37,6 +37,10 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 public class TimeStamp extends BaseType {
     private static final long serialVersionUID = 728644269380254714L;
 
+    public static final TimeStamp UNSPECIFIED_TIME = new TimeStamp(Time.UNSPECIFIED);
+    public static final TimeStamp UNSPECIFIED_SEQUENCE = new TimeStamp(new UnsignedInteger(0));
+    public static final TimeStamp UNSPECIFIED_DATETIME = new TimeStamp(DateTime.UNSPECIFIED);
+
     private final Choice choice;
 
     private static List<Class<? extends Encodable>> classes;
@@ -90,6 +94,11 @@ public class TimeStamp extends BaseType {
 
     public DateTime getDateTime() {
         return (DateTime) choice.getDatum();
+    }
+
+    @Override
+    public String toString() {
+        return "TimeStamp [choice=" + choice + "]";
     }
 
     @Override

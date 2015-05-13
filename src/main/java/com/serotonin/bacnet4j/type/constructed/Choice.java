@@ -45,8 +45,9 @@ public class Choice extends BaseType {
         return contextId;
     }
 
-    public Encodable getDatum() {
-        return datum;
+    @SuppressWarnings("unchecked")
+    public <T extends Encodable> T getDatum() {
+        return (T) datum;
     }
 
     @Override

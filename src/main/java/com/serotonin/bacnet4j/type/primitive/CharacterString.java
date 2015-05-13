@@ -46,6 +46,8 @@ public class CharacterString extends Primitive {
         byte ISO_8859_1 = 5;
     }
 
+    public static final CharacterString EMPTY = new CharacterString("");
+
     private final byte encoding;
     private final String value;
 

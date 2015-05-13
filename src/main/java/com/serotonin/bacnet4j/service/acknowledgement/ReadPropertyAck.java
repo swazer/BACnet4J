@@ -72,8 +72,9 @@ public class ReadPropertyAck extends AcknowledgementService {
         return propertyIdentifier;
     }
 
-    public Encodable getValue() {
-        return value;
+    @SuppressWarnings("unchecked")
+    public <T extends Encodable> T getValue() {
+        return (T) value;
     }
 
     @Override

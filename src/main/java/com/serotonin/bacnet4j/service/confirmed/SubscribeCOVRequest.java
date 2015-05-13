@@ -34,7 +34,6 @@ import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -77,15 +76,14 @@ public class SubscribeCOVRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
         try {
             BACnetObject obj = localDevice.getObjectRequired(monitoredObjectIdentifier);
             if (issueConfirmedNotifications == null && lifetime == null)
                 obj.removeCovSubscription(from, subscriberProcessIdentifier);
             else
-                obj.addCovSubscription(from, linkService, subscriberProcessIdentifier, issueConfirmedNotifications,
-                        lifetime);
+                obj.addCovSubscription(from, subscriberProcessIdentifier, issueConfirmedNotifications, lifetime, null,
+                        null);
             return null;
         }
         catch (BACnetServiceException e) {

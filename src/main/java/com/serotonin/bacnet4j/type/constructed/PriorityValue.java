@@ -66,6 +66,21 @@ public class PriorityValue extends BaseType {
         this.constructedValue = constructedValue;
     }
 
+    public PriorityValue(Encodable value) {
+        if (value instanceof Null)
+            nullValue = (Null) value;
+        else if (value instanceof Real)
+            realValue = (Real) value;
+        else if (value instanceof BinaryPV)
+            binaryValue = (BinaryPV) value;
+        else if (value instanceof UnsignedInteger)
+            integerValue = (UnsignedInteger) value;
+        else if (value instanceof BaseType)
+            constructedValue = value;
+        else
+            throw new IllegalArgumentException("Unhandled priority type: " + value.getClass());
+    }
+
     public Null getNullValue() {
         return nullValue;
     }
@@ -90,16 +105,17 @@ public class PriorityValue extends BaseType {
         return nullValue != null;
     }
 
-    public Encodable getValue() {
+    @SuppressWarnings("unchecked")
+    public <T extends Encodable> T getValue() {
         if (nullValue != null)
-            return nullValue;
+            return (T) nullValue;
         if (realValue != null)
-            return realValue;
+            return (T) realValue;
         if (binaryValue != null)
-            return binaryValue;
+            return (T) binaryValue;
         if (integerValue != null)
-            return integerValue;
-        return constructedValue;
+            return (T) integerValue;
+        return (T) constructedValue;
     }
 
     @Override

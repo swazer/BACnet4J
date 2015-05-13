@@ -26,14 +26,15 @@
 package com.serotonin.bacnet4j.service.confirmed;
 
 import com.serotonin.bacnet4j.LocalDevice;
+import com.serotonin.bacnet4j.exception.BACnetErrorException;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.exception.NotImplementedException;
+import com.serotonin.bacnet4j.exception.BACnetServiceException;
+import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.PropertyReference;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
@@ -86,9 +87,19 @@ public class SubscribeCOVPropertyRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
-        throw new NotImplementedException();
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
+        try {
+            BACnetObject obj = localDevice.getObjectRequired(monitoredObjectIdentifier);
+            if (issueConfirmedNotifications == null && lifetime == null)
+                obj.removeCovSubscription(from, subscriberProcessIdentifier);
+            else
+                obj.addCovSubscription(from, subscriberProcessIdentifier, issueConfirmedNotifications, lifetime,
+                        monitoredPropertyIdentifier, covIncrement);
+            return null;
+        }
+        catch (BACnetServiceException e) {
+            throw new BACnetErrorException(getChoiceId(), e);
+        }
     }
 
     @Override

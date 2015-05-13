@@ -3,7 +3,6 @@ package com.serotonin.bacnet4j.transport;
 import com.serotonin.bacnet4j.ResponseConsumer;
 import com.serotonin.bacnet4j.apdu.APDU;
 import com.serotonin.bacnet4j.apdu.Segmentable;
-import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class UnackedMessageContext {
@@ -11,7 +10,7 @@ public class UnackedMessageContext {
     private int attemptsLeft;
 
     // The response consumer, for confirmed requests
-    private final ResponseConsumer<? extends AcknowledgementService> consumer;
+    private final ResponseConsumer consumer;
 
     // The original APDU for resending in case of timeout.
     private APDU originalApdu;
@@ -26,7 +25,7 @@ public class UnackedMessageContext {
     private byte[] segBuf;
     private int lastIdSent;
 
-    public UnackedMessageContext(int timeout, int retries, ResponseConsumer<? extends AcknowledgementService> consumer) {
+    public UnackedMessageContext(int timeout, int retries, ResponseConsumer consumer) {
         reset(timeout, retries);
         this.consumer = consumer;
     }
@@ -49,7 +48,7 @@ public class UnackedMessageContext {
         return attemptsLeft > 0;
     }
 
-    public ResponseConsumer<? extends AcknowledgementService> getConsumer() {
+    public ResponseConsumer getConsumer() {
         return consumer;
     }
 

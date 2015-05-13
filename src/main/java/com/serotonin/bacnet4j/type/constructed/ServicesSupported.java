@@ -143,14 +143,6 @@ public class ServicesSupported extends BitString {
         getValue()[12] = readProperty;
     }
 
-    public boolean isReadPropertyConditional() {
-        return getValue()[13];
-    }
-
-    public void setReadPropertyConditional(boolean readPropertyConditional) {
-        getValue()[13] = readPropertyConditional;
-    }
-
     public boolean isReadPropertyMultiple() {
         return getValue()[14];
     }
@@ -229,22 +221,6 @@ public class ServicesSupported extends BitString {
 
     public void setVtData(boolean vtData) {
         getValue()[23] = vtData;
-    }
-
-    public boolean isAuthenticate() {
-        return getValue()[24];
-    }
-
-    public void setAuthenticate(boolean authenticate) {
-        getValue()[24] = authenticate;
-    }
-
-    public boolean isRequestKey() {
-        return getValue()[25];
-    }
-
-    public void setRequestKey(boolean requestKey) {
-        getValue()[25] = requestKey;
     }
 
     public boolean isIAm() {
@@ -357,5 +333,13 @@ public class ServicesSupported extends BitString {
 
     public void setGetEventInformation(boolean getEventInformation) {
         getValue()[39] = getEventInformation;
+    }
+
+    public boolean isWriteGroup() {
+        return getValue()[40];
+    }
+
+    public void setWriteGroup(boolean writeGroup) {
+        getValue()[40] = writeGroup;
     }
 }

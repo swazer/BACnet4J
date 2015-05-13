@@ -1,10 +1,9 @@
 package com.serotonin.bacnet4j.npdu.mstp;
 
-import com.serotonin.bacnet4j.apdu.APDU;
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.npdu.IncomingRequestParser;
 import com.serotonin.bacnet4j.npdu.MessageValidationAssertionException;
+import com.serotonin.bacnet4j.npdu.NPDU;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
 import com.serotonin.bacnet4j.transport.Transport;
@@ -47,19 +46,13 @@ public class MstpNetwork extends Network {
     }
 
     @Override
-    public Address getLocalBroadcastAddress() {
-        return new Address(getLocalNetworkNumber(), (byte) 0xFF);
+    protected OctetString getBroadcastMAC() {
+        return MstpNetworkUtils.toOctetString((byte) 0xFF);
     }
 
     @Override
     public Address[] getAllLocalAddresses() {
-        return new Address[] { new Address(getLocalNetworkNumber(), node.getThisStation()) };
-    }
-
-    @Override
-    public void checkSendThread() {
-        if (Thread.currentThread() == node.thread)
-            throw new IllegalStateException("Cannot send a request in the socket listener thread.");
+        return new Address[] { MstpNetworkUtils.toAddress(getLocalNetworkNumber(), node.getThisStation()) };
     }
 
     @Override
@@ -73,26 +66,14 @@ public class MstpNetwork extends Network {
     }
 
     @Override
-    public void sendAPDU(Address recipient, OctetString link, APDU apdu, boolean broadcast) throws BACnetException {
-        ByteQueue queue = new ByteQueue();
+    protected void sendNPDU(Address recipient, OctetString router, ByteQueue npdu, boolean broadcast,
+            boolean expectsReply) throws BACnetException {
+        byte[] data = npdu.popAll();
 
-        // NPCI
-        writeNpci(queue, recipient, link, apdu);
+        OctetString dest = getDestination(recipient, router);
+        byte mstpAddress = MstpNetworkUtils.getMstpAddress(dest);
 
-        // APDU
-        apdu.write(queue);
-
-        byte[] data = queue.popAll();
-
-        byte mstpAddress;
-        if (recipient.isGlobal())
-            mstpAddress = getLocalBroadcastAddress().getMacAddress().getMstpAddress();
-        else if (link != null)
-            mstpAddress = link.getMstpAddress();
-        else
-            mstpAddress = recipient.getMacAddress().getMstpAddress();
-
-        if (apdu.expectsReply()) {
+        if (expectsReply) {
             if (node instanceof SlaveNode)
                 throw new RuntimeException("Cannot originate a request from a slave node");
 
@@ -114,18 +95,13 @@ public class MstpNetwork extends Network {
     // Incoming frames
     //
     void receivedFrame(Frame frame) {
-        new IncomingFrameHandler(this, frame).run();
+        handleIncomingData(new ByteQueue(frame.getData()), MstpNetworkUtils.toOctetString(frame.getSourceAddress()));
     }
 
-    class IncomingFrameHandler extends IncomingRequestParser {
-        public IncomingFrameHandler(Network network, Frame frame) {
-            super(network, new ByteQueue(frame.getData()), new OctetString(frame.getSourceAddress()));
-        }
-
-        @Override
-        protected void parseFrame() throws MessageValidationAssertionException {
-            // no op. The frame has already been parsed.
-        }
+    @Override
+    protected NPDU handleIncomingDataImpl(ByteQueue queue, OctetString linkService)
+            throws MessageValidationAssertionException {
+        return parseNpduData(queue, linkService);
     }
 
     //
@@ -133,7 +109,7 @@ public class MstpNetwork extends Network {
     // Convenience methods
     //
     public Address getAddress(byte station) {
-        return new Address(getLocalNetworkNumber(), station);
+        return MstpNetworkUtils.toAddress(getLocalNetworkNumber(), station);
     }
 
     @Override

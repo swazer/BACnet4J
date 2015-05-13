@@ -25,14 +25,10 @@
  */
 package com.serotonin.bacnet4j.base;
 
+import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class BACnetUtils {
-    public static void pushShort(ByteQueue queue, long value) {
-        queue.push((byte) (0xff & (value >> 8)));
-        queue.push((byte) (0xff & value));
-    }
-
     public static void pushInt(ByteQueue queue, long value) {
         queue.push((byte) (0xff & (value >> 24)));
         queue.push((byte) (0xff & (value >> 16)));
@@ -49,6 +45,27 @@ public class BACnetUtils {
         queue.push((byte) (0xff & (value >> 16)));
         queue.push((byte) (0xff & (value >> 8)));
         queue.push((byte) (0xff & value));
+    }
+
+    public static OctetString toVirtualAddressBytes(int deviceId) {
+        byte[] b = new byte[3];
+        b[0] = (byte) (0xff & (deviceId >> 16));
+        b[1] = (byte) (0xff & (deviceId >> 8));
+        b[2] = (byte) (0xff & deviceId);
+        return new OctetString(b);
+    }
+
+    public static int toDeviceId(byte[] virtualAddressBytes) {
+        int deviceId = toInt(virtualAddressBytes[0]) << 16;
+        deviceId |= toInt(virtualAddressBytes[1]) << 8;
+        deviceId |= toInt(virtualAddressBytes[2]);
+        return deviceId;
+    }
+
+    public static OctetString popDeviceId(ByteQueue queue) {
+        byte[] b = new byte[3];
+        queue.pop(b);
+        return new OctetString(b);
     }
 
     public static int popShort(ByteQueue queue) {

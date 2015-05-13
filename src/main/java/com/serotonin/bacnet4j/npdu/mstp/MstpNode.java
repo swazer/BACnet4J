@@ -111,7 +111,7 @@ abstract public class MstpNode implements Runnable {
             lastNonSilence = timeSource.currentTimeMillis();
             state = ReadFrameState.idle;
             if (runInThread) {
-                thread = new Thread(this);
+                thread = new Thread(this, "BACnet4J MS/TP node");
                 thread.start();
             }
         }

@@ -30,15 +30,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
+import com.serotonin.bacnet4j.util.sero.Utils;
 
 public class SequenceOf<E extends Encodable> extends BaseType implements Iterable<E> {
     private static final long serialVersionUID = -5118339248636778224L;
-    private final List<E> values;
+    protected final List<E> values;
 
     public SequenceOf() {
         values = new ArrayList<E>();
@@ -46,6 +45,12 @@ public class SequenceOf<E extends Encodable> extends BaseType implements Iterabl
 
     public SequenceOf(List<E> values) {
         this.values = values;
+    }
+
+    public SequenceOf(E... values) {
+        this();
+        for (E value : values)
+            this.values.add(value);
     }
 
     @Override
@@ -112,7 +117,7 @@ public class SequenceOf<E extends Encodable> extends BaseType implements Iterabl
             return;
 
         for (int i = 0; i < values.size(); i++) {
-            if (ObjectUtils.equals(values.get(i), value)) {
+            if (Utils.equals(values.get(i), value)) {
                 remove(i + 1);
                 break;
             }
@@ -122,14 +127,14 @@ public class SequenceOf<E extends Encodable> extends BaseType implements Iterabl
     public void removeAll(E value) {
         for (ListIterator<E> it = values.listIterator(); it.hasNext();) {
             E e = it.next();
-            if (ObjectUtils.equals(e, value))
+            if (Utils.equals(e, value))
                 it.remove();
         }
     }
 
     public boolean contains(E value) {
         for (E e : values) {
-            if (ObjectUtils.equals(e, value))
+            if (Utils.equals(e, value))
                 return true;
         }
         return false;

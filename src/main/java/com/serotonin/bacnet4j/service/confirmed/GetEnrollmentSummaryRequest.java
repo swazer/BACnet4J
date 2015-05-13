@@ -27,14 +27,16 @@ package com.serotonin.bacnet4j.service.confirmed;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.exception.NotImplementedException;
+import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
+import com.serotonin.bacnet4j.service.acknowledgement.GetEnrollmentSummaryAck;
+import com.serotonin.bacnet4j.service.acknowledgement.GetEnrollmentSummaryAck.EnrollmentSummary;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.BaseType;
 import com.serotonin.bacnet4j.type.constructed.RecipientProcess;
+import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.EventType;
 import com.serotonin.bacnet4j.type.primitive.Enumerated;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -42,29 +44,15 @@ public class GetEnrollmentSummaryRequest extends ConfirmedRequestService {
     private static final long serialVersionUID = -6947534972488875567L;
     public static final byte TYPE_ID = 4;
 
-    public interface AcknowledgmentFilters {
-        int all = 0;
-        int acked = 1;
-        int notAcked = 2;
-    }
-
-    public interface EventStateFilter {
-        int offnormal = 0;
-        int fault = 1;
-        int normal = 2;
-        int all = 3;
-        int active = 4;
-    }
-
-    private final Enumerated acknowledgmentFilter; // 0
+    private final AcknowledgmentFilter acknowledgmentFilter; // 0
     private final RecipientProcess enrollmentFilter; // 1 optional
-    private final Enumerated eventStateFilter; // 2 optional
+    private final EventStateFilter eventStateFilter; // 2 optional
     private final EventType eventTypeFilter; // 3 optional
     private final PriorityFilter priorityFilter; // 4 optional
     private final UnsignedInteger notificationClassFilter; // 5 optional
 
-    public GetEnrollmentSummaryRequest(Enumerated acknowledgmentFilter, RecipientProcess enrollmentFilter,
-            Enumerated eventStateFilter, EventType eventTypeFilter, PriorityFilter priorityFilter,
+    public GetEnrollmentSummaryRequest(AcknowledgmentFilter acknowledgmentFilter, RecipientProcess enrollmentFilter,
+            EventStateFilter eventStateFilter, EventType eventTypeFilter, PriorityFilter priorityFilter,
             UnsignedInteger notificationClassFilter) {
         this.acknowledgmentFilter = acknowledgmentFilter;
         this.enrollmentFilter = enrollmentFilter;
@@ -80,9 +68,17 @@ public class GetEnrollmentSummaryRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
-        throw new NotImplementedException();
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
+        SequenceOf<EnrollmentSummary> summaries = new SequenceOf<EnrollmentSummary>();
+
+        for (BACnetObject bo : localDevice.getLocalObjects()) {
+            EnrollmentSummary enrollmentSummary = bo.getEnrollmentSummary(acknowledgmentFilter, enrollmentFilter,
+                    eventStateFilter, eventTypeFilter, priorityFilter, notificationClassFilter);
+            if (enrollmentSummary != null)
+                summaries.add(enrollmentSummary);
+        }
+
+        return new GetEnrollmentSummaryAck(summaries);
     }
 
     @Override
@@ -96,12 +92,78 @@ public class GetEnrollmentSummaryRequest extends ConfirmedRequestService {
     }
 
     GetEnrollmentSummaryRequest(ByteQueue queue) throws BACnetException {
-        acknowledgmentFilter = read(queue, Enumerated.class, 0);
+        acknowledgmentFilter = read(queue, AcknowledgmentFilter.class, 0);
         enrollmentFilter = readOptional(queue, RecipientProcess.class, 1);
-        eventStateFilter = readOptional(queue, Enumerated.class, 2);
+        eventStateFilter = readOptional(queue, EventStateFilter.class, 2);
         eventTypeFilter = readOptional(queue, EventType.class, 3);
         priorityFilter = readOptional(queue, PriorityFilter.class, 4);
         notificationClassFilter = readOptional(queue, UnsignedInteger.class, 5);
+    }
+
+    public static class AcknowledgmentFilter extends Enumerated {
+        private static final long serialVersionUID = 2908973080032838353L;
+
+        public static final AcknowledgmentFilter all = new AcknowledgmentFilter(0);
+        public static final AcknowledgmentFilter acked = new AcknowledgmentFilter(1);
+        public static final AcknowledgmentFilter notAcked = new AcknowledgmentFilter(2);
+
+        public static final AcknowledgmentFilter[] ALL = { all, acked, notAcked, };
+
+        public AcknowledgmentFilter(int value) {
+            super(value);
+        }
+
+        public AcknowledgmentFilter(ByteQueue queue) {
+            super(queue);
+        }
+
+        @Override
+        public String toString() {
+            int type = intValue();
+            if (type == all.intValue())
+                return "all";
+            if (type == acked.intValue())
+                return "acked";
+            if (type == notAcked.intValue())
+                return "notAcked";
+            return "Unknown(" + type + ")";
+        }
+    }
+
+    public static class EventStateFilter extends Enumerated {
+        private static final long serialVersionUID = 3658424484986437251L;
+
+        public static final EventStateFilter offnormal = new EventStateFilter(0);
+        public static final EventStateFilter fault = new EventStateFilter(1);
+        public static final EventStateFilter normal = new EventStateFilter(2);
+        public static final EventStateFilter all = new EventStateFilter(3);
+        public static final EventStateFilter active = new EventStateFilter(4);
+
+        public static final EventStateFilter[] ALL = { offnormal, fault, normal, all, active, };
+
+        public EventStateFilter(int value) {
+            super(value);
+        }
+
+        public EventStateFilter(ByteQueue queue) {
+            super(queue);
+        }
+
+        @Override
+        public String toString() {
+            int type = intValue();
+            if (type == offnormal.intValue())
+                return "offnormal";
+            if (type == fault.intValue())
+                return "fault";
+            if (type == normal.intValue())
+                return "normal";
+            if (type == all.intValue())
+                return "all";
+            if (type == active.intValue())
+                return "active";
+            return "Unknown(" + type + ")";
+        }
     }
 
     public static class PriorityFilter extends BaseType {
@@ -123,6 +185,14 @@ public class GetEnrollmentSummaryRequest extends ConfirmedRequestService {
         public PriorityFilter(ByteQueue queue) throws BACnetException {
             minPriority = read(queue, UnsignedInteger.class, 0);
             maxPriority = read(queue, UnsignedInteger.class, 1);
+        }
+
+        public UnsignedInteger getMinPriority() {
+            return minPriority;
+        }
+
+        public UnsignedInteger getMaxPriority() {
+            return maxPriority;
         }
 
         @Override

@@ -60,6 +60,6 @@ public class AbortReason extends Enumerated {
             return "Preempted by higher priority task";
         if (type == segmentationNotSupported.intValue())
             return "Segmentation not supported";
-        return "Unknown abort reason(" + type + ")";
+        return "Unknown(" + type + ")";
     }
 }

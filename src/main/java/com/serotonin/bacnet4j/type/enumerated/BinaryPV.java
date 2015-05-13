@@ -42,4 +42,14 @@ public class BinaryPV extends Enumerated {
     public BinaryPV(ByteQueue queue) {
         super(queue);
     }
+
+    @Override
+    public String toString() {
+        int type = intValue();
+        if (type == inactive.intValue())
+            return "Inactive";
+        if (type == active.intValue())
+            return "Active";
+        return "Unknown: " + type;
+    }
 }

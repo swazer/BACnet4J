@@ -32,7 +32,6 @@ import com.serotonin.bacnet4j.exception.BACnetServiceException;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class DeleteObjectRequest extends ConfirmedRequestService {
@@ -52,8 +51,7 @@ public class DeleteObjectRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetErrorException {
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetErrorException {
         try {
             localDevice.removeObject(objectIdentifier);
         }

@@ -35,6 +35,7 @@ import com.serotonin.bacnet4j.obj.PropertyTypeDefinition;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
+import com.serotonin.bacnet4j.type.constructed.BACnetArray;
 import com.serotonin.bacnet4j.type.constructed.BACnetError;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
@@ -43,7 +44,6 @@ import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.error.ChangeListError;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -72,35 +72,73 @@ public class AddListElementRequest extends ConfirmedRequestService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
         BACnetObject obj = localDevice.getObject(objectIdentifier);
         if (obj == null)
-            throw createException(ErrorClass.property, ErrorCode.writeAccessDenied, new UnsignedInteger(1));
+            throw createException(ErrorClass.object, ErrorCode.unknownObject, new UnsignedInteger(0));
+
+        PropertyTypeDefinition def = ObjectProperties.getPropertyTypeDefinition(objectIdentifier.getObjectType(),
+                propertyIdentifier);
+        if (def == null)
+            throw createException(ErrorClass.property, ErrorCode.unknownProperty, new UnsignedInteger(0));
 
         Encodable e;
         try {
-            e = obj.getProperty(propertyIdentifier, propertyArrayIndex);
+            e = obj.getProperty(propertyIdentifier);
         }
         catch (BACnetServiceException ex) {
-            throw createException(ErrorClass.property, ErrorCode.invalidArrayIndex, new UnsignedInteger(1));
+            throw createException(ErrorClass.property, ErrorCode.unknownProperty, new UnsignedInteger(0));
         }
-        if (!(e instanceof SequenceOf<?>))
-            throw createException(ErrorClass.property, ErrorCode.propertyIsNotAnArray, new UnsignedInteger(1));
-
-        SequenceOf<Encodable> propList = (SequenceOf<Encodable>) e;
+        if (e == null)
+            throw createException(ErrorClass.property, ErrorCode.unknownProperty, new UnsignedInteger(0));
 
         PropertyValue pv = new PropertyValue(propertyIdentifier, propertyArrayIndex, listOfElements, null);
-        if (localDevice.getEventHandler().checkAllowPropertyWrite(obj, pv)) {
-            for (Encodable pr : listOfElements) {
-                if (!propList.contains(pr))
-                    propList.add(pr);
+        if (!localDevice.getEventHandler().checkAllowPropertyWrite(from, obj, pv))
+            throw createException(ErrorClass.property, ErrorCode.writeAccessDenied, new UnsignedInteger(0));
+
+        if (propertyArrayIndex == null) {
+            // Expecting a list
+            if (!(e instanceof SequenceOf))
+                throw createException(ErrorClass.property, ErrorCode.propertyIsNotAList, new UnsignedInteger(0));
+            if (e instanceof BACnetArray)
+                throw createException(ErrorClass.property, ErrorCode.propertyIsNotAList, new UnsignedInteger(0));
+
+            SequenceOf<Encodable> origList = (SequenceOf<Encodable>) e;
+            SequenceOf<Encodable> list = new SequenceOf<Encodable>(origList.getValues());
+            for (int i = 0; i < listOfElements.getCount(); i++) {
+                Encodable pr = listOfElements.get(i + 1);
+                if (!def.getClazz().isAssignableFrom(pr.getClass()))
+                    throw createException(ErrorClass.property, ErrorCode.datatypeNotSupported, new UnsignedInteger(
+                            i + 1));
+                if (!list.contains(pr))
+                    list.add(pr);
             }
 
-            localDevice.getEventHandler().propertyWritten(obj, pv);
+            obj.writeProperty(propertyIdentifier, origList);
         }
-        else
-            throw createException(ErrorClass.property, ErrorCode.writeAccessDenied, new UnsignedInteger(1));
+        else {
+            // Expecting an array
+            if (!(e instanceof BACnetArray))
+                throw createException(ErrorClass.property, ErrorCode.propertyIsNotAnArray, new UnsignedInteger(0));
+
+            BACnetArray<Encodable> array = new BACnetArray<Encodable>((BACnetArray<Encodable>) e);
+            int writeIndex = propertyArrayIndex.intValue();
+            for (int i = 0; i < listOfElements.getCount(); i++) {
+                Encodable pr = listOfElements.get(i + 1);
+                if (!def.getClazz().isAssignableFrom(pr.getClass()))
+                    throw createException(ErrorClass.property, ErrorCode.datatypeNotSupported, new UnsignedInteger(
+                            i + 1));
+
+                int index = writeIndex + i;
+                if (i < 1 || i > array.getCount())
+                    throw createException(ErrorClass.property, ErrorCode.invalidArrayIndex, new UnsignedInteger(i + 1));
+                array.set(index, pr);
+            }
+
+            obj.writeProperty(propertyIdentifier, array);
+        }
+
+        localDevice.getEventHandler().propertyWritten(from, obj, pv);
 
         return null;
     }

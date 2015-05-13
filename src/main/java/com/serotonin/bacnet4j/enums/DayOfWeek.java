@@ -25,24 +25,49 @@
  */
 package com.serotonin.bacnet4j.enums;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import com.serotonin.bacnet4j.type.primitive.Date;
+
 public enum DayOfWeek {
     MONDAY(1), TUESDAY(2), WEDNESDAY(3), THURSDAY(4), FRIDAY(5), SATURDAY(6), SUNDAY(7), UNSPECIFIED(255);
 
-    private byte id;
+    private int id;
 
     DayOfWeek(int id) {
-        this.id = (byte) id;
+        this.id = id;
     }
 
-    public byte getId() {
+    public int getId() {
         return id;
     }
 
-    public static DayOfWeek valueOf(int id) {
-        return valueOf((byte) id);
+    public boolean isSpecific() {
+        return this != UNSPECIFIED;
     }
 
-    public static DayOfWeek valueOf(byte id) {
+    public static DayOfWeek forCalendarDow(int calendarDow) {
+        switch (calendarDow) {
+        case Calendar.MONDAY:
+            return MONDAY;
+        case Calendar.TUESDAY:
+            return TUESDAY;
+        case Calendar.WEDNESDAY:
+            return WEDNESDAY;
+        case Calendar.THURSDAY:
+            return THURSDAY;
+        case Calendar.FRIDAY:
+            return FRIDAY;
+        case Calendar.SATURDAY:
+            return SATURDAY;
+        case Calendar.SUNDAY:
+            return SUNDAY;
+        }
+        throw new RuntimeException("Can't get day of week for calendar value: " + calendarDow);
+    }
+
+    public static DayOfWeek valueOf(int id) {
         if (id == MONDAY.id)
             return MONDAY;
         if (id == TUESDAY.id)
@@ -58,5 +83,25 @@ public enum DayOfWeek {
         if (id == SUNDAY.id)
             return SUNDAY;
         return UNSPECIFIED;
+    }
+
+    public static DayOfWeek forDate(Date date) {
+        GregorianCalendar gc = date.calculateGC();
+        int calendarDow = gc.get(Calendar.DAY_OF_WEEK);
+        return forCalendarDow(calendarDow);
+    }
+
+    public boolean matches(Date date) {
+        if (this == DayOfWeek.UNSPECIFIED)
+            return true;
+
+        DayOfWeek thatDow = date.getDayOfWeek();
+
+        // Tolerate the day of week of the given date being unspecified.
+        if (thatDow.isSpecific())
+            return this == thatDow;
+
+        // Otherwise we need to calculate the given date's day of week.
+        return equals(forDate(date));
     }
 }

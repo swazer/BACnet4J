@@ -29,6 +29,7 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
+import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
@@ -69,19 +70,21 @@ public interface DeviceEventListener {
     /**
      * Allow a listener to veto an attempt by another device to write a property in a local object.
      * 
+     * @param from
      * @param obj
      * @param pv
      * @return true if the write should be allowed.
      */
-    boolean allowPropertyWrite(BACnetObject obj, PropertyValue pv);
+    boolean allowPropertyWrite(Address from, BACnetObject obj, PropertyValue pv);
 
     /**
      * Notification that a property of a local object was written by another device.
      * 
+     * @param from
      * @param obj
      * @param pv
      */
-    void propertyWritten(BACnetObject obj, PropertyValue pv);
+    void propertyWritten(Address from, BACnetObject obj, PropertyValue pv);
 
     /**
      * Notification of receipt of an IHave message.
@@ -144,27 +147,31 @@ public interface DeviceEventListener {
      * Notification of either an UnconfirmedPrivateTransferRequest or a ConfirmedPrivateTransferRequest. The latter will
      * be automatically confirmed by the service handler.
      * 
+     * @param from
      * @param vendorId
      * @param serviceNumber
      * @param serviceParameters
      */
-    void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber, Sequence serviceParameters);
+    void privateTransferReceived(Address from, UnsignedInteger vendorId, UnsignedInteger serviceNumber,
+            Sequence serviceParameters);
 
     /**
      * Notification that the device should be reinitialized. The local device's password has already been validated at
      * this point, the the indicated action should be carried out.
      * 
+     * @param from
      * @param reinitializedStateOfDevice
      */
-    void reinitializeDevice(ReinitializedStateOfDevice reinitializedStateOfDevice);
+    void reinitializeDevice(Address from, ReinitializedStateOfDevice reinitializedStateOfDevice);
 
     /**
      * Notification that the device should synchronize its time to the given date/time value. The local device has
      * already been checked at this point to ensure that it supports time synchronization.
      * 
+     * @param from
      * @param dateTime
      * @param utc
      *            true if a UTCTimeSynchronizationRequest was sent, false if TimeSynchronizationRequest.
      */
-    void synchronizeTime(DateTime dateTime, boolean utc);
+    void synchronizeTime(Address from, DateTime dateTime, boolean utc);
 }

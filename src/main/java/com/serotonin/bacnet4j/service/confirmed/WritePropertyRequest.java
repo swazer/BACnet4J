@@ -38,7 +38,6 @@ import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
 import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
@@ -86,17 +85,16 @@ public class WritePropertyRequest extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetErrorException {
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetErrorException {
         BACnetObject obj = localDevice.getObject(objectIdentifier);
         if (obj == null)
             throw new BACnetErrorException(getChoiceId(), ErrorClass.object, ErrorCode.unknownObject);
 
         PropertyValue pv = new PropertyValue(propertyIdentifier, propertyArrayIndex, propertyValue, priority);
         try {
-            if (localDevice.getEventHandler().checkAllowPropertyWrite(obj, pv)) {
-                obj.setProperty(pv);
-                localDevice.getEventHandler().propertyWritten(obj, pv);
+            if (localDevice.getEventHandler().checkAllowPropertyWrite(from, obj, pv)) {
+                obj.writeProperty(pv);
+                localDevice.getEventHandler().propertyWritten(from, obj, pv);
             }
             else
                 throw new BACnetServiceException(ErrorClass.property, ErrorCode.writeAccessDenied);

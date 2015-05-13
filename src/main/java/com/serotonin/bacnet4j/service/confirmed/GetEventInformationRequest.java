@@ -27,21 +27,24 @@ package com.serotonin.bacnet4j.service.confirmed;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.exception.NotImplementedException;
+import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
+import com.serotonin.bacnet4j.service.acknowledgement.GetEventInformationAck;
+import com.serotonin.bacnet4j.service.acknowledgement.GetEventInformationAck.EventSummary;
 import com.serotonin.bacnet4j.type.constructed.Address;
+import com.serotonin.bacnet4j.type.constructed.SequenceOf;
+import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
-public class GetEventInformation extends ConfirmedRequestService {
+public class GetEventInformationRequest extends ConfirmedRequestService {
     private static final long serialVersionUID = 5920365345189498832L;
 
     public static final byte TYPE_ID = 29;
 
-    private final ObjectIdentifier lastReceivedObjectIdentifier;
+    private final ObjectIdentifier lastReceivedObjectIdentifier; // Optional
 
-    public GetEventInformation(ObjectIdentifier lastReceivedObjectIdentifier) {
+    public GetEventInformationRequest(ObjectIdentifier lastReceivedObjectIdentifier) {
         this.lastReceivedObjectIdentifier = lastReceivedObjectIdentifier;
     }
 
@@ -51,9 +54,16 @@ public class GetEventInformation extends ConfirmedRequestService {
     }
 
     @Override
-    public AcknowledgementService handle(LocalDevice localDevice, Address from, OctetString linkService)
-            throws BACnetException {
-        throw new NotImplementedException();
+    public AcknowledgementService handle(LocalDevice localDevice, Address from) throws BACnetException {
+        SequenceOf<EventSummary> summaries = new SequenceOf<EventSummary>();
+
+        for (BACnetObject bo : localDevice.getLocalObjects()) {
+            EventSummary eventSummary = bo.getEventSummary();
+            if (eventSummary != null)
+                summaries.add(eventSummary);
+        }
+
+        return new GetEventInformationAck(summaries, new Boolean(false));
     }
 
     @Override
@@ -61,7 +71,7 @@ public class GetEventInformation extends ConfirmedRequestService {
         writeOptional(queue, lastReceivedObjectIdentifier, 0);
     }
 
-    GetEventInformation(ByteQueue queue) throws BACnetException {
+    GetEventInformationRequest(ByteQueue queue) throws BACnetException {
         lastReceivedObjectIdentifier = readOptional(queue, ObjectIdentifier.class, 0);
     }
 
@@ -82,7 +92,7 @@ public class GetEventInformation extends ConfirmedRequestService {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final GetEventInformation other = (GetEventInformation) obj;
+        final GetEventInformationRequest other = (GetEventInformationRequest) obj;
         if (lastReceivedObjectIdentifier == null) {
             if (other.lastReceivedObjectIdentifier != null)
                 return false;

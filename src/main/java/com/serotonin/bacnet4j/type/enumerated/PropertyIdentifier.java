@@ -83,7 +83,6 @@ public class PropertyIdentifier extends Enumerated {
     public static final PropertyIdentifier limitEnable = new PropertyIdentifier(52);
     public static final PropertyIdentifier listOfGroupMembers = new PropertyIdentifier(53);
     public static final PropertyIdentifier listOfObjectPropertyReferences = new PropertyIdentifier(54);
-    public static final PropertyIdentifier listOfSessionKeys = new PropertyIdentifier(55);
     public static final PropertyIdentifier localDate = new PropertyIdentifier(56);
     public static final PropertyIdentifier localTime = new PropertyIdentifier(57);
     public static final PropertyIdentifier location = new PropertyIdentifier(58);
@@ -250,10 +249,139 @@ public class PropertyIdentifier extends Enumerated {
     public static final PropertyIdentifier lockStatus = new PropertyIdentifier(233);
     public static final PropertyIdentifier maskedAlarmValues = new PropertyIdentifier(234);
     public static final PropertyIdentifier securedStatus = new PropertyIdentifier(235);
+    public static final PropertyIdentifier absenteeLimit = new PropertyIdentifier(244);
+    public static final PropertyIdentifier accessAlarmEvents = new PropertyIdentifier(245);
+    public static final PropertyIdentifier accessDoors = new PropertyIdentifier(246);
+    public static final PropertyIdentifier accessEvent = new PropertyIdentifier(247);
+    public static final PropertyIdentifier accessEventAuthenticationFactor = new PropertyIdentifier(248);
+    public static final PropertyIdentifier accessEventCredential = new PropertyIdentifier(249);
+    public static final PropertyIdentifier accessEventTime = new PropertyIdentifier(250);
+    public static final PropertyIdentifier accessTransactionEvents = new PropertyIdentifier(251);
+    public static final PropertyIdentifier accompaniment = new PropertyIdentifier(252);
+    public static final PropertyIdentifier accompanimentTime = new PropertyIdentifier(253);
+    public static final PropertyIdentifier activationTime = new PropertyIdentifier(254);
+    public static final PropertyIdentifier activeAuthenticationPolicy = new PropertyIdentifier(255);
+    public static final PropertyIdentifier assignedAccessRights = new PropertyIdentifier(256);
+    public static final PropertyIdentifier authenticationFactors = new PropertyIdentifier(257);
+    public static final PropertyIdentifier authenticationPolicyList = new PropertyIdentifier(258);
+    public static final PropertyIdentifier authenticationPolicyNames = new PropertyIdentifier(259);
+    public static final PropertyIdentifier authenticationStatus = new PropertyIdentifier(260);
+    public static final PropertyIdentifier authorizationMode = new PropertyIdentifier(261);
+    public static final PropertyIdentifier belongsTo = new PropertyIdentifier(262);
+    public static final PropertyIdentifier credentialDisable = new PropertyIdentifier(263);
+    public static final PropertyIdentifier credentialStatus = new PropertyIdentifier(264);
+    public static final PropertyIdentifier credentials = new PropertyIdentifier(265);
+    public static final PropertyIdentifier credentialsInZone = new PropertyIdentifier(266);
+    public static final PropertyIdentifier daysRemaining = new PropertyIdentifier(267);
+    public static final PropertyIdentifier entryPoints = new PropertyIdentifier(268);
+    public static final PropertyIdentifier exitPoints = new PropertyIdentifier(269);
+    public static final PropertyIdentifier expiryTime = new PropertyIdentifier(270);
+    public static final PropertyIdentifier extendedTimeEnable = new PropertyIdentifier(271);
+    public static final PropertyIdentifier failedAttemptEvents = new PropertyIdentifier(272);
+    public static final PropertyIdentifier failedAttempts = new PropertyIdentifier(273);
+    public static final PropertyIdentifier failedAttemptsTime = new PropertyIdentifier(274);
+    public static final PropertyIdentifier lastAccessEvent = new PropertyIdentifier(275);
+    public static final PropertyIdentifier lastAccessPoint = new PropertyIdentifier(276);
+    public static final PropertyIdentifier lastCredentialAdded = new PropertyIdentifier(277);
+    public static final PropertyIdentifier lastCredentialAddedTime = new PropertyIdentifier(278);
+    public static final PropertyIdentifier lastCredentialRemoved = new PropertyIdentifier(279);
+    public static final PropertyIdentifier lastCredentialRemovedTime = new PropertyIdentifier(280);
+    public static final PropertyIdentifier lastUseTime = new PropertyIdentifier(281);
+    public static final PropertyIdentifier lockout = new PropertyIdentifier(282);
+    public static final PropertyIdentifier lockoutRelinquishTime = new PropertyIdentifier(283);
+    public static final PropertyIdentifier maxFailedAttempts = new PropertyIdentifier(285);
+    public static final PropertyIdentifier members = new PropertyIdentifier(286);
+    public static final PropertyIdentifier musterPoint = new PropertyIdentifier(287);
+    public static final PropertyIdentifier negativeAccessRules = new PropertyIdentifier(288);
+    public static final PropertyIdentifier numberOfAuthenticationPolicies = new PropertyIdentifier(289);
+    public static final PropertyIdentifier occupancyCount = new PropertyIdentifier(290);
+    public static final PropertyIdentifier occupancyCountAdjust = new PropertyIdentifier(291);
+    public static final PropertyIdentifier occupancyCountEnable = new PropertyIdentifier(292);
+    public static final PropertyIdentifier occupancyLowerLimit = new PropertyIdentifier(294);
+    public static final PropertyIdentifier occupancyLowerLimitEnforced = new PropertyIdentifier(295);
+    public static final PropertyIdentifier occupancyState = new PropertyIdentifier(296);
+    public static final PropertyIdentifier occupancyUpperLimit = new PropertyIdentifier(297);
+    public static final PropertyIdentifier occupancyUpperLimitEnforced = new PropertyIdentifier(298);
+    public static final PropertyIdentifier passbackMode = new PropertyIdentifier(300);
+    public static final PropertyIdentifier passbackTimeout = new PropertyIdentifier(301);
+    public static final PropertyIdentifier positiveAccessRules = new PropertyIdentifier(302);
+    public static final PropertyIdentifier reasonForDisable = new PropertyIdentifier(303);
+    public static final PropertyIdentifier supportedFormats = new PropertyIdentifier(304);
+    public static final PropertyIdentifier supportedFormatClasses = new PropertyIdentifier(305);
+    public static final PropertyIdentifier threatAuthority = new PropertyIdentifier(306);
+    public static final PropertyIdentifier threatLevel = new PropertyIdentifier(307);
+    public static final PropertyIdentifier traceFlag = new PropertyIdentifier(308);
+    public static final PropertyIdentifier transactionNotificationClass = new PropertyIdentifier(309);
+    public static final PropertyIdentifier userExternalIdentifier = new PropertyIdentifier(310);
+    public static final PropertyIdentifier userInformationReference = new PropertyIdentifier(311);
+    public static final PropertyIdentifier userName = new PropertyIdentifier(317);
+    public static final PropertyIdentifier userType = new PropertyIdentifier(318);
+    public static final PropertyIdentifier usesRemaining = new PropertyIdentifier(319);
+    public static final PropertyIdentifier zoneFrom = new PropertyIdentifier(320);
+    public static final PropertyIdentifier zoneTo = new PropertyIdentifier(321);
+    public static final PropertyIdentifier accessEventTag = new PropertyIdentifier(322);
+    public static final PropertyIdentifier globalIdentifier = new PropertyIdentifier(323);
+    public static final PropertyIdentifier verificationTime = new PropertyIdentifier(326);
+    public static final PropertyIdentifier baseDeviceSecurityPolicy = new PropertyIdentifier(327);
+    public static final PropertyIdentifier distributionKeyRevision = new PropertyIdentifier(328);
+    public static final PropertyIdentifier doNotHide = new PropertyIdentifier(329);
+    public static final PropertyIdentifier keySets = new PropertyIdentifier(330);
+    public static final PropertyIdentifier lastKeyServer = new PropertyIdentifier(331);
+    public static final PropertyIdentifier networkAccessSecurityPolicies = new PropertyIdentifier(332);
+    public static final PropertyIdentifier packetReorderTime = new PropertyIdentifier(333);
+    public static final PropertyIdentifier securityPduTimeout = new PropertyIdentifier(334);
+    public static final PropertyIdentifier securityTimeWindow = new PropertyIdentifier(335);
+    public static final PropertyIdentifier supportedSecurityAlgorithms = new PropertyIdentifier(336);
+    public static final PropertyIdentifier updateKeySetTimeout = new PropertyIdentifier(337);
     public static final PropertyIdentifier backupAndRestoreState = new PropertyIdentifier(338);
     public static final PropertyIdentifier backupPreparationTime = new PropertyIdentifier(339);
     public static final PropertyIdentifier restoreCompletionTime = new PropertyIdentifier(340);
     public static final PropertyIdentifier restorePreparationTime = new PropertyIdentifier(341);
+    public static final PropertyIdentifier bitMask = new PropertyIdentifier(342);
+    public static final PropertyIdentifier bitText = new PropertyIdentifier(343);
+    public static final PropertyIdentifier isUtc = new PropertyIdentifier(344);
+    public static final PropertyIdentifier groupMembers = new PropertyIdentifier(345);
+    public static final PropertyIdentifier groupMemberNames = new PropertyIdentifier(346);
+    public static final PropertyIdentifier memberStatusFlags = new PropertyIdentifier(347);
+    public static final PropertyIdentifier requestedUpdateInterval = new PropertyIdentifier(348);
+    public static final PropertyIdentifier covuPeriod = new PropertyIdentifier(349);
+    public static final PropertyIdentifier covuRecipients = new PropertyIdentifier(350);
+    public static final PropertyIdentifier eventMessageTexts = new PropertyIdentifier(351);
+    public static final PropertyIdentifier eventMessageTextsConfig = new PropertyIdentifier(352);
+    public static final PropertyIdentifier eventDetectionEnable = new PropertyIdentifier(353);
+    public static final PropertyIdentifier eventAlgorithmInhibit = new PropertyIdentifier(354);
+    public static final PropertyIdentifier eventAlgorithmInhibitRef = new PropertyIdentifier(355);
+    public static final PropertyIdentifier timeDelayNormal = new PropertyIdentifier(356);
+    public static final PropertyIdentifier reliabilityEvaluationInhibit = new PropertyIdentifier(357);
+    public static final PropertyIdentifier faultParameters = new PropertyIdentifier(358);
+    public static final PropertyIdentifier faultType = new PropertyIdentifier(359);
+    public static final PropertyIdentifier localForwardingOnly = new PropertyIdentifier(360);
+    public static final PropertyIdentifier processIdentifierFilter = new PropertyIdentifier(361);
+    public static final PropertyIdentifier subscribedRecipients = new PropertyIdentifier(362);
+    public static final PropertyIdentifier portFilter = new PropertyIdentifier(363);
+    public static final PropertyIdentifier authorizationExemptions = new PropertyIdentifier(364);
+    public static final PropertyIdentifier allowGroupDelayInhibit = new PropertyIdentifier(365);
+    public static final PropertyIdentifier channelNumber = new PropertyIdentifier(366);
+    public static final PropertyIdentifier controlGroups = new PropertyIdentifier(367);
+    public static final PropertyIdentifier executionDelay = new PropertyIdentifier(368);
+    public static final PropertyIdentifier lastPriority = new PropertyIdentifier(369);
+    public static final PropertyIdentifier writeStatus = new PropertyIdentifier(370);
+    public static final PropertyIdentifier propertyList = new PropertyIdentifier(371);
+    public static final PropertyIdentifier serialNumber = new PropertyIdentifier(372);
+    public static final PropertyIdentifier blinkWarnEnable = new PropertyIdentifier(373);
+    public static final PropertyIdentifier defaultFadeTime = new PropertyIdentifier(374);
+    public static final PropertyIdentifier defaultRampRate = new PropertyIdentifier(375);
+    public static final PropertyIdentifier defaultStepIncrement = new PropertyIdentifier(376);
+    public static final PropertyIdentifier egressTime = new PropertyIdentifier(377);
+    public static final PropertyIdentifier inProgress = new PropertyIdentifier(378);
+    public static final PropertyIdentifier instantaneousPower = new PropertyIdentifier(379);
+    public static final PropertyIdentifier lightingCommand = new PropertyIdentifier(380);
+    public static final PropertyIdentifier lightingCommandDefaultPriority = new PropertyIdentifier(381);
+    public static final PropertyIdentifier maxActualValue = new PropertyIdentifier(382);
+    public static final PropertyIdentifier minActualValue = new PropertyIdentifier(383);
+    public static final PropertyIdentifier power = new PropertyIdentifier(384);
+    public static final PropertyIdentifier transition = new PropertyIdentifier(385);
+    public static final PropertyIdentifier egressActive = new PropertyIdentifier(386);
 
     public static final PropertyIdentifier[] ALL = { ackedTransitions, ackRequired, action, actionText, activeText,
             activeVtSessions, alarmValue, alarmValues, all, allWritesSuccessful, apduSegmentTimeout, apduTimeout,
@@ -263,36 +391,63 @@ public class PropertyIdentifier extends Enumerated {
             descriptionOfHalt, deviceAddressBinding, deviceType, effectivePeriod, elapsedActiveTime, errorLimit,
             eventEnable, eventState, eventType, exceptionSchedule, faultValues, feedbackValue, fileAccessMethod,
             fileSize, fileType, firmwareRevision, highLimit, inactiveText, inProcess, instanceOf, integralConstant,
-            integralConstantUnits, limitEnable, listOfGroupMembers, listOfObjectPropertyReferences, listOfSessionKeys,
-            localDate, localTime, location, lowLimit, manipulatedVariableReference, maximumOutput,
-            maxApduLengthAccepted, maxInfoFrames, maxMaster, maxPresValue, minimumOffTime, minimumOnTime,
-            minimumOutput, minPresValue, modelName, modificationDate, notifyType, numberOfApduRetries, numberOfStates,
-            objectIdentifier, objectList, objectName, objectPropertyReference, objectType, optional, outOfService,
-            outputUnits, eventParameters, polarity, presentValue, priority, priorityArray, priorityForWriting,
-            processIdentifier, programChange, programLocation, programState, proportionalConstant,
-            proportionalConstantUnits, protocolObjectTypesSupported, protocolServicesSupported, protocolVersion,
-            readOnly, reasonForHalt, recipientList, reliability, relinquishDefault, required, resolution,
-            segmentationSupported, setpoint, setpointReference, stateText, statusFlags, systemStatus, timeDelay,
-            timeOfActiveTimeReset, timeOfStateCountReset, timeSynchronizationRecipients, units, updateInterval,
-            utcOffset, vendorIdentifier, vendorName, vtClassesSupported, weeklySchedule, attemptedSamples,
-            averageValue, bufferSize, clientCovIncrement, covResubscriptionInterval, eventTimeStamps, logBuffer,
-            logDeviceObjectProperty, enable, logInterval, maximumValue, minimumValue, notificationThreshold,
-            protocolRevision, recordsSinceNotification, recordCount, startTime, stopTime, stopWhenFull,
-            totalRecordCount, validSamples, windowInterval, windowSamples, maximumValueTimestamp,
-            minimumValueTimestamp, varianceValue, activeCovSubscriptions, backupFailureTimeout, configurationFiles,
-            databaseRevision, directReading, lastRestoreTime, maintenanceRequired, memberOf, mode, operationExpected,
-            setting, silenced, trackingValue, zoneMembers, lifeSafetyAlarmValues, maxSegmentsAccepted, profileName,
-            autoSlaveDiscovery, manualSlaveAddressBinding, slaveAddressBinding, slaveProxyEnable, lastNotifyRecord,
-            scheduleDefault, acceptedModes, adjustValue, count, countBeforeChange, countChangeTime, covPeriod,
-            inputReference, limitMonitoringInterval, loggingObject, loggingRecord, prescale, pulseRate, scale,
-            scaleFactor, updateTime, valueBeforeChange, valueSet, valueChangeTime, alignIntervals, intervalOffset,
-            lastRestartReason, loggingType, restartNotificationRecipients, timeOfDeviceRestart,
-            timeSynchronizationInterval, trigger, utcTimeSynchronizationRecipients, nodeSubtype, nodeType,
-            structuredObjectList, subordinateAnnotations, subordinateList, actualShedLevel, dutyWindow,
-            expectedShedLevel, fullDutyBaseline, requestedShedLevel, shedDuration, shedLevelDescriptions, shedLevels,
-            stateDescription, doorAlarmState, doorExtendedPulseTime, doorMembers, doorOpenTooLongTime, doorPulseTime,
-            doorStatus, doorUnlockDelayTime, lockStatus, maskedAlarmValues, securedStatus, backupAndRestoreState,
-            backupPreparationTime, restoreCompletionTime, restorePreparationTime, };
+            integralConstantUnits, limitEnable, listOfGroupMembers, listOfObjectPropertyReferences, localDate,
+            localTime, location, lowLimit, manipulatedVariableReference, maximumOutput, maxApduLengthAccepted,
+            maxInfoFrames, maxMaster, maxPresValue, minimumOffTime, minimumOnTime, minimumOutput, minPresValue,
+            modelName, modificationDate, notifyType, numberOfApduRetries, numberOfStates, objectIdentifier, objectList,
+            objectName, objectPropertyReference, objectType, optional, outOfService, outputUnits, eventParameters,
+            polarity, presentValue, priority, priorityArray, priorityForWriting, processIdentifier, programChange,
+            programLocation, programState, proportionalConstant, proportionalConstantUnits,
+            protocolObjectTypesSupported, protocolServicesSupported, protocolVersion, readOnly, reasonForHalt,
+            recipientList, reliability, relinquishDefault, required, resolution, segmentationSupported, setpoint,
+            setpointReference, stateText, statusFlags, systemStatus, timeDelay, timeOfActiveTimeReset,
+            timeOfStateCountReset, timeSynchronizationRecipients, units, updateInterval, utcOffset, vendorIdentifier,
+            vendorName, vtClassesSupported, weeklySchedule, attemptedSamples, averageValue, bufferSize,
+            clientCovIncrement, covResubscriptionInterval, eventTimeStamps, logBuffer, logDeviceObjectProperty, enable,
+            logInterval, maximumValue, minimumValue, notificationThreshold, protocolRevision, recordsSinceNotification,
+            recordCount, startTime, stopTime, stopWhenFull, totalRecordCount, validSamples, windowInterval,
+            windowSamples, maximumValueTimestamp, minimumValueTimestamp, varianceValue, activeCovSubscriptions,
+            backupFailureTimeout, configurationFiles, databaseRevision, directReading, lastRestoreTime,
+            maintenanceRequired, memberOf, mode, operationExpected, setting, silenced, trackingValue, zoneMembers,
+            lifeSafetyAlarmValues, maxSegmentsAccepted, profileName, autoSlaveDiscovery, manualSlaveAddressBinding,
+            slaveAddressBinding, slaveProxyEnable, lastNotifyRecord, scheduleDefault, acceptedModes, adjustValue,
+            count, countBeforeChange, countChangeTime, covPeriod, inputReference, limitMonitoringInterval,
+            loggingObject, loggingRecord, prescale, pulseRate, scale, scaleFactor, updateTime, valueBeforeChange,
+            valueSet, valueChangeTime, alignIntervals, intervalOffset, lastRestartReason, loggingType,
+            restartNotificationRecipients, timeOfDeviceRestart, timeSynchronizationInterval, trigger,
+            utcTimeSynchronizationRecipients, nodeSubtype, nodeType, structuredObjectList, subordinateAnnotations,
+            subordinateList, actualShedLevel, dutyWindow, expectedShedLevel, fullDutyBaseline, requestedShedLevel,
+            shedDuration, shedLevelDescriptions, shedLevels, stateDescription, doorAlarmState, doorExtendedPulseTime,
+            doorMembers, doorOpenTooLongTime, doorPulseTime, doorStatus, doorUnlockDelayTime, lockStatus,
+            maskedAlarmValues, securedStatus, absenteeLimit, accessAlarmEvents, accessDoors, accessEvent,
+            accessEventAuthenticationFactor, accessEventCredential, accessEventTime, accessTransactionEvents,
+            accompaniment, accompanimentTime, activationTime, activeAuthenticationPolicy, assignedAccessRights,
+            authenticationFactors, authenticationPolicyList, authenticationPolicyNames, authenticationStatus,
+            authorizationMode, belongsTo, credentialDisable, credentialStatus, credentials, credentialsInZone,
+            daysRemaining, entryPoints, exitPoints, expiryTime, extendedTimeEnable, failedAttemptEvents,
+            failedAttempts, failedAttemptsTime, lastAccessEvent, lastAccessPoint, lastCredentialAdded,
+            lastCredentialAddedTime, lastCredentialRemoved, lastCredentialRemovedTime, lastUseTime, lockout,
+            lockoutRelinquishTime, maxFailedAttempts, members, musterPoint, negativeAccessRules,
+            numberOfAuthenticationPolicies, occupancyCount, occupancyCountAdjust, occupancyCountEnable,
+            occupancyLowerLimit, occupancyLowerLimitEnforced, occupancyState, occupancyUpperLimit,
+            occupancyUpperLimitEnforced, passbackMode, passbackTimeout, positiveAccessRules, reasonForDisable,
+            supportedFormats, supportedFormatClasses, threatAuthority, threatLevel, traceFlag,
+            transactionNotificationClass, userExternalIdentifier, userInformationReference, userName, userType,
+            usesRemaining, zoneFrom, zoneTo, accessEventTag, globalIdentifier, verificationTime,
+            baseDeviceSecurityPolicy, distributionKeyRevision, doNotHide, keySets, lastKeyServer,
+            networkAccessSecurityPolicies, packetReorderTime, securityPduTimeout, securityTimeWindow,
+            supportedSecurityAlgorithms, updateKeySetTimeout, backupAndRestoreState, backupPreparationTime,
+            restoreCompletionTime, restorePreparationTime, bitMask, bitText, isUtc, groupMembers, groupMemberNames,
+            memberStatusFlags, requestedUpdateInterval, covuPeriod, covuRecipients, eventMessageTexts,
+            eventMessageTextsConfig, eventDetectionEnable, eventAlgorithmInhibit, eventAlgorithmInhibitRef,
+            timeDelayNormal, reliabilityEvaluationInhibit, faultParameters, faultType, localForwardingOnly,
+            processIdentifierFilter, subscribedRecipients, portFilter, authorizationExemptions, allowGroupDelayInhibit,
+            channelNumber, controlGroups, executionDelay, lastPriority, writeStatus, propertyList, serialNumber,
+            blinkWarnEnable, defaultFadeTime, defaultRampRate, defaultStepIncrement, egressTime, inProgress,
+            instantaneousPower, lightingCommand, lightingCommandDefaultPriority, maxActualValue, minActualValue, power,
+            transition, egressActive,
+
+    };
 
     public PropertyIdentifier(int value) {
         super(value);
@@ -306,453 +461,709 @@ public class PropertyIdentifier extends Enumerated {
     public String toString() {
         int type = intValue();
         if (type == ackedTransitions.intValue())
-            return "Acked transitions";
+            return "ackedTransitions";
         if (type == ackRequired.intValue())
-            return "Ack required";
+            return "ackRequired";
         if (type == action.intValue())
-            return "Action";
+            return "action";
         if (type == actionText.intValue())
-            return "Action text";
+            return "actionText";
         if (type == activeText.intValue())
-            return "Active text";
+            return "activeText";
         if (type == activeVtSessions.intValue())
-            return "Active VT sessions";
+            return "activeVtSessions";
         if (type == alarmValue.intValue())
-            return "Alarm value";
+            return "alarmValue";
         if (type == alarmValues.intValue())
-            return "Alarm values";
+            return "alarmValues";
         if (type == all.intValue())
-            return "All";
+            return "all";
         if (type == allWritesSuccessful.intValue())
-            return "All writes successful";
+            return "allWritesSuccessful";
         if (type == apduSegmentTimeout.intValue())
-            return "APDU segment timeout";
+            return "apduSegmentTimeout";
         if (type == apduTimeout.intValue())
-            return "APDU timeout";
+            return "apduTimeout";
         if (type == applicationSoftwareVersion.intValue())
-            return "Application software version";
+            return "applicationSoftwareVersion";
         if (type == archive.intValue())
-            return "Archive";
+            return "archive";
         if (type == bias.intValue())
-            return "Bias";
+            return "bias";
         if (type == changeOfStateCount.intValue())
-            return "Change of state count";
+            return "changeOfStateCount";
         if (type == changeOfStateTime.intValue())
-            return "Change of state time";
+            return "changeOfStateTime";
         if (type == notificationClass.intValue())
-            return "Notification class";
+            return "notificationClass";
         if (type == controlledVariableReference.intValue())
-            return "Controlled variable reference";
+            return "controlledVariableReference";
         if (type == controlledVariableUnits.intValue())
-            return "Controlled variable units";
+            return "controlledVariableUnits";
         if (type == controlledVariableValue.intValue())
-            return "Controlled variable value";
+            return "controlledVariableValue";
         if (type == covIncrement.intValue())
-            return "COV increment";
+            return "covIncrement";
         if (type == dateList.intValue())
-            return "Date list";
+            return "dateList";
         if (type == daylightSavingsStatus.intValue())
-            return "Daylight savings status";
+            return "daylightSavingsStatus";
         if (type == deadband.intValue())
-            return "Deadband";
+            return "deadband";
         if (type == derivativeConstant.intValue())
-            return "Derivative constant";
+            return "derivativeConstant";
         if (type == derivativeConstantUnits.intValue())
-            return "Derivative constant units";
+            return "derivativeConstantUnits";
         if (type == description.intValue())
-            return "Description";
+            return "description";
         if (type == descriptionOfHalt.intValue())
-            return "Description of halt";
+            return "descriptionOfHalt";
         if (type == deviceAddressBinding.intValue())
-            return "Device address binding";
+            return "deviceAddressBinding";
         if (type == deviceType.intValue())
-            return "Device type";
+            return "deviceType";
         if (type == effectivePeriod.intValue())
-            return "Effective period";
+            return "effectivePeriod";
         if (type == elapsedActiveTime.intValue())
-            return "Elapsed active time";
+            return "elapsedActiveTime";
         if (type == errorLimit.intValue())
-            return "Error limit";
+            return "errorLimit";
         if (type == eventEnable.intValue())
-            return "Event enable";
+            return "eventEnable";
         if (type == eventState.intValue())
-            return "Event state";
+            return "eventState";
         if (type == eventType.intValue())
-            return "Event type";
+            return "eventType";
         if (type == exceptionSchedule.intValue())
-            return "Exception schedule";
+            return "exceptionSchedule";
         if (type == faultValues.intValue())
-            return "Fault values";
+            return "faultValues";
         if (type == feedbackValue.intValue())
-            return "Feedback value";
+            return "feedbackValue";
         if (type == fileAccessMethod.intValue())
-            return "File access method";
+            return "fileAccessMethod";
         if (type == fileSize.intValue())
-            return "File size";
+            return "fileSize";
         if (type == fileType.intValue())
-            return "File type";
+            return "fileType";
         if (type == firmwareRevision.intValue())
-            return "Firmware revision";
+            return "firmwareRevision";
         if (type == highLimit.intValue())
-            return "High limit";
+            return "highLimit";
         if (type == inactiveText.intValue())
-            return "Inactive text";
+            return "inactiveText";
         if (type == inProcess.intValue())
-            return "In process";
+            return "inProcess";
         if (type == instanceOf.intValue())
-            return "Instance of";
+            return "instanceOf";
         if (type == integralConstant.intValue())
-            return "Integral constant";
+            return "integralConstant";
         if (type == integralConstantUnits.intValue())
-            return "Integral constant units";
+            return "integralConstantUnits";
         if (type == limitEnable.intValue())
-            return "Limit enable";
+            return "limitEnable";
         if (type == listOfGroupMembers.intValue())
-            return "List of group members";
+            return "listOfGroupMembers";
         if (type == listOfObjectPropertyReferences.intValue())
-            return "List of object property references";
-        if (type == listOfSessionKeys.intValue())
-            return "List of session keys";
+            return "listOfObjectPropertyReferences";
         if (type == localDate.intValue())
-            return "Local date";
+            return "localDate";
         if (type == localTime.intValue())
-            return "Local time";
+            return "localTime";
         if (type == location.intValue())
-            return "Location";
+            return "location";
         if (type == lowLimit.intValue())
-            return "Low limit";
+            return "lowLimit";
         if (type == manipulatedVariableReference.intValue())
-            return "Manipulated variable reference";
+            return "manipulatedVariableReference";
         if (type == maximumOutput.intValue())
-            return "Maximum output";
+            return "maximumOutput";
         if (type == maxApduLengthAccepted.intValue())
-            return "Max APDU length accepted";
+            return "maxApduLengthAccepted";
         if (type == maxInfoFrames.intValue())
-            return "Max info frames";
+            return "maxInfoFrames";
         if (type == maxMaster.intValue())
-            return "Max master";
+            return "maxMaster";
         if (type == maxPresValue.intValue())
-            return "Max pres value";
+            return "maxPresValue";
         if (type == minimumOffTime.intValue())
-            return "Minimum off time";
+            return "minimumOffTime";
         if (type == minimumOnTime.intValue())
-            return "Minimum on time";
+            return "minimumOnTime";
         if (type == minimumOutput.intValue())
-            return "Minimum output";
+            return "minimumOutput";
         if (type == minPresValue.intValue())
-            return "Min pres value";
+            return "minPresValue";
         if (type == modelName.intValue())
-            return "Model name";
+            return "modelName";
         if (type == modificationDate.intValue())
-            return "Modification date";
+            return "modificationDate";
         if (type == notifyType.intValue())
-            return "Notify type";
+            return "notifyType";
         if (type == numberOfApduRetries.intValue())
-            return "Number of APDU retries";
+            return "numberOfApduRetries";
         if (type == numberOfStates.intValue())
-            return "Number of states";
+            return "numberOfStates";
         if (type == objectIdentifier.intValue())
-            return "Object identifier";
+            return "objectIdentifier";
         if (type == objectList.intValue())
-            return "Object list";
+            return "objectList";
         if (type == objectName.intValue())
-            return "Object name";
+            return "objectName";
         if (type == objectPropertyReference.intValue())
-            return "Object property reference";
+            return "objectPropertyReference";
         if (type == objectType.intValue())
-            return "Object type";
+            return "objectType";
         if (type == optional.intValue())
-            return "Optional";
+            return "optional";
         if (type == outOfService.intValue())
-            return "Out of service";
+            return "outOfService";
         if (type == outputUnits.intValue())
-            return "Output units";
+            return "outputUnits";
         if (type == eventParameters.intValue())
-            return "Event parameters";
+            return "eventParameters";
         if (type == polarity.intValue())
-            return "Polarity";
+            return "polarity";
         if (type == presentValue.intValue())
-            return "Present value";
+            return "presentValue";
         if (type == priority.intValue())
-            return "Priority";
+            return "priority";
         if (type == priorityArray.intValue())
-            return "Priority array";
+            return "priorityArray";
         if (type == priorityForWriting.intValue())
-            return "Priority for writing";
+            return "priorityForWriting";
         if (type == processIdentifier.intValue())
-            return "Process identifier";
+            return "processIdentifier";
         if (type == programChange.intValue())
-            return "Program change";
+            return "programChange";
         if (type == programLocation.intValue())
-            return "Program location";
+            return "programLocation";
         if (type == programState.intValue())
-            return "Program state";
+            return "programState";
         if (type == proportionalConstant.intValue())
-            return "Proportional constant";
+            return "proportionalConstant";
         if (type == proportionalConstantUnits.intValue())
-            return "Proportional constant units";
+            return "proportionalConstantUnits";
         if (type == protocolObjectTypesSupported.intValue())
-            return "Protocol object types supported";
+            return "protocolObjectTypesSupported";
         if (type == protocolServicesSupported.intValue())
-            return "Protocol services supported";
+            return "protocolServicesSupported";
         if (type == protocolVersion.intValue())
-            return "Protocol version";
+            return "protocolVersion";
         if (type == readOnly.intValue())
-            return "Read only";
+            return "readOnly";
         if (type == reasonForHalt.intValue())
-            return "Reason for halt";
+            return "reasonForHalt";
         if (type == recipientList.intValue())
-            return "Recipient list";
+            return "recipientList";
         if (type == reliability.intValue())
-            return "Reliability";
+            return "reliability";
         if (type == relinquishDefault.intValue())
-            return "Relinquish default";
+            return "relinquishDefault";
         if (type == required.intValue())
-            return "Required";
+            return "required";
         if (type == resolution.intValue())
-            return "Resolution";
+            return "resolution";
         if (type == segmentationSupported.intValue())
-            return "Segmentation supported";
+            return "segmentationSupported";
         if (type == setpoint.intValue())
-            return "Setpoint";
+            return "setpoint";
         if (type == setpointReference.intValue())
-            return "Setpoint reference";
+            return "setpointReference";
         if (type == stateText.intValue())
-            return "State text";
+            return "stateText";
         if (type == statusFlags.intValue())
-            return "Status flags";
+            return "statusFlags";
         if (type == systemStatus.intValue())
-            return "System status";
+            return "systemStatus";
         if (type == timeDelay.intValue())
-            return "Time delay";
+            return "timeDelay";
         if (type == timeOfActiveTimeReset.intValue())
-            return "Time of active time reset";
+            return "timeOfActiveTimeReset";
         if (type == timeOfStateCountReset.intValue())
-            return "Time of state count reset";
+            return "timeOfStateCountReset";
         if (type == timeSynchronizationRecipients.intValue())
-            return "Time synchronization recipients";
+            return "timeSynchronizationRecipients";
         if (type == units.intValue())
-            return "Units";
+            return "units";
         if (type == updateInterval.intValue())
-            return "Update interval";
+            return "updateInterval";
         if (type == utcOffset.intValue())
-            return "UTC offset";
+            return "utcOffset";
         if (type == vendorIdentifier.intValue())
-            return "Vendor identifier";
+            return "vendorIdentifier";
         if (type == vendorName.intValue())
-            return "Vendor name";
+            return "vendorName";
         if (type == vtClassesSupported.intValue())
-            return "VT classes supported";
+            return "vtClassesSupported";
         if (type == weeklySchedule.intValue())
-            return "Weekly schedule";
+            return "weeklySchedule";
         if (type == attemptedSamples.intValue())
-            return "Attempted samples";
+            return "attemptedSamples";
         if (type == averageValue.intValue())
-            return "Average value";
+            return "averageValue";
         if (type == bufferSize.intValue())
-            return "Buffer size";
+            return "bufferSize";
         if (type == clientCovIncrement.intValue())
-            return "Client COV increment";
+            return "clientCovIncrement";
         if (type == covResubscriptionInterval.intValue())
-            return "COV resubscription interval";
+            return "covResubscriptionInterval";
         if (type == eventTimeStamps.intValue())
-            return "Event time stamps";
+            return "eventTimeStamps";
         if (type == logBuffer.intValue())
-            return "Log buffer";
+            return "logBuffer";
         if (type == logDeviceObjectProperty.intValue())
-            return "Log device object property";
+            return "logDeviceObjectProperty";
         if (type == enable.intValue())
             return "enable";
         if (type == logInterval.intValue())
-            return "Log interval";
+            return "logInterval";
         if (type == maximumValue.intValue())
-            return "Maximum value";
+            return "maximumValue";
         if (type == minimumValue.intValue())
-            return "Minimum value";
+            return "minimumValue";
         if (type == notificationThreshold.intValue())
-            return "Notification threshold";
+            return "notificationThreshold";
         if (type == protocolRevision.intValue())
-            return "Protocol revision";
+            return "protocolRevision";
         if (type == recordsSinceNotification.intValue())
-            return "Records since notification";
+            return "recordsSinceNotification";
         if (type == recordCount.intValue())
-            return "Record count";
+            return "recordCount";
         if (type == startTime.intValue())
-            return "Start time";
+            return "startTime";
         if (type == stopTime.intValue())
-            return "Stop time";
+            return "stopTime";
         if (type == stopWhenFull.intValue())
-            return "Stop when full";
+            return "stopWhenFull";
         if (type == totalRecordCount.intValue())
-            return "Total record count";
+            return "totalRecordCount";
         if (type == validSamples.intValue())
-            return "Valid samples";
+            return "validSamples";
         if (type == windowInterval.intValue())
-            return "Window interval";
+            return "windowInterval";
         if (type == windowSamples.intValue())
-            return "Window samples";
+            return "windowSamples";
         if (type == maximumValueTimestamp.intValue())
-            return "Maximum value timestamp";
+            return "maximumValueTimestamp";
         if (type == minimumValueTimestamp.intValue())
-            return "Minimum value timestamp";
+            return "minimumValueTimestamp";
         if (type == varianceValue.intValue())
-            return "Variance value";
+            return "varianceValue";
         if (type == activeCovSubscriptions.intValue())
-            return "Active COV subscriptions";
+            return "activeCovSubscriptions";
         if (type == backupFailureTimeout.intValue())
-            return "Backup failure timeout";
+            return "backupFailureTimeout";
         if (type == configurationFiles.intValue())
-            return "Configuration files";
+            return "configurationFiles";
         if (type == databaseRevision.intValue())
-            return "Database revision";
+            return "databaseRevision";
         if (type == directReading.intValue())
-            return "Direct reading";
+            return "directReading";
         if (type == lastRestoreTime.intValue())
-            return "Last restore time";
+            return "lastRestoreTime";
         if (type == maintenanceRequired.intValue())
-            return "Maintenance required";
+            return "maintenanceRequired";
         if (type == memberOf.intValue())
-            return "Member of";
+            return "memberOf";
         if (type == mode.intValue())
-            return "Mode";
+            return "mode";
         if (type == operationExpected.intValue())
-            return "Operation expected";
+            return "operationExpected";
         if (type == setting.intValue())
-            return "Setting";
+            return "setting";
         if (type == silenced.intValue())
-            return "Silenced";
+            return "silenced";
         if (type == trackingValue.intValue())
-            return "Tracking value";
+            return "trackingValue";
         if (type == zoneMembers.intValue())
-            return "Zone members";
+            return "zoneMembers";
         if (type == lifeSafetyAlarmValues.intValue())
-            return "Life safety alarm values";
+            return "lifeSafetyAlarmValues";
         if (type == maxSegmentsAccepted.intValue())
-            return "Max segments accepted";
+            return "maxSegmentsAccepted";
         if (type == profileName.intValue())
-            return "Profile name";
+            return "profileName";
         if (type == autoSlaveDiscovery.intValue())
-            return "Auto slave discovery";
+            return "autoSlaveDiscovery";
         if (type == manualSlaveAddressBinding.intValue())
-            return "Manual slave address binding";
+            return "manualSlaveAddressBinding";
         if (type == slaveAddressBinding.intValue())
-            return "Slave address binding";
+            return "slaveAddressBinding";
         if (type == slaveProxyEnable.intValue())
-            return "Slave proxy enable";
+            return "slaveProxyEnable";
         if (type == lastNotifyRecord.intValue())
-            return "Last notify record";
+            return "lastNotifyRecord";
         if (type == scheduleDefault.intValue())
-            return "Schedule default";
+            return "scheduleDefault";
         if (type == acceptedModes.intValue())
-            return "Accepted modes";
+            return "acceptedModes";
         if (type == adjustValue.intValue())
-            return "Adjust value";
+            return "adjustValue";
         if (type == count.intValue())
-            return "Count";
+            return "count";
         if (type == countBeforeChange.intValue())
-            return "Count before change";
+            return "countBeforeChange";
         if (type == countChangeTime.intValue())
-            return "Count change time";
+            return "countChangeTime";
         if (type == covPeriod.intValue())
-            return "COV period";
+            return "covPeriod";
         if (type == inputReference.intValue())
-            return "Input reference";
+            return "inputReference";
         if (type == limitMonitoringInterval.intValue())
-            return "Limit monitoring interval";
+            return "limitMonitoringInterval";
         if (type == loggingObject.intValue())
-            return "Logging object";
+            return "loggingObject";
         if (type == loggingRecord.intValue())
-            return "Logging record";
+            return "loggingRecord";
         if (type == prescale.intValue())
-            return "Prescale";
+            return "prescale";
         if (type == pulseRate.intValue())
-            return "Pulse rate";
+            return "pulseRate";
         if (type == scale.intValue())
-            return "Scale";
+            return "scale";
         if (type == scaleFactor.intValue())
-            return "Scale factor";
+            return "scaleFactor";
         if (type == updateTime.intValue())
-            return "Update time";
+            return "updateTime";
         if (type == valueBeforeChange.intValue())
-            return "Value before change";
+            return "valueBeforeChange";
         if (type == valueSet.intValue())
-            return "Value set";
+            return "valueSet";
         if (type == valueChangeTime.intValue())
-            return "Value change time";
+            return "valueChangeTime";
         if (type == alignIntervals.intValue())
-            return "Align Intervals";
+            return "alignIntervals";
         if (type == intervalOffset.intValue())
-            return "Interval Offset";
+            return "intervalOffset";
         if (type == lastRestartReason.intValue())
-            return "Last Restart Reason";
+            return "lastRestartReason";
         if (type == loggingType.intValue())
-            return "Logging Type";
+            return "loggingType";
         if (type == restartNotificationRecipients.intValue())
-            return "Restart Notification Recipients";
+            return "restartNotificationRecipients";
         if (type == timeOfDeviceRestart.intValue())
-            return "Time Of Device Restart";
+            return "timeOfDeviceRestart";
         if (type == timeSynchronizationInterval.intValue())
-            return "Time Synchronization Interval";
+            return "timeSynchronizationInterval";
         if (type == trigger.intValue())
-            return "Trigger";
+            return "trigger";
         if (type == utcTimeSynchronizationRecipients.intValue())
-            return "UTC Time Synchronization Recipients";
+            return "utcTimeSynchronizationRecipients";
         if (type == nodeSubtype.intValue())
-            return "Node Subtype";
+            return "nodeSubtype";
         if (type == nodeType.intValue())
-            return "Node Type";
+            return "nodeType";
         if (type == structuredObjectList.intValue())
-            return "Structured Object List";
+            return "structuredObjectList";
         if (type == subordinateAnnotations.intValue())
-            return "Subordinate Annotations";
+            return "subordinateAnnotations";
         if (type == subordinateList.intValue())
-            return "Subordinate List";
+            return "subordinateList";
         if (type == actualShedLevel.intValue())
-            return "Actual Shed Level";
+            return "actualShedLevel";
         if (type == dutyWindow.intValue())
-            return "Duty Window";
+            return "dutyWindow";
         if (type == expectedShedLevel.intValue())
-            return "Expected Shed Level";
+            return "expectedShedLevel";
         if (type == fullDutyBaseline.intValue())
-            return "Full Duty Baseline";
+            return "fullDutyBaseline";
         if (type == requestedShedLevel.intValue())
-            return "Requested Shed Level";
+            return "requestedShedLevel";
         if (type == shedDuration.intValue())
-            return "Shed Duration";
+            return "shedDuration";
         if (type == shedLevelDescriptions.intValue())
-            return "Shed Level Descriptions";
+            return "shedLevelDescriptions";
         if (type == shedLevels.intValue())
-            return "Shed Levels";
+            return "shedLevels";
         if (type == stateDescription.intValue())
-            return "State Description";
+            return "stateDescription";
         if (type == doorAlarmState.intValue())
-            return "Door Alarm State";
+            return "doorAlarmState";
         if (type == doorExtendedPulseTime.intValue())
-            return "Door Extended Pulse Time";
+            return "doorExtendedPulseTime";
         if (type == doorMembers.intValue())
-            return "Door Members";
+            return "doorMembers";
         if (type == doorOpenTooLongTime.intValue())
-            return "Door Open Too Long Time";
+            return "doorOpenTooLongTime";
         if (type == doorPulseTime.intValue())
-            return "Door Pulse Time";
+            return "doorPulseTime";
         if (type == doorStatus.intValue())
-            return "Door Status";
+            return "doorStatus";
         if (type == doorUnlockDelayTime.intValue())
-            return "Door Unlock Delay Time";
+            return "doorUnlockDelayTime";
         if (type == lockStatus.intValue())
-            return "Lock Status";
+            return "lockStatus";
         if (type == maskedAlarmValues.intValue())
-            return "Masked Alarm Values";
+            return "maskedAlarmValues";
         if (type == securedStatus.intValue())
-            return "Secured Status";
+            return "securedStatus";
+        if (type == absenteeLimit.intValue())
+            return "absenteeLimit";
+        if (type == accessAlarmEvents.intValue())
+            return "accessAlarmEvents";
+        if (type == accessDoors.intValue())
+            return "accessDoors";
+        if (type == accessEvent.intValue())
+            return "accessEvent";
+        if (type == accessEventAuthenticationFactor.intValue())
+            return "accessEventAuthenticationFactor";
+        if (type == accessEventCredential.intValue())
+            return "accessEventCredential";
+        if (type == accessEventTime.intValue())
+            return "accessEventTime";
+        if (type == accessTransactionEvents.intValue())
+            return "accessTransactionEvents";
+        if (type == accompaniment.intValue())
+            return "accompaniment";
+        if (type == accompanimentTime.intValue())
+            return "accompanimentTime";
+        if (type == activationTime.intValue())
+            return "activationTime";
+        if (type == activeAuthenticationPolicy.intValue())
+            return "activeAuthenticationPolicy";
+        if (type == assignedAccessRights.intValue())
+            return "assignedAccessRights";
+        if (type == authenticationFactors.intValue())
+            return "authenticationFactors";
+        if (type == authenticationPolicyList.intValue())
+            return "authenticationPolicyList";
+        if (type == authenticationPolicyNames.intValue())
+            return "authenticationPolicyNames";
+        if (type == authenticationStatus.intValue())
+            return "authenticationStatus";
+        if (type == authorizationMode.intValue())
+            return "authorizationMode";
+        if (type == belongsTo.intValue())
+            return "belongsTo";
+        if (type == credentialDisable.intValue())
+            return "credentialDisable";
+        if (type == credentialStatus.intValue())
+            return "credentialStatus";
+        if (type == credentials.intValue())
+            return "credentials";
+        if (type == credentialsInZone.intValue())
+            return "credentialsInZone";
+        if (type == daysRemaining.intValue())
+            return "daysRemaining";
+        if (type == entryPoints.intValue())
+            return "entryPoints";
+        if (type == exitPoints.intValue())
+            return "exitPoints";
+        if (type == expiryTime.intValue())
+            return "expiryTime";
+        if (type == extendedTimeEnable.intValue())
+            return "extendedTimeEnable";
+        if (type == failedAttemptEvents.intValue())
+            return "failedAttemptEvents";
+        if (type == failedAttempts.intValue())
+            return "failedAttempts";
+        if (type == failedAttemptsTime.intValue())
+            return "failedAttemptsTime";
+        if (type == lastAccessEvent.intValue())
+            return "lastAccessEvent";
+        if (type == lastAccessPoint.intValue())
+            return "lastAccessPoint";
+        if (type == lastCredentialAdded.intValue())
+            return "lastCredentialAdded";
+        if (type == lastCredentialAddedTime.intValue())
+            return "lastCredentialAddedTime";
+        if (type == lastCredentialRemoved.intValue())
+            return "lastCredentialRemoved";
+        if (type == lastCredentialRemovedTime.intValue())
+            return "lastCredentialRemovedTime";
+        if (type == lastUseTime.intValue())
+            return "lastUseTime";
+        if (type == lockout.intValue())
+            return "lockout";
+        if (type == lockoutRelinquishTime.intValue())
+            return "lockoutRelinquishTime";
+        if (type == maxFailedAttempts.intValue())
+            return "maxFailedAttempts";
+        if (type == members.intValue())
+            return "members";
+        if (type == musterPoint.intValue())
+            return "musterPoint";
+        if (type == negativeAccessRules.intValue())
+            return "negativeAccessRules";
+        if (type == numberOfAuthenticationPolicies.intValue())
+            return "numberOfAuthenticationPolicies";
+        if (type == occupancyCount.intValue())
+            return "occupancyCount";
+        if (type == occupancyCountAdjust.intValue())
+            return "occupancyCountAdjust";
+        if (type == occupancyCountEnable.intValue())
+            return "occupancyCountEnable";
+        if (type == occupancyLowerLimit.intValue())
+            return "occupancyLowerLimit";
+        if (type == occupancyLowerLimitEnforced.intValue())
+            return "occupancyLowerLimitEnforced";
+        if (type == occupancyState.intValue())
+            return "occupancyState";
+        if (type == occupancyUpperLimit.intValue())
+            return "occupancyUpperLimit";
+        if (type == occupancyUpperLimitEnforced.intValue())
+            return "occupancyUpperLimitEnforced";
+        if (type == passbackMode.intValue())
+            return "passbackMode";
+        if (type == passbackTimeout.intValue())
+            return "passbackTimeout";
+        if (type == positiveAccessRules.intValue())
+            return "positiveAccessRules";
+        if (type == reasonForDisable.intValue())
+            return "reasonForDisable";
+        if (type == supportedFormats.intValue())
+            return "supportedFormats";
+        if (type == supportedFormatClasses.intValue())
+            return "supportedFormatClasses";
+        if (type == threatAuthority.intValue())
+            return "threatAuthority";
+        if (type == threatLevel.intValue())
+            return "threatLevel";
+        if (type == traceFlag.intValue())
+            return "traceFlag";
+        if (type == transactionNotificationClass.intValue())
+            return "transactionNotificationClass";
+        if (type == userExternalIdentifier.intValue())
+            return "userExternalIdentifier";
+        if (type == userInformationReference.intValue())
+            return "userInformationReference";
+        if (type == userName.intValue())
+            return "userName";
+        if (type == userType.intValue())
+            return "userType";
+        if (type == usesRemaining.intValue())
+            return "usesRemaining";
+        if (type == zoneFrom.intValue())
+            return "zoneFrom";
+        if (type == zoneTo.intValue())
+            return "zoneTo";
+        if (type == accessEventTag.intValue())
+            return "accessEventTag";
+        if (type == globalIdentifier.intValue())
+            return "globalIdentifier";
+        if (type == verificationTime.intValue())
+            return "verificationTime";
+        if (type == baseDeviceSecurityPolicy.intValue())
+            return "baseDeviceSecurityPolicy";
+        if (type == distributionKeyRevision.intValue())
+            return "distributionKeyRevision";
+        if (type == doNotHide.intValue())
+            return "doNotHide";
+        if (type == keySets.intValue())
+            return "keySets";
+        if (type == lastKeyServer.intValue())
+            return "lastKeyServer";
+        if (type == networkAccessSecurityPolicies.intValue())
+            return "networkAccessSecurityPolicies";
+        if (type == packetReorderTime.intValue())
+            return "packetReorderTime";
+        if (type == securityPduTimeout.intValue())
+            return "securityPduTimeout";
+        if (type == securityTimeWindow.intValue())
+            return "securityTimeWindow";
+        if (type == supportedSecurityAlgorithms.intValue())
+            return "supportedSecurityAlgorithms";
+        if (type == updateKeySetTimeout.intValue())
+            return "updateKeySetTimeout";
         if (type == backupAndRestoreState.intValue())
-            return "Backup And Restore State";
+            return "backupAndRestoreState";
         if (type == backupPreparationTime.intValue())
-            return "Backup Preparation Time";
+            return "backupPreparationTime";
         if (type == restoreCompletionTime.intValue())
-            return "Restore Completion Time";
+            return "restoreCompletionTime";
         if (type == restorePreparationTime.intValue())
-            return "Restore Preparation Time";
+            return "restorePreparationTime";
+        if (type == bitMask.intValue())
+            return "bitMask";
+        if (type == bitText.intValue())
+            return "bitText";
+        if (type == isUtc.intValue())
+            return "isUtc";
+        if (type == groupMembers.intValue())
+            return "groupMembers";
+        if (type == groupMemberNames.intValue())
+            return "groupMemberNames";
+        if (type == memberStatusFlags.intValue())
+            return "memberStatusFlags";
+        if (type == requestedUpdateInterval.intValue())
+            return "requestedUpdateInterval";
+        if (type == covuPeriod.intValue())
+            return "covuPeriod";
+        if (type == covuRecipients.intValue())
+            return "covuRecipients";
+        if (type == eventMessageTexts.intValue())
+            return "eventMessageTexts";
+        if (type == eventMessageTextsConfig.intValue())
+            return "eventMessageTextsConfig";
+        if (type == eventDetectionEnable.intValue())
+            return "eventDetectionEnable";
+        if (type == eventAlgorithmInhibit.intValue())
+            return "eventAlgorithmInhibit";
+        if (type == eventAlgorithmInhibitRef.intValue())
+            return "eventAlgorithmInhibitRef";
+        if (type == timeDelayNormal.intValue())
+            return "timeDelayNormal";
+        if (type == reliabilityEvaluationInhibit.intValue())
+            return "reliabilityEvaluationInhibit";
+        if (type == faultParameters.intValue())
+            return "faultParameters";
+        if (type == faultType.intValue())
+            return "faultType";
+        if (type == localForwardingOnly.intValue())
+            return "localForwardingOnly";
+        if (type == processIdentifierFilter.intValue())
+            return "processIdentifierFilter";
+        if (type == subscribedRecipients.intValue())
+            return "subscribedRecipients";
+        if (type == portFilter.intValue())
+            return "portFilter";
+        if (type == authorizationExemptions.intValue())
+            return "authorizationExemptions";
+        if (type == allowGroupDelayInhibit.intValue())
+            return "allowGroupDelayInhibit";
+        if (type == channelNumber.intValue())
+            return "channelNumber";
+        if (type == controlGroups.intValue())
+            return "controlGroups";
+        if (type == executionDelay.intValue())
+            return "executionDelay";
+        if (type == lastPriority.intValue())
+            return "lastPriority";
+        if (type == writeStatus.intValue())
+            return "writeStatus";
+        if (type == propertyList.intValue())
+            return "propertyList";
+        if (type == serialNumber.intValue())
+            return "serialNumber";
+        if (type == blinkWarnEnable.intValue())
+            return "blinkWarnEnable";
+        if (type == defaultFadeTime.intValue())
+            return "defaultFadeTime";
+        if (type == defaultRampRate.intValue())
+            return "defaultRampRate";
+        if (type == defaultStepIncrement.intValue())
+            return "defaultStepIncrement";
+        if (type == egressTime.intValue())
+            return "egressTime";
+        if (type == inProgress.intValue())
+            return "inProgress";
+        if (type == instantaneousPower.intValue())
+            return "instantaneousPower";
+        if (type == lightingCommand.intValue())
+            return "lightingCommand";
+        if (type == lightingCommandDefaultPriority.intValue())
+            return "lightingCommandDefaultPriority";
+        if (type == maxActualValue.intValue())
+            return "maxActualValue";
+        if (type == minActualValue.intValue())
+            return "minActualValue";
+        if (type == power.intValue())
+            return "power";
+        if (type == transition.intValue())
+            return "transition";
+        if (type == egressActive.intValue())
+            return "egressActive";
         return "Unknown: " + type;
     }
 }
