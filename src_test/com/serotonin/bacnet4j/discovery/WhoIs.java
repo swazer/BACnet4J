@@ -5,12 +5,13 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 
 public class WhoIs {
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         LocalDevice localDevice = new LocalDevice(0xBAC0, transport);
         localDevice.getEventHandler().addListener(new Listener());
 

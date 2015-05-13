@@ -29,7 +29,7 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
@@ -49,7 +49,7 @@ public class DiscoveryTest {
                 IpNetwork.DEFAULT_BIND_IP, 1);
 
         // LocalDevice localDevice = new LocalDevice(1234, "192.168.0.255");
-        LocalDevice localDevice = new LocalDevice(1234, new Transport(network));
+        LocalDevice localDevice = new LocalDevice(1234, new DefaultTransport(network));
         localDevice.getEventHandler().addListener(new Listener());
         localDevice.initialize();
 

@@ -17,6 +17,7 @@ import com.serotonin.bacnet4j.service.confirmed.ReadPropertyMultipleRequest;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyMultipleRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.PropertyReference;
@@ -41,7 +42,7 @@ public class RemoteTest {
     static RemoteDevice d;
 
     public static void main(String[] args) throws Exception {
-        localDevice = new LocalDevice(1, new Transport(new IpNetwork()));
+        localDevice = new LocalDevice(1, new DefaultTransport(new IpNetwork()));
         localDevice.initialize();
         try {
             d = DiscoveryUtils.discoverDevice(localDevice, 1969);
@@ -63,16 +64,17 @@ public class RemoteTest {
 
     static void readRequest() throws Exception {
         // Send a read request to the remote device.
-        ServiceFuture<ReadPropertyAck> future = localDevice.send(d, new ReadPropertyRequest(new ObjectIdentifier(
-                ObjectType.analogInput, 1), PropertyIdentifier.units));
-        Assert.assertEquals(EngineeringUnits.percentObscurationPerFoot, future.get().getValue());
+        ServiceFuture future = localDevice.send(d, new ReadPropertyRequest(new ObjectIdentifier(ObjectType.analogInput,
+                1), PropertyIdentifier.units));
+        ReadPropertyAck ack = future.get();
+        Assert.assertEquals(EngineeringUnits.percentObscurationPerFoot, ack.getValue());
     }
 
     static void segmentedResponse() throws Exception {
         // Send an object list request to the remote device.
         List<ReadAccessSpecification> specs = new ArrayList<ReadAccessSpecification>();
         specs.add(new ReadAccessSpecification(d.getObjectIdentifier(), PropertyIdentifier.objectList));
-        ServiceFuture<ReadPropertyMultipleAck> future = localDevice.send(d, new ReadPropertyMultipleRequest(
+        ServiceFuture future = localDevice.send(d, new ReadPropertyMultipleRequest(
                 new SequenceOf<ReadAccessSpecification>(specs)));
         ReadPropertyMultipleAck ack = future.get();
 
@@ -134,7 +136,7 @@ public class RemoteTest {
         for (int i = 0; i < 1000; i++)
             specs.add(new ReadAccessSpecification(new ObjectIdentifier(ObjectType.analogValue, i), propertyReferenceSeq));
 
-        ServiceFuture<ReadPropertyMultipleAck> future = localDevice.send(d, new ReadPropertyMultipleRequest(
+        ServiceFuture future = localDevice.send(d, new ReadPropertyMultipleRequest(
                 new SequenceOf<ReadAccessSpecification>(specs)));
         ReadPropertyMultipleAck ack = future.get();
 

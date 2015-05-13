@@ -12,7 +12,7 @@ import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.service.acknowledgement.AtomicReadFileAck;
 import com.serotonin.bacnet4j.service.confirmed.AtomicReadFileRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
@@ -29,10 +29,10 @@ public class FileAccessTest {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork("192.168.0.255");
-        LocalDevice localDevice = new LocalDevice(1234, new Transport(network));
+        LocalDevice localDevice = new LocalDevice(1234, new DefaultTransport(network));
         try {
             localDevice.initialize();
-            localDevice.sendBroadcast(network.getBroadcastAddress(2068), null, new WhoIsRequest(null, null));
+            localDevice.sendBroadcast(network.getBroadcastAddress(2068), new WhoIsRequest(null, null));
 
             Thread.sleep(1000);
 

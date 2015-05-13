@@ -7,6 +7,7 @@ import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.mstp.MasterNode;
 import com.serotonin.bacnet4j.npdu.mstp.MstpNetwork;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -29,7 +30,7 @@ public class SerialTest {
 
         MasterNode master = new MasterNode(params, (byte) 0x4, 2);
         MstpNetwork network = new MstpNetwork(master);
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         localDevice = new LocalDevice(1234, transport);
         localDevice.getEventHandler().addListener(new Listener());
 

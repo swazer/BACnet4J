@@ -34,9 +34,10 @@ import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.obj.FileObject;
 import com.serotonin.bacnet4j.service.VendorServiceKey;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.SequenceDefinition;
 import com.serotonin.bacnet4j.type.SequenceDefinition.ElementSpecification;
+import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
@@ -61,8 +62,8 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 
 public class SlaveDeviceTest {
     public static void main(String[] args) throws Exception {
-        LocalDevice localDevice = new LocalDevice(1969, new Transport(new IpNetwork("192.168.0.255")));
-        localDevice.getConfiguration().setProperty(PropertyIdentifier.objectName,
+        LocalDevice localDevice = new LocalDevice(1969, new DefaultTransport(new IpNetwork("192.168.0.255")));
+        localDevice.getConfiguration().writeProperty(PropertyIdentifier.objectName,
                 new CharacterString("BACnet4J slave device test"));
         localDevice.getEventHandler().addListener(new Listener());
         // localDevice.getConfiguration().setProperty(PropertyIdentifier.segmentationSupported,
@@ -77,67 +78,59 @@ public class SlaveDeviceTest {
         //                =[2e,c,2,0,27,74,19,0,29,0,3e,c,0,0,0,9,19,55,3e,44,42,d7,ac,4a,3f,5b,4,0,0,3f,2f]
 
         // Set up a few objects.
-        BACnetObject ai0 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
-        ai0.setProperty(PropertyIdentifier.units, EngineeringUnits.centimeters);
+        BACnetObject ai0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
+        ai0.writeProperty(PropertyIdentifier.units, EngineeringUnits.centimeters);
         // Set the COV threshold/increment which is the value at which COV notifications will be triggered
-        ai0.setProperty(PropertyIdentifier.covIncrement, new Real(0.2f));
+        ai0.writeProperty(PropertyIdentifier.covIncrement, new Real(0.2f));
         localDevice.addObject(ai0);
 
-        BACnetObject ai1 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
-        ai1.setProperty(PropertyIdentifier.units, EngineeringUnits.percentObscurationPerFoot);
+        BACnetObject ai1 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
+        ai1.writeProperty(PropertyIdentifier.units, EngineeringUnits.percentObscurationPerFoot);
         // Set the COV threshold/increment which is the value at which COV notifications will be triggered
-        ai1.setProperty(PropertyIdentifier.covIncrement, new Real(1));
+        ai1.writeProperty(PropertyIdentifier.covIncrement, new Real(1));
         localDevice.addObject(ai1);
 
-        BACnetObject bi0 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
+        BACnetObject bi0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
         localDevice.addObject(bi0);
-        bi0.setProperty(PropertyIdentifier.objectName, new CharacterString("Off and on"));
-        bi0.setProperty(PropertyIdentifier.inactiveText, new CharacterString("Off"));
-        bi0.setProperty(PropertyIdentifier.activeText, new CharacterString("On"));
+        bi0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Off and on"));
+        bi0.writeProperty(PropertyIdentifier.inactiveText, new CharacterString("Off"));
+        bi0.writeProperty(PropertyIdentifier.activeText, new CharacterString("On"));
 
-        BACnetObject bi1 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
+        BACnetObject bi1 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
         localDevice.addObject(bi1);
-        bi1.setProperty(PropertyIdentifier.objectName, new CharacterString("Good and bad"));
-        bi1.setProperty(PropertyIdentifier.inactiveText, new CharacterString("Bad"));
-        bi1.setProperty(PropertyIdentifier.activeText, new CharacterString("Good"));
+        bi1.writeProperty(PropertyIdentifier.objectName, new CharacterString("Good and bad"));
+        bi1.writeProperty(PropertyIdentifier.inactiveText, new CharacterString("Bad"));
+        bi1.writeProperty(PropertyIdentifier.activeText, new CharacterString("Good"));
 
-        BACnetObject mso0 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.multiStateOutput));
-        mso0.setProperty(PropertyIdentifier.objectName, new CharacterString("Vegetable"));
-        mso0.setProperty(PropertyIdentifier.numberOfStates, new UnsignedInteger(4));
-        mso0.setProperty(PropertyIdentifier.stateText, 1, new CharacterString("Tomato"));
-        mso0.setProperty(PropertyIdentifier.stateText, 2, new CharacterString("Potato"));
-        mso0.setProperty(PropertyIdentifier.stateText, 3, new CharacterString("Onion"));
-        mso0.setProperty(PropertyIdentifier.stateText, 4, new CharacterString("Broccoli"));
-        mso0.setProperty(PropertyIdentifier.presentValue, new UnsignedInteger(1));
+        BACnetObject mso0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.multiStateOutput));
+        mso0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Vegetable"));
+        mso0.writeProperty(PropertyIdentifier.numberOfStates, new UnsignedInteger(4));
+        mso0.writeProperty(PropertyIdentifier.stateText, 1, new CharacterString("Tomato"));
+        mso0.writeProperty(PropertyIdentifier.stateText, 2, new CharacterString("Potato"));
+        mso0.writeProperty(PropertyIdentifier.stateText, 3, new CharacterString("Onion"));
+        mso0.writeProperty(PropertyIdentifier.stateText, 4, new CharacterString("Broccoli"));
+        mso0.writeProperty(PropertyIdentifier.presentValue, new UnsignedInteger(1));
         localDevice.addObject(mso0);
 
-        BACnetObject ao0 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.analogOutput));
-        ao0.setProperty(PropertyIdentifier.objectName, new CharacterString("Settable analog"));
+        BACnetObject ao0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogOutput));
+        ao0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Settable analog"));
         localDevice.addObject(ao0);
 
-        BACnetObject av0 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.analogValue));
-        av0.setProperty(PropertyIdentifier.objectName, new CharacterString("Command Priority Test"));
-        av0.setProperty(PropertyIdentifier.relinquishDefault, new Real(3.1415F));
+        BACnetObject av0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogValue));
+        av0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Command Priority Test"));
+        av0.writeProperty(PropertyIdentifier.relinquishDefault, new Real(3.1415F));
         localDevice.addObject(av0);
 
-        FileObject file0 = new FileObject(localDevice, localDevice.getNextInstanceObjectIdentifier(ObjectType.file),
-                new File("testFile.txt"), FileAccessMethod.streamAccess);
-        file0.setProperty(PropertyIdentifier.fileType, new CharacterString("aTestFile"));
-        file0.setProperty(PropertyIdentifier.archive, new Boolean(false));
+        FileObject file0 = new FileObject(localDevice.getNextInstanceObjectNumber(ObjectType.file), new File(
+                "testFile.txt"), FileAccessMethod.streamAccess);
+        file0.writeProperty(PropertyIdentifier.fileType, new CharacterString("aTestFile"));
+        file0.writeProperty(PropertyIdentifier.archive, new Boolean(false));
         localDevice.addObject(file0);
 
-        BACnetObject bv1 = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryValue));
-        bv1.setProperty(PropertyIdentifier.objectName, new CharacterString("A binary value"));
-        bv1.setProperty(PropertyIdentifier.inactiveText, new CharacterString("Down"));
-        bv1.setProperty(PropertyIdentifier.activeText, new CharacterString("Up"));
+        BACnetObject bv1 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryValue));
+        bv1.writeProperty(PropertyIdentifier.objectName, new CharacterString("A binary value"));
+        bv1.writeProperty(PropertyIdentifier.inactiveText, new CharacterString("Down"));
+        bv1.writeProperty(PropertyIdentifier.activeText, new CharacterString("Up"));
         localDevice.addObject(bv1);
 
         // Add a bunch more values.
@@ -158,7 +151,7 @@ public class SlaveDeviceTest {
 
         Thread.sleep(10000);
 
-        mso0.setProperty(PropertyIdentifier.presentValue, new UnsignedInteger(2));
+        mso0.writeProperty(PropertyIdentifier.presentValue, new UnsignedInteger(2));
         while (true) {
             // Change the values.
             ai0value += 0.1;
@@ -167,10 +160,10 @@ public class SlaveDeviceTest {
             bi1value = !bi1value;
 
             // Update the values in the objects.
-            ai0.setProperty(PropertyIdentifier.presentValue, new Real(ai0value));
-            ai1.setProperty(PropertyIdentifier.presentValue, new Real(ai1value));
-            bi0.setProperty(PropertyIdentifier.presentValue, bi0value ? BinaryPV.active : BinaryPV.inactive);
-            bi1.setProperty(PropertyIdentifier.presentValue, bi1value ? BinaryPV.active : BinaryPV.inactive);
+            ai0.writeProperty(PropertyIdentifier.presentValue, new Real(ai0value));
+            ai1.writeProperty(PropertyIdentifier.presentValue, new Real(ai1value));
+            bi0.writeProperty(PropertyIdentifier.presentValue, bi0value ? BinaryPV.active : BinaryPV.inactive);
+            bi1.writeProperty(PropertyIdentifier.presentValue, bi1value ? BinaryPV.active : BinaryPV.inactive);
 
             Thread.sleep(2500);
         }
@@ -178,10 +171,9 @@ public class SlaveDeviceTest {
 
     static void addAnalogValue(LocalDevice localDevice, EngineeringUnits units, float value)
             throws BACnetServiceException {
-        BACnetObject av = new BACnetObject(localDevice,
-                localDevice.getNextInstanceObjectIdentifier(ObjectType.analogValue));
-        av.setProperty(PropertyIdentifier.units, units);
-        av.setProperty(PropertyIdentifier.presentValue, new Real(value));
+        BACnetObject av = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogValue));
+        av.writeProperty(PropertyIdentifier.units, units);
+        av.writeProperty(PropertyIdentifier.presentValue, new Real(value));
         localDevice.addObject(av);
     }
 
@@ -197,12 +189,12 @@ public class SlaveDeviceTest {
         }
 
         @Override
-        public boolean allowPropertyWrite(BACnetObject obj, PropertyValue pv) {
+        public boolean allowPropertyWrite(Address from, BACnetObject obj, PropertyValue pv) {
             return true;
         }
 
         @Override
-        public void propertyWritten(BACnetObject obj, PropertyValue pv) {
+        public void propertyWritten(Address from, BACnetObject obj, PropertyValue pv) {
             System.out.println("Wrote " + pv + " to " + obj.getId());
         }
 
@@ -233,18 +225,18 @@ public class SlaveDeviceTest {
         }
 
         @Override
-        public void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
+        public void privateTransferReceived(Address from, UnsignedInteger vendorId, UnsignedInteger serviceNumber,
                 Sequence serviceParameters) {
             System.out.println("Received private transfer service with params: " + serviceParameters.getValues());
         }
 
         @Override
-        public void reinitializeDevice(ReinitializedStateOfDevice reinitializedStateOfDevice) {
+        public void reinitializeDevice(Address from, ReinitializedStateOfDevice reinitializedStateOfDevice) {
             // no op
         }
 
         @Override
-        public void synchronizeTime(DateTime dateTime, boolean utc) {
+        public void synchronizeTime(Address from, DateTime dateTime, boolean utc) {
             // no op
         }
     }

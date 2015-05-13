@@ -30,7 +30,8 @@ import com.serotonin.bacnet4j.exception.BACnetServiceException;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
+import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
@@ -79,10 +80,9 @@ public class LoopDevice implements Runnable {
 
     public LoopDevice(String broadcastAddress, int port) throws BACnetServiceException, Exception {
         network = new IpNetwork(broadcastAddress, port);
-        localDevice = new LocalDevice(1968, new Transport(network));
+        localDevice = new LocalDevice(1968, new DefaultTransport(network));
         try {
             localDevice.getEventHandler().addListener(new DeviceEventListener() {
-
                 @Override
                 public void listenerException(Throwable e) {
                     System.out.println("loopDevice listenerException");
@@ -94,13 +94,13 @@ public class LoopDevice implements Runnable {
                 }
 
                 @Override
-                public boolean allowPropertyWrite(BACnetObject obj, PropertyValue pv) {
+                public boolean allowPropertyWrite(Address from, BACnetObject obj, PropertyValue pv) {
                     System.out.println("loopDevice allowPropertyWrite");
                     return true;
                 }
 
                 @Override
-                public void propertyWritten(BACnetObject obj, PropertyValue pv) {
+                public void propertyWritten(Address from, BACnetObject obj, PropertyValue pv) {
                     System.out.println("loopDevice propertyWritten");
                 }
 
@@ -132,18 +132,18 @@ public class LoopDevice implements Runnable {
                 }
 
                 @Override
-                public void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
-                        Sequence serviceParameters) {
+                public void privateTransferReceived(Address from, UnsignedInteger vendorId,
+                        UnsignedInteger serviceNumber, Sequence serviceParameters) {
                     System.out.println("loopDevice privateTransferReceived");
                 }
 
                 @Override
-                public void reinitializeDevice(ReinitializedStateOfDevice reinitializedStateOfDevice) {
+                public void reinitializeDevice(Address from, ReinitializedStateOfDevice reinitializedStateOfDevice) {
                     System.out.println("loopDevice reinitializeDevice");
                 }
 
                 @Override
-                public void synchronizeTime(DateTime dateTime, boolean utc) {
+                public void synchronizeTime(Address from, DateTime dateTime, boolean utc) {
                     System.out.println("loopDevice synchronizeTime");
                 }
             });
@@ -151,65 +151,64 @@ public class LoopDevice implements Runnable {
             // for valid property values with valid datatypes see com.serotonin.bacnet4j.obj.ObjectProperties and ther
             // look for the big static block at the end;
             // properties of device object
-            localDevice.getConfiguration().setProperty(PropertyIdentifier.modelName,
+            localDevice.getConfiguration().writeProperty(PropertyIdentifier.modelName,
                     new CharacterString("BACnet4J LoopDevice"));
 
             // Set up a few objects.
-            ai0 = new BACnetObject(localDevice, localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
+            ai0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
 
             // mandatory properties
-            ai0.setProperty(PropertyIdentifier.objectName, new CharacterString("G1-RLT03-TM-01")); // this is a cryptic
+            ai0.writeProperty(PropertyIdentifier.objectName, new CharacterString("G1-RLT03-TM-01")); // this is a cryptic
             // encoded name of a
             // temp sensor from a
             // drawing... (ahm.
             // actually taken
             // from a book ;-))
-            ai0.setProperty(PropertyIdentifier.presentValue, new Real(11));
-            ai0.setProperty(PropertyIdentifier.outOfService, new Boolean(false));
-            ai0.setProperty(PropertyIdentifier.units, EngineeringUnits.degreesCelsius);
+            ai0.writeProperty(PropertyIdentifier.presentValue, new Real(11));
+            ai0.writeProperty(PropertyIdentifier.outOfService, new Boolean(false));
+            ai0.writeProperty(PropertyIdentifier.units, EngineeringUnits.degreesCelsius);
 
             // some optional properties
-            ai0.setProperty(PropertyIdentifier.description, new CharacterString("temperature"));
-            ai0.setProperty(PropertyIdentifier.deviceType, new CharacterString("random values"));
-            ai0.setProperty(PropertyIdentifier.reliability, Reliability.noFaultDetected);
-            ai0.setProperty(PropertyIdentifier.updateInterval, new UnsignedInteger(10));
+            ai0.writeProperty(PropertyIdentifier.description, new CharacterString("temperature"));
+            ai0.writeProperty(PropertyIdentifier.deviceType, new CharacterString("random values"));
+            ai0.writeProperty(PropertyIdentifier.reliability, Reliability.noFaultDetected);
+            ai0.writeProperty(PropertyIdentifier.updateInterval, new UnsignedInteger(10));
 
-            ai0.setProperty(PropertyIdentifier.minPresValue, new Real(-70));
-            ai0.setProperty(PropertyIdentifier.maxPresValue, new Real(120));
-            ai0.setProperty(PropertyIdentifier.resolution, new Real((float) 0.1));
-            ai0.setProperty(PropertyIdentifier.profileName, new CharacterString("funny reader"));
+            ai0.writeProperty(PropertyIdentifier.minPresValue, new Real(-70));
+            ai0.writeProperty(PropertyIdentifier.maxPresValue, new Real(120));
+            ai0.writeProperty(PropertyIdentifier.resolution, new Real((float) 0.1));
+            ai0.writeProperty(PropertyIdentifier.profileName, new CharacterString("funny reader"));
 
             localDevice.addObject(ai0);
 
-            ai1 = new BACnetObject(localDevice, localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
-            ai1.setProperty(PropertyIdentifier.units, EngineeringUnits.percentObscurationPerFoot);
+            ai1 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogInput));
+            ai1.writeProperty(PropertyIdentifier.units, EngineeringUnits.percentObscurationPerFoot);
             localDevice.addObject(ai1);
 
-            bi0 = new BACnetObject(localDevice, localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
+            bi0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
             localDevice.addObject(bi0);
-            bi0.setProperty(PropertyIdentifier.objectName, new CharacterString("Off and on"));
-            bi0.setProperty(PropertyIdentifier.inactiveText, new CharacterString("Off"));
-            bi0.setProperty(PropertyIdentifier.activeText, new CharacterString("On"));
+            bi0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Off and on"));
+            bi0.writeProperty(PropertyIdentifier.inactiveText, new CharacterString("Off"));
+            bi0.writeProperty(PropertyIdentifier.activeText, new CharacterString("On"));
 
-            bi1 = new BACnetObject(localDevice, localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
+            bi1 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.binaryInput));
             localDevice.addObject(bi1);
-            bi1.setProperty(PropertyIdentifier.objectName, new CharacterString("Good and bad"));
-            bi1.setProperty(PropertyIdentifier.inactiveText, new CharacterString("Bad"));
-            bi1.setProperty(PropertyIdentifier.activeText, new CharacterString("Good"));
+            bi1.writeProperty(PropertyIdentifier.objectName, new CharacterString("Good and bad"));
+            bi1.writeProperty(PropertyIdentifier.inactiveText, new CharacterString("Bad"));
+            bi1.writeProperty(PropertyIdentifier.activeText, new CharacterString("Good"));
 
-            mso0 = new BACnetObject(localDevice,
-                    localDevice.getNextInstanceObjectIdentifier(ObjectType.multiStateOutput));
-            mso0.setProperty(PropertyIdentifier.objectName, new CharacterString("Vegetable"));
-            mso0.setProperty(PropertyIdentifier.numberOfStates, new UnsignedInteger(4));
-            mso0.setProperty(PropertyIdentifier.stateText, 1, new CharacterString("Tomato"));
-            mso0.setProperty(PropertyIdentifier.stateText, 2, new CharacterString("Potato"));
-            mso0.setProperty(PropertyIdentifier.stateText, 3, new CharacterString("Onion"));
-            mso0.setProperty(PropertyIdentifier.stateText, 4, new CharacterString("Broccoli"));
-            mso0.setProperty(PropertyIdentifier.presentValue, new UnsignedInteger(1));
+            mso0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.multiStateOutput));
+            mso0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Vegetable"));
+            mso0.writeProperty(PropertyIdentifier.numberOfStates, new UnsignedInteger(4));
+            mso0.writeProperty(PropertyIdentifier.stateText, 1, new CharacterString("Tomato"));
+            mso0.writeProperty(PropertyIdentifier.stateText, 2, new CharacterString("Potato"));
+            mso0.writeProperty(PropertyIdentifier.stateText, 3, new CharacterString("Onion"));
+            mso0.writeProperty(PropertyIdentifier.stateText, 4, new CharacterString("Broccoli"));
+            mso0.writeProperty(PropertyIdentifier.presentValue, new UnsignedInteger(1));
             localDevice.addObject(mso0);
 
-            ao0 = new BACnetObject(localDevice, localDevice.getNextInstanceObjectIdentifier(ObjectType.analogOutput));
-            ao0.setProperty(PropertyIdentifier.objectName, new CharacterString("Settable analog"));
+            ao0 = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.analogOutput));
+            ao0.writeProperty(PropertyIdentifier.objectName, new CharacterString("Settable analog"));
             localDevice.addObject(ao0);
 
             // Start the local device.
@@ -236,15 +235,15 @@ public class LoopDevice implements Runnable {
             boolean bi0value = false;
             boolean bi1value = false;
 
-            getMso0().setProperty(PropertyIdentifier.presentValue, new UnsignedInteger(2));
+            getMso0().writeProperty(PropertyIdentifier.presentValue, new UnsignedInteger(2));
             while (!isTerminate()) {
                 System.out.print("Change values of LoopDevice " + this);
 
                 // Update the values in the objects.
-                ai0.setProperty(PropertyIdentifier.presentValue, new Real(ai0value));
-                ai1.setProperty(PropertyIdentifier.presentValue, new Real(ai1value));
-                bi0.setProperty(PropertyIdentifier.presentValue, bi0value ? BinaryPV.active : BinaryPV.inactive);
-                bi1.setProperty(PropertyIdentifier.presentValue, bi1value ? BinaryPV.active : BinaryPV.inactive);
+                ai0.writeProperty(PropertyIdentifier.presentValue, new Real(ai0value));
+                ai1.writeProperty(PropertyIdentifier.presentValue, new Real(ai1value));
+                bi0.writeProperty(PropertyIdentifier.presentValue, bi0value ? BinaryPV.active : BinaryPV.inactive);
+                bi1.writeProperty(PropertyIdentifier.presentValue, bi1value ? BinaryPV.active : BinaryPV.inactive);
 
                 synchronized (this) {
                     wait(1000); // 1 second or notified (faster exit then stupid wait for 1 second)

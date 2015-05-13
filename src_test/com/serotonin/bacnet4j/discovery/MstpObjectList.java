@@ -13,6 +13,7 @@ import com.serotonin.bacnet4j.npdu.mstp.MasterNode;
 import com.serotonin.bacnet4j.npdu.mstp.MstpNetwork;
 import com.serotonin.bacnet4j.npdu.mstp.MstpNode;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
@@ -40,7 +41,7 @@ public class MstpObjectList {
         serialParams.setBaudRate(38400);
         MasterNode node = new MasterNode(serialParams, (byte) 0, 2);
         MstpNetwork network = new MstpNetwork(node);
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         localDevice = new LocalDevice(1234, transport);
         localDevice.getEventHandler().addListener(new Listener());
 

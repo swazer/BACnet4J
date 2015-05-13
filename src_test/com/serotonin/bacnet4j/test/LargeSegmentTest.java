@@ -2,11 +2,11 @@ package com.serotonin.bacnet4j.test;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
-import com.serotonin.bacnet4j.base.BACnetUtils;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
 import com.serotonin.bacnet4j.obj.BACnetObject;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
@@ -31,23 +31,23 @@ public class LargeSegmentTest {
         int deviceReadId = deviceWithObjectsId + 1;
         final int numberOfObjectsToCreate = 4000;
 
-        LocalDevice localDeviceWithLotsOfObjects = new LocalDevice(deviceWithObjectsId, new Transport(new IpNetwork(
-                "127.0.0.255")));
+        LocalDevice localDeviceWithLotsOfObjects = new LocalDevice(deviceWithObjectsId, new DefaultTransport(
+                new IpNetwork("127.0.0.255")));
 
         for (int i = 1; i <= numberOfObjectsToCreate; i++) {
-            BACnetObject av = new BACnetObject(localDeviceWithLotsOfObjects,
+            BACnetObject av = new BACnetObject(
                     localDeviceWithLotsOfObjects.getNextInstanceObjectIdentifier(ObjectType.analogValue));
-            av.setProperty(PropertyIdentifier.objectName, new CharacterString("Test [" + i + "]"));
-            av.setProperty(PropertyIdentifier.relinquishDefault, new Real(i));
+            av.writeProperty(PropertyIdentifier.objectName, new CharacterString("Test [" + i + "]"));
+            av.writeProperty(PropertyIdentifier.relinquishDefault, new Real(i));
             localDeviceWithLotsOfObjects.addObject(av);
         }
         localDeviceWithLotsOfObjects.initialize();
 
-        LocalDevice localDevice = new LocalDevice(deviceReadId, new Transport(new IpNetwork("127.0.0.255",
+        LocalDevice localDevice = new LocalDevice(deviceReadId, new DefaultTransport(new IpNetwork("127.0.0.255",
                 IpNetwork.DEFAULT_PORT + 1)));
         localDevice.initialize();
-        Address address = new Address(BACnetUtils.dottedStringToBytes("127.0.0.1"), IpNetwork.DEFAULT_PORT);
-        RemoteDevice remoteDevice = localDevice.findRemoteDevice(address, null, deviceWithObjectsId);
+        Address address = IpNetworkUtils.toAddress("127.0.0.1", IpNetwork.DEFAULT_PORT);
+        RemoteDevice remoteDevice = localDevice.findRemoteDevice(address, deviceWithObjectsId);
         DiscoveryUtils.getExtendedDeviceInformation(localDevice, remoteDevice);
 
         try {
