@@ -211,7 +211,7 @@ public class CovReportingMixin extends AbstractMixin {
     //
     // COV reporting criteria
     //
-    static class CovReportingCriteria {
+    public static class CovReportingCriteria {
         final PropertyIdentifier[] monitoredProperties;
         final PropertyIdentifier[] propertiesReported;
         final PropertyIdentifier incrementProperty;

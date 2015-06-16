@@ -73,6 +73,6 @@ public class MultistateValueObject extends BACnetObject {
     }
 
     public void supportCovReporting() {
-        addMixin(new CovReportingMixin(this, CovReportingMixin.criteria13_1_4, null));
+        supportCovReporting(CovReportingMixin.criteria13_1_4, null);
     }
 }

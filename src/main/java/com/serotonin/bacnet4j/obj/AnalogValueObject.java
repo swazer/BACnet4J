@@ -60,6 +60,6 @@ public class AnalogValueObject extends BACnetObject {
     }
 
     public void supportCovReporting(float covIncrement) {
-        addMixin(new CovReportingMixin(this, CovReportingMixin.criteria13_1_3, new Real(covIncrement)));
+        supportCovReporting(CovReportingMixin.criteria13_1_3, new Real(covIncrement));
     }
 }

@@ -37,6 +37,7 @@ import com.serotonin.bacnet4j.exception.BACnetRuntimeException;
 import com.serotonin.bacnet4j.exception.BACnetServiceException;
 import com.serotonin.bacnet4j.obj.mixin.CommandableMixin;
 import com.serotonin.bacnet4j.obj.mixin.CovReportingMixin;
+import com.serotonin.bacnet4j.obj.mixin.CovReportingMixin.CovReportingCriteria;
 import com.serotonin.bacnet4j.obj.mixin.HasStatusFlagsMixin;
 import com.serotonin.bacnet4j.obj.mixin.PropertyListMixin;
 import com.serotonin.bacnet4j.obj.mixin.intrinsicReporting.IntrinsicReportingMixin;
@@ -228,6 +229,12 @@ public class BACnetObject implements Serializable {
             throw new BACnetServiceException(ErrorClass.object, ErrorCode.noAlarmConfigured);
         intrinsicReportingMixin.acknowledgeAlarm(acknowledgingProcessIdentifier, eventStateAcknowledged, timeStamp,
                 acknowledgmentSource, timeOfAcknowledgment);
+    }
+
+    //
+    // COVs
+    public void supportCovReporting(CovReportingCriteria criteria, Real covIncrement) {
+        addMixin(new CovReportingMixin(this, criteria, covIncrement));
     }
 
     public AlarmSummary getAlarmSummary() {
@@ -464,7 +471,7 @@ public class BACnetObject implements Serializable {
      * @param value
      * @return
      */
-    BACnetObject writePropertyImpl(PropertyIdentifier pid, Encodable value) {
+    public BACnetObject writePropertyImpl(PropertyIdentifier pid, Encodable value) {
         Encodable oldValue = properties.get(pid);
         properties.put(pid, value);
 
