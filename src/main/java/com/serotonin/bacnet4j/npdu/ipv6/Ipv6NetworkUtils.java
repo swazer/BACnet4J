@@ -51,4 +51,22 @@ public class Ipv6NetworkUtils {
         System.arraycopy(mac.getBytes(), 0, b, 0, 16);
         return b;
     }
+
+    public static String toString(OctetString mac) {
+        return toIpPortString(mac);
+    }
+
+    public static String toIpPortString(OctetString mac) {
+        return "[" + toIpString(mac) + "]:" + getPort(mac);
+    }
+
+    public static String toIpString(OctetString mac) {
+        byte[] ipBytes = getIpBytes(mac);
+        try {
+            return InetAddress.getByAddress(ipBytes).getHostAddress();
+        }
+        catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
