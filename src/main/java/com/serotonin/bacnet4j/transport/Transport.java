@@ -43,6 +43,10 @@ public interface Transport {
 
     public int getRetries();
 
+    public void setSegWindow(int segWindow);
+
+    public int getSegWindow();
+
     void initialize() throws Exception;
 
     void terminate();
