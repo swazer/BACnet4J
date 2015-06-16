@@ -200,6 +200,9 @@ public class DefaultTransport implements Transport, Runnable {
     @Override
     public ServiceFuture send(Address address, int maxAPDULengthAccepted, Segmentation segmentationSupported,
             ConfirmedRequestService service) {
+        if (Thread.currentThread() == thread)
+            throw new IllegalStateException("Cannot send future request in the transport thread. Use a callback " // 
+                    + "call instead, or make this call in a new thread.");
         ServiceFutureImpl future = new ServiceFutureImpl();
         send(address, maxAPDULengthAccepted, segmentationSupported, service, future);
         return future;
