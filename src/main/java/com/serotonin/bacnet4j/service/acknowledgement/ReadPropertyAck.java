@@ -85,7 +85,7 @@ public class ReadPropertyAck extends AcknowledgementService {
         writeEncodable(queue, value, 3);
     }
 
-    ReadPropertyAck(ByteQueue queue) throws BACnetException {
+    public ReadPropertyAck(ByteQueue queue) throws BACnetException {
         eventObjectIdentifier = read(queue, ObjectIdentifier.class, 0);
         propertyIdentifier = read(queue, PropertyIdentifier.class, 1);
         propertyArrayIndex = readOptional(queue, UnsignedInteger.class, 2);
