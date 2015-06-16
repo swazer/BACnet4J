@@ -622,7 +622,7 @@ public class LocalDevice {
             ObjectIdentifier deviceOid = new ObjectIdentifier(ObjectType.device, deviceId);
             ReadPropertyRequest req = new ReadPropertyRequest(deviceOid, PropertyIdentifier.maxApduLengthAccepted);
             ReadPropertyAck ack = (ReadPropertyAck) transport.send(address, MaxApduLength.UP_TO_50.getMaxLength(),
-                    Segmentation.noSegmentation, req);
+                    Segmentation.noSegmentation, req).get();
 
             // If we got this far, then we got a response. Now get the other required properties.
             d = new RemoteDevice(deviceOid.getInstanceNumber(), address);
