@@ -11,6 +11,7 @@ import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
+import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
@@ -18,8 +19,8 @@ import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class EncodingTest {
     public static void main(String[] args) throws Exception {
-        send();
-        //        encode();
+        //        send();
+        encode();
     }
 
     static void send() throws Exception {
@@ -52,9 +53,9 @@ public class EncodingTest {
     static void encode() throws Exception {
         ActionCommand ac = new ActionCommand( //
                 new ObjectIdentifier(ObjectType.device, 234), //
-                new ObjectIdentifier(ObjectType.analogValue, 0), //
+                new ObjectIdentifier(ObjectType.analogInput, 0), //
                 PropertyIdentifier.presentValue, //
-                null, new Real(3.14F), null, null, Boolean.FALSE, Boolean.FALSE);
+                null, /* new Real(3.14F) */new Null(), null, null, Boolean.FALSE, Boolean.FALSE);
         ActionList al = new ActionList(new SequenceOf<ActionCommand>(ac));
         WritePropertyRequest req = new WritePropertyRequest( //
                 new ObjectIdentifier(ObjectType.command, 0), //

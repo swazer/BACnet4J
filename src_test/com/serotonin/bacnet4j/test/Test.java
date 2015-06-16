@@ -27,7 +27,11 @@ import java.util.List;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
+import com.serotonin.bacnet4j.exception.BACnetServiceException;
+import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
+import com.serotonin.bacnet4j.obj.BACnetObject;
+import com.serotonin.bacnet4j.obj.mixin.CovReportingMixin;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.service.acknowledgement.CreateObjectAck;
 import com.serotonin.bacnet4j.service.confirmed.ConfirmedRequestService;
@@ -38,6 +42,7 @@ import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyMultipleRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Destination;
 import com.serotonin.bacnet4j.type.constructed.EventTransitionBits;
@@ -46,8 +51,10 @@ import com.serotonin.bacnet4j.type.constructed.PropertyValue;
 import com.serotonin.bacnet4j.type.constructed.ReadAccessSpecification;
 import com.serotonin.bacnet4j.type.constructed.Recipient;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
+import com.serotonin.bacnet4j.type.constructed.StatusFlags;
 import com.serotonin.bacnet4j.type.constructed.WriteAccessSpecification;
 import com.serotonin.bacnet4j.type.enumerated.EngineeringUnits;
+import com.serotonin.bacnet4j.type.enumerated.EventState;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.enumerated.Segmentation;
@@ -59,14 +66,22 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.DiscoveryUtils;
 
 public class Test {
-    public static void main(String[] args) {
-        //        new Address(0, "192.168.0.70:47808");
-        //        IpNetworkUtils.toOctetString("192.168.2.3:47808");
+    public static void main(String[] args) throws BACnetServiceException {
+        LocalDevice localDevice = new LocalDevice(1969, new DefaultTransport(new IpNetwork("192.168.0.255")));
 
-        EventTransitionBits e = new EventTransitionBits(false, true, true);
-        EventTransitionBits e2 = new EventTransitionBits(e);
-        System.out.println(e);
-        System.out.println(e2);
+        BACnetObject o = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.multiStateInput));
+        o.writeProperty(PropertyIdentifier.presentValue, new UnsignedInteger(0));
+        o.writeProperty(PropertyIdentifier.statusFlags, new StatusFlags(false, false, false, false));
+        o.writeProperty(PropertyIdentifier.eventState, EventState.normal);
+        o.writeProperty(PropertyIdentifier.outOfService, new com.serotonin.bacnet4j.type.primitive.Boolean(false));
+        o.writeProperty(PropertyIdentifier.numberOfStates, new UnsignedInteger(2));
+        //        o.writeProperty(PropertyIdentifier.polarity, Polarity.normal);
+        //        o.writeProperty(PropertyIdentifier.units, EngineeringUnits.noUnits);
+        o.supportCovReporting(CovReportingMixin.criteria13_1_4, null);
+
+        localDevice.addObject(o);
+
+        localDevice.terminate();
     }
 
     //    public static void main(String[] args) throws Exception {
