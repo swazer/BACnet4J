@@ -1,7 +1,7 @@
 package com.serotonin.bacnet4j.test;
 
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
-import com.serotonin.util.queue.ByteQueue;
+import com.serotonin.bacnet4j.util.sero.ByteQueue;
 
 public class ServiceDataDecoding {
     public static void main(String[] args) throws Exception {

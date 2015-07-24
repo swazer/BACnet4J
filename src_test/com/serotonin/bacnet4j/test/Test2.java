@@ -2,24 +2,25 @@ package com.serotonin.bacnet4j.test;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
-import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
-import com.serotonin.bacnet4j.type.enumerated.Segmentation;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 
 public class Test2 {
     public static void main(String[] args) throws Exception {
-        LocalDevice localDevice = new LocalDevice(1968, new Transport(new IpNetwork()));
+        Transport transport = new DefaultTransport(new IpNetwork());
+        transport.addNetworkRouter(2001, IpNetworkUtils.toOctetString("192.168.0.68:47808"));
+        LocalDevice localDevice = new LocalDevice(1968, transport);
         //        LocalDevice localDevice = new LocalDevice(1968, "93.93.233.191");
         //        localDevice.setPort(47809);
 
@@ -36,8 +37,7 @@ public class Test2 {
 
             //        getObjectList(localDevice, "192.168.0.68", 0xBAC0, 101);
             //            getObjectList(localDevice, "192.168.0.68", 76058, new Address(2001, new byte[] { 0x3a }));
-            getObjectList(localDevice, new Address(2001, new byte[] { 0x3a }), new OctetString("192.168.0.68:47808"),
-                    76058);
+            getObjectList(localDevice, new Address(2001, new byte[] { 0x3a }), 76058);
 
             //getObjectList(localDevice, "206.210.100.135", 0xBAC0, 1011);
             // getObjectList(localDevice, "10.174.1.128", 0xBAC0, 57);
@@ -50,15 +50,13 @@ public class Test2 {
     }
 
     private static void getObjectList(LocalDevice localDevice, String ip, int deviceId) throws Exception {
-        getObjectList(localDevice, new Address(ip, 0xBAC0), null, deviceId);
+        getObjectList(localDevice, IpNetworkUtils.toAddress(ip, 0xBAC0), deviceId);
     }
 
-    private static void getObjectList(LocalDevice localDevice, Address to, OctetString link, int deviceId)
-            throws Exception {
+    private static void getObjectList(LocalDevice localDevice, Address to, int deviceId) throws Exception {
         ReadPropertyRequest read = new ReadPropertyRequest(new ObjectIdentifier(ObjectType.device, deviceId),
                 PropertyIdentifier.objectList);
-        ReadPropertyAck ack = (ReadPropertyAck) localDevice.send(to, link, MaxApduLength.UP_TO_1476,
-                Segmentation.segmentedBoth, read);
+        ReadPropertyAck ack = (ReadPropertyAck) localDevice.send(to, read).get();
 
         System.out.println("IP: " + to.getDescription());
         SequenceOf<ObjectIdentifier> oids = (SequenceOf<ObjectIdentifier>) ack.getValue();

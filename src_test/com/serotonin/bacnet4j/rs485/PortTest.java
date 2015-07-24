@@ -3,9 +3,9 @@ package com.serotonin.bacnet4j.rs485;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.serotonin.io.serial.SerialParameters;
-import com.serotonin.io.serial.SerialPortProxy;
-import com.serotonin.io.serial.SerialUtils;
+import com.serotonin.bacnet4j.util.sero.SerialParameters;
+import com.serotonin.bacnet4j.util.sero.SerialPortProxy;
+import com.serotonin.bacnet4j.util.sero.SerialUtils;
 
 public class PortTest {
     public static void main(String[] args) throws Exception {

@@ -1,8 +1,5 @@
 package com.serotonin.bacnet4j.rs485;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
@@ -10,10 +7,11 @@ import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.mstp.MasterNode;
 import com.serotonin.bacnet4j.npdu.mstp.MstpNetwork;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.util.RequestUtils;
-import com.serotonin.io.serial.SerialParameters;
+import com.serotonin.bacnet4j.util.sero.SerialParameters;
 
 /**
  * This class tests the MS/TP code using an RS-485 network accessed via COM4.
@@ -25,8 +23,6 @@ public class SerialTest {
     static LocalDevice localDevice;
 
     public static void main(String[] args) throws Exception {
-        Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.FINEST);
-
         SerialParameters params = new SerialParameters();
         params.setCommPortId("COM4");
         params.setBaudRate(9600);
@@ -34,7 +30,7 @@ public class SerialTest {
 
         MasterNode master = new MasterNode(params, (byte) 0x4, 2);
         MstpNetwork network = new MstpNetwork(master);
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         localDevice = new LocalDevice(1234, transport);
         localDevice.getEventHandler().addListener(new Listener());
 

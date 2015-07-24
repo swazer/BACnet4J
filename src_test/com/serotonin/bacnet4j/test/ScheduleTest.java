@@ -4,10 +4,11 @@ import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.AmbiguousValue;
 import com.serotonin.bacnet4j.type.Encodable;
-import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
@@ -21,7 +22,7 @@ public class ScheduleTest {
 
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         localDevice = new LocalDevice(1234, transport);
 
         try {
@@ -34,7 +35,7 @@ public class ScheduleTest {
     }
 
     static void run() throws BACnetException {
-        RemoteDevice brock = localDevice.findRemoteDevice(new Address("108.9.141.98", 0xbac0), null, 10000);
+        RemoteDevice brock = localDevice.findRemoteDevice(IpNetworkUtils.toAddress("108.9.141.98", 0xbac0), 10000);
         getSchedule(brock, 1);
         //        getSchedule(brock, 2);
         //        getSchedule(brock, 3);

@@ -27,23 +27,22 @@ import java.util.List;
 
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
-import com.serotonin.bacnet4j.enums.MaxApduLength;
-import com.serotonin.bacnet4j.npdu.ip.InetAddrCache;
+import com.serotonin.bacnet4j.exception.BACnetServiceException;
+import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
+import com.serotonin.bacnet4j.obj.BACnetObject;
+import com.serotonin.bacnet4j.obj.mixin.CovReportingMixin;
 import com.serotonin.bacnet4j.service.acknowledgement.AcknowledgementService;
 import com.serotonin.bacnet4j.service.acknowledgement.CreateObjectAck;
 import com.serotonin.bacnet4j.service.confirmed.ConfirmedRequestService;
 import com.serotonin.bacnet4j.service.confirmed.CreateObjectRequest;
 import com.serotonin.bacnet4j.service.confirmed.DeleteObjectRequest;
-import com.serotonin.bacnet4j.service.confirmed.ReadPropertyConditionalRequest;
-import com.serotonin.bacnet4j.service.confirmed.ReadPropertyConditionalRequest.ObjectSelectionCriteria;
-import com.serotonin.bacnet4j.service.confirmed.ReadPropertyConditionalRequest.ObjectSelectionCriteria.SelectionCriteria;
-import com.serotonin.bacnet4j.service.confirmed.ReadPropertyConditionalRequest.ObjectSelectionCriteria.SelectionCriteria.RelationSpecifier;
-import com.serotonin.bacnet4j.service.confirmed.ReadPropertyConditionalRequest.ObjectSelectionCriteria.SelectionLogic;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyMultipleRequest;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyMultipleRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Destination;
 import com.serotonin.bacnet4j.type.constructed.EventTransitionBits;
@@ -52,23 +51,37 @@ import com.serotonin.bacnet4j.type.constructed.PropertyValue;
 import com.serotonin.bacnet4j.type.constructed.ReadAccessSpecification;
 import com.serotonin.bacnet4j.type.constructed.Recipient;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
+import com.serotonin.bacnet4j.type.constructed.StatusFlags;
 import com.serotonin.bacnet4j.type.constructed.WriteAccessSpecification;
 import com.serotonin.bacnet4j.type.enumerated.EngineeringUnits;
+import com.serotonin.bacnet4j.type.enumerated.EventState;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.enumerated.Segmentation;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
-import com.serotonin.bacnet4j.type.primitive.OctetString;
 import com.serotonin.bacnet4j.type.primitive.Real;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.DiscoveryUtils;
 
 public class Test {
-    public static void main(String[] args) {
-        //        new Address(0, "192.168.0.70:47808");
-        new OctetString("192.168.2.3:47808");
+    public static void main(String[] args) throws BACnetServiceException {
+        LocalDevice localDevice = new LocalDevice(1969, new DefaultTransport(new IpNetwork("192.168.0.255")));
+
+        BACnetObject o = new BACnetObject(localDevice.getNextInstanceObjectIdentifier(ObjectType.multiStateInput));
+        o.writeProperty(PropertyIdentifier.presentValue, new UnsignedInteger(0));
+        o.writeProperty(PropertyIdentifier.statusFlags, new StatusFlags(false, false, false, false));
+        o.writeProperty(PropertyIdentifier.eventState, EventState.normal);
+        o.writeProperty(PropertyIdentifier.outOfService, new com.serotonin.bacnet4j.type.primitive.Boolean(false));
+        o.writeProperty(PropertyIdentifier.numberOfStates, new UnsignedInteger(2));
+        //        o.writeProperty(PropertyIdentifier.polarity, Polarity.normal);
+        //        o.writeProperty(PropertyIdentifier.units, EngineeringUnits.noUnits);
+        o.supportCovReporting(CovReportingMixin.criteria13_1_4, null);
+
+        localDevice.addObject(o);
+
+        localDevice.terminate();
     }
 
     //    public static void main(String[] args) throws Exception {
@@ -156,8 +169,7 @@ public class Test {
     // }
 
     public static void test3(LocalDevice d) throws Exception {
-        RemoteDevice rd = new RemoteDevice(105, new Address(new byte[] { (byte) 206, (byte) 210, 100, (byte) 134 },
-                47808), null);
+        RemoteDevice rd = new RemoteDevice(105, IpNetworkUtils.toAddress("206.210.100.134", 47808));
         rd.setSegmentationSupported(Segmentation.noSegmentation);
         rd.setMaxAPDULengthAccepted(1476);
 
@@ -265,23 +277,14 @@ public class Test {
 
         System.out.println(send(d, new ReadPropertyMultipleRequest(new SequenceOf<ReadAccessSpecification>(specs))));
 
-        // Read conditional
-        List<SelectionCriteria> criteria = new ArrayList<SelectionCriteria>();
-        criteria.add(new SelectionCriteria(PropertyIdentifier.presentValue, null, RelationSpecifier.equal, new Real(0)));
-        criteria.add(new SelectionCriteria(PropertyIdentifier.presentValue, null, RelationSpecifier.notEqual, new Real(
-                0)));
-        ObjectSelectionCriteria osc = new ObjectSelectionCriteria(SelectionLogic.or, new SequenceOf<SelectionCriteria>(
-                criteria));
-        new ReadPropertyConditionalRequest(osc, null);
-
         // Delete object
         System.out.println(send(d, new DeleteObjectRequest(created)));
         System.out.println(send(d, new DeleteObjectRequest(created)));
     }
 
     public static AcknowledgementService send(LocalDevice d, ConfirmedRequestService s) throws Exception {
-        Address a = new Address(InetAddrCache.get("localhost", 0xbac1));
-        return d.send(a, null, MaxApduLength.UP_TO_50, Segmentation.segmentedBoth, s);
+        Address a = IpNetworkUtils.toAddress("localhost", 0xbac1);
+        return d.send(a, s).get();
     }
 
     public static void test2(LocalDevice d) throws Exception {
@@ -313,7 +316,7 @@ public class Test {
 
     public static AcknowledgementService send(LocalDevice d, RemoteDevice rd, ConfirmedRequestService s)
             throws Exception {
-        return d.send(rd, s);
+        return d.send(rd, s).get();
     }
 
     // public static void main(String[] args) throws Exception {

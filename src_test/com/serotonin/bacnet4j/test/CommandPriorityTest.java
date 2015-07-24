@@ -13,7 +13,7 @@ import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoHasRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.CharacterString;
@@ -33,15 +33,15 @@ public class CommandPriorityTest {
     public static void main(String[] args) throws Exception {
         String objectName = "Command Priority Test";
         network = new IpNetwork();
-        localDevice = new LocalDevice(1234, new Transport(network));
+        localDevice = new LocalDevice(1234, new DefaultTransport(network));
         localDevice.initialize();
 
         // Who is
-        localDevice.sendBroadcast(network.getBroadcastAddress(2068), null, new WhoIsRequest());
+        localDevice.sendBroadcast(network.getBroadcastAddress(2068), new WhoIsRequest());
         Thread.sleep(1000);
 
         // Who has
-        localDevice.sendBroadcast(network.getBroadcastAddress(2068), null, new WhoHasRequest(null, new CharacterString(
+        localDevice.sendBroadcast(network.getBroadcastAddress(2068), new WhoHasRequest(null, new CharacterString(
                 objectName)));
 
         // Wait a bit for responses to come in.

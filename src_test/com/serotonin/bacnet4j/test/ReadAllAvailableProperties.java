@@ -32,10 +32,11 @@ import com.serotonin.bacnet4j.event.DeviceEventListener;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.ip.InetAddrCache;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
-import com.serotonin.bacnet4j.transport.Transport;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.constructed.Choice;
 import com.serotonin.bacnet4j.type.constructed.DateTime;
@@ -76,9 +77,8 @@ public class ReadAllAvailableProperties {
 
     public ReadAllAvailableProperties(String broadcastAddress, int port) throws Exception {
         network = new IpNetwork(broadcastAddress, port);
-        localDevice = new LocalDevice(1234, new Transport(network));
+        localDevice = new LocalDevice(1234, new DefaultTransport(network));
         localDevice.getEventHandler().addListener(new DeviceEventListener() {
-
             @Override
             public void listenerException(Throwable e) {
                 System.out.println("DiscoveryTest listenerException");
@@ -94,13 +94,13 @@ public class ReadAllAvailableProperties {
             }
 
             @Override
-            public boolean allowPropertyWrite(BACnetObject obj, PropertyValue pv) {
+            public boolean allowPropertyWrite(Address from, BACnetObject obj, PropertyValue pv) {
                 System.out.println("DiscoveryTest allowPropertyWrite");
                 return true;
             }
 
             @Override
-            public void propertyWritten(BACnetObject obj, PropertyValue pv) {
+            public void propertyWritten(Address from, BACnetObject obj, PropertyValue pv) {
                 System.out.println("DiscoveryTest propertyWritten");
             }
 
@@ -131,18 +131,18 @@ public class ReadAllAvailableProperties {
             }
 
             @Override
-            public void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
+            public void privateTransferReceived(Address from, UnsignedInteger vendorId, UnsignedInteger serviceNumber,
                     Sequence serviceParameters) {
                 System.out.println("DiscoveryTest privateTransferReceived");
             }
 
             @Override
-            public void reinitializeDevice(ReinitializedStateOfDevice reinitializedStateOfDevice) {
+            public void reinitializeDevice(Address from, ReinitializedStateOfDevice reinitializedStateOfDevice) {
                 System.out.println("DiscoveryTest reinitializeDevice");
             }
 
             @Override
-            public void synchronizeTime(DateTime dateTime, boolean utc) {
+            public void synchronizeTime(Address from, DateTime dateTime, boolean utc) {
                 System.out.println("DiscoveryTest synchronizeTime");
             }
         });
@@ -159,7 +159,7 @@ public class ReadAllAvailableProperties {
         // Who is
         System.out.println("Send Broadcast WhoIsRequest() ");
         // Send the broadcast to the correct port of the LoopDevice !!!
-        localDevice.sendBroadcast(new Address(InetAddrCache.get("255.255.255.255", loopDevice.getPort())), null,
+        localDevice.sendBroadcast(IpNetworkUtils.toAddress(InetAddrCache.get("255.255.255.255", loopDevice.getPort())),
                 new WhoIsRequest(null, null));
 
         // wait for notification in iAmReceived() Timeout 2 sec

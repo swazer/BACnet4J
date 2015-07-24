@@ -2,3 +2,5 @@
 /build.properties
 /bin
 /target
+/build
+/.gradle

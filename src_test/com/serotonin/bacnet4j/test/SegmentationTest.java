@@ -4,8 +4,8 @@ import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
-import com.serotonin.bacnet4j.transport.Transport;
-import com.serotonin.bacnet4j.type.constructed.Address;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.util.PropertyValues;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -14,11 +14,11 @@ public class SegmentationTest {
     static LocalDevice localDevice;
 
     public static void main(String[] args) throws Exception {
-        localDevice = new LocalDevice(1968, new Transport(new IpNetwork("255.255.255.255", 1234)));
+        localDevice = new LocalDevice(1968, new DefaultTransport(new IpNetwork("255.255.255.255", 1234)));
         localDevice.initialize();
 
         try {
-            RemoteDevice d = localDevice.findRemoteDevice(new Address("192.168.0.103", 0xBAC0), null, 1969);
+            RemoteDevice d = localDevice.findRemoteDevice(IpNetworkUtils.toAddress("192.168.0.103", 0xBAC0), 1969);
             d.setMaxReadMultipleReferences(2000);
             localDevice.addRemoteDevice(d);
 

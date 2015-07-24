@@ -11,9 +11,11 @@ import com.serotonin.bacnet4j.event.DeviceEventListener;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.ip.InetAddrCache;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.confirmed.ReinitializeDeviceRequest.ReinitializedStateOfDevice;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
@@ -45,7 +47,7 @@ public class QuickTest {
 
     public static void main(String[] args) throws Exception {
         network = new IpNetwork("192.168.0.255");
-        transport = new Transport(network);
+        transport = new DefaultTransport(network);
         localDevice = new LocalDevice(1234, transport);
 
         try {
@@ -79,8 +81,8 @@ public class QuickTest {
     }
 
     static void sendWhoIs() throws BACnetException {
-        Address bcastAddr = new Address(InetAddrCache.get(network.getBroadcastIp(), 0xBAC1));
-        localDevice.sendBroadcast(bcastAddr, null, new WhoIsRequest());
+        Address bcastAddr = IpNetworkUtils.toAddress(InetAddrCache.get(network.getBroadcastIp(), 0xBAC1));
+        localDevice.sendBroadcast(bcastAddr, new WhoIsRequest());
     }
 
     static class Listener implements DeviceEventListener {
@@ -111,7 +113,7 @@ public class QuickTest {
          * com.serotonin.bacnet4j.type.constructed.PropertyValue)
          */
         @Override
-        public boolean allowPropertyWrite(BACnetObject obj, PropertyValue pv) {
+        public boolean allowPropertyWrite(Address from, BACnetObject obj, PropertyValue pv) {
             // TODO Auto-generated method stub
             return false;
         }
@@ -124,7 +126,7 @@ public class QuickTest {
          * com.serotonin.bacnet4j.type.constructed.PropertyValue)
          */
         @Override
-        public void propertyWritten(BACnetObject obj, PropertyValue pv) {
+        public void propertyWritten(Address from, BACnetObject obj, PropertyValue pv) {
             // TODO Auto-generated method stub
 
         }
@@ -203,7 +205,7 @@ public class QuickTest {
          * com.serotonin.bacnet4j.type.Encodable)
          */
         @Override
-        public void privateTransferReceived(UnsignedInteger vendorId, UnsignedInteger serviceNumber,
+        public void privateTransferReceived(Address from, UnsignedInteger vendorId, UnsignedInteger serviceNumber,
                 Sequence serviceParameters) {
             // TODO Auto-generated method stub
 
@@ -217,7 +219,7 @@ public class QuickTest {
          * .ReinitializeDeviceRequest.ReinitializedStateOfDevice)
          */
         @Override
-        public void reinitializeDevice(ReinitializedStateOfDevice reinitializedStateOfDevice) {
+        public void reinitializeDevice(Address from, ReinitializedStateOfDevice reinitializedStateOfDevice) {
             // TODO Auto-generated method stub
 
         }
@@ -230,7 +232,7 @@ public class QuickTest {
          * DateTime, boolean)
          */
         @Override
-        public void synchronizeTime(DateTime dateTime, boolean utc) {
+        public void synchronizeTime(Address from, DateTime dateTime, boolean utc) {
             // TODO Auto-generated method stub
 
         }

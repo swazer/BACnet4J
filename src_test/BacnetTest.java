@@ -8,6 +8,7 @@ import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.constructed.ServicesSupported;
@@ -22,7 +23,7 @@ public class BacnetTest {
 
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         //        transport.setTimeout(15000);
         //        transport.setSegTimeout(15000);
         localDevice = new LocalDevice(1234, transport);

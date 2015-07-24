@@ -3,11 +3,10 @@ package com.serotonin.bacnet4j.test;
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
-import com.serotonin.bacnet4j.npdu.ip.InetAddrCache;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
 import com.serotonin.bacnet4j.service.confirmed.SubscribeCOVRequest;
-import com.serotonin.bacnet4j.transport.Transport;
-import com.serotonin.bacnet4j.type.constructed.Address;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.type.constructed.PropertyValue;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
@@ -18,17 +17,15 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 public class SimpleSubscriptionClient {
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
-        LocalDevice localDevice = new LocalDevice(1234, new Transport(network));
+        LocalDevice localDevice = new LocalDevice(1234, new DefaultTransport(network));
         RemoteDevice d = null;
         ObjectIdentifier oid = new ObjectIdentifier(ObjectType.binaryInput, 0);
         ObjectIdentifier aoid = new ObjectIdentifier(ObjectType.analogInput, 0);
         try {
             localDevice.initialize();
             localDevice.getEventHandler().addListener(new Listener());
-            localDevice.sendBroadcast(new Address(InetAddrCache.get("255.255.255.255", 2068)), null,
-                    localDevice.getIAm());
-            d = localDevice
-                    .findRemoteDevice(new Address(new byte[] { (byte) 192, (byte) 168, 0, 2 }, 2068), null, 1968);
+            localDevice.sendBroadcast(IpNetworkUtils.toAddress("255.255.255.255", 2068), localDevice.getIAm());
+            d = localDevice.findRemoteDevice(IpNetworkUtils.toAddress("192.168.0.2", 2068), 1968);
 
             // Subscribe to binary 0
             SubscribeCOVRequest req = new SubscribeCOVRequest(new UnsignedInteger(0), oid, new Boolean(true),

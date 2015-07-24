@@ -5,6 +5,8 @@ import java.util.Map;
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkUtils;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.Address;
@@ -14,11 +16,11 @@ import com.serotonin.bacnet4j.util.RequestUtils;
 public class Test3 {
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         LocalDevice ld = new LocalDevice(1, transport);
         ld.initialize();
 
-        RemoteDevice rd = ld.findRemoteDevice(new Address("192.168.0.68", 0xbac0), null, 101);
+        RemoteDevice rd = ld.findRemoteDevice(new Address(IpNetworkUtils.toOctetString("192.168.0.68", 0xbac0)), 101);
 
         Map<PropertyIdentifier, Encodable> values = RequestUtils.getProperties(ld, rd, null,
                 PropertyIdentifier.objectName, PropertyIdentifier.vendorName, PropertyIdentifier.modelName,

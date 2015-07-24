@@ -1,6 +1,7 @@
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.util.DiscoveryUtils;
 
@@ -9,7 +10,7 @@ public class PublisherTest {
 
     public static void main(String[] args) throws Exception {
         IpNetwork network = new IpNetwork();
-        Transport transport = new Transport(network);
+        Transport transport = new DefaultTransport(network);
         //        //        transport.setTimeout(15000);
         //        //        transport.setSegTimeout(15000);
         localDevice = new LocalDevice(1234, transport);
