@@ -109,7 +109,8 @@ public class DateRangeTest {
 
     @Test
     public void oneDayMatchTest() {
-        DateRange spec = new DateRange(new Date(2016, Month.NOVEMBER, 4, null), new Date(2016, Month.NOVEMBER, 4, null));
+        DateRange spec = new DateRange(new Date(2016, Month.NOVEMBER, 4, null),
+                new Date(2016, Month.NOVEMBER, 4, null));
         test(spec, new Matcher() {
             @Override
             public boolean match(GregorianCalendar gc) {
