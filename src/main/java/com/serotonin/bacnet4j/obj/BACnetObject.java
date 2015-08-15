@@ -227,7 +227,7 @@ public class BACnetObject implements Serializable {
     // Intrinsic reporting
     public void acknowledgeAlarm(UnsignedInteger acknowledgingProcessIdentifier, EventState eventStateAcknowledged,
             TimeStamp timeStamp, CharacterString acknowledgmentSource, TimeStamp timeOfAcknowledgment)
-            throws BACnetServiceException {
+                    throws BACnetServiceException {
         if (intrinsicReportingMixin == null)
             throw new BACnetServiceException(ErrorClass.object, ErrorCode.noAlarmConfigured);
         intrinsicReportingMixin.acknowledgeAlarm(acknowledgingProcessIdentifier, eventStateAcknowledged, timeStamp,
@@ -396,9 +396,9 @@ public class BACnetObject implements Serializable {
                     value.getPropertyIdentifier());
             if (value.getPropertyArrayIndex() == null) {
                 // Expecting to write to a non-list property.
-                if (value.getValue() instanceof Null && !def.isOptional())
-                    throw new BACnetServiceException(ErrorClass.property, ErrorCode.invalidDataType,
-                            "Null provided, but the value is not optional");
+                //if (value.getValue() instanceof Null && !def.isOptional())
+                //    throw new BACnetServiceException(ErrorClass.property, ErrorCode.invalidDataType,
+                //            "Null provided, but the value is not optional");
 
                 if (def.isSequence()) {
                     // Replacing an entire array. Validate each element of the given array.
@@ -412,8 +412,8 @@ public class BACnetObject implements Serializable {
                 }
                 else if (!def.getClazz().isAssignableFrom(value.getValue().getClass()))
                     // Validate the given data type.
-                    throw new BACnetServiceException(ErrorClass.property, ErrorCode.invalidDataType, "expected "
-                            + def.getClazz() + ", received=" + value.getValue().getClass());
+                    throw new BACnetServiceException(ErrorClass.property, ErrorCode.invalidDataType,
+                            "expected " + def.getClazz() + ", received=" + value.getValue().getClass());
             }
             else {
                 // Expecting to write to an array element.
@@ -504,8 +504,8 @@ public class BACnetObject implements Serializable {
         List<PropertyTypeDefinition> defs = ObjectProperties.getRequiredPropertyTypeDefinitions(objectType);
         for (PropertyTypeDefinition def : defs) {
             if (getProperty(def.getPropertyIdentifier()) == null)
-                throw new BACnetServiceException(ErrorClass.property, ErrorCode.other, "Required property not set: "
-                        + def.getPropertyIdentifier());
+                throw new BACnetServiceException(ErrorClass.property, ErrorCode.other,
+                        "Required property not set: " + def.getPropertyIdentifier());
         }
     }
 
