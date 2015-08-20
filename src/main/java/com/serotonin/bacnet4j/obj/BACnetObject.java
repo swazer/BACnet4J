@@ -453,16 +453,9 @@ public class BACnetObject implements Serializable {
                     writePropertyImpl(pid, list);
                 }
             }
-            else {
+            else
                 // Set the value of a property
-                if (value.getValue() instanceof Null) {
-                    properties.remove(pid);
-                    //Encodable oldValue = properties.remove(pid);
-                    //fireSubscriptions(pid, oldValue, null);
-                }
-                else
-                    writePropertyImpl(pid, value.getValue());
-            }
+                writePropertyImpl(pid, value.getValue());
         }
     }
 
