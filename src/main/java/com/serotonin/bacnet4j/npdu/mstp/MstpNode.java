@@ -39,10 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.serotonin.bacnet4j.util.ClockTimeSource;
 import com.serotonin.bacnet4j.util.TimeSource;
 import com.serotonin.bacnet4j.util.sero.ByteQueue;
-import com.serotonin.bacnet4j.util.sero.SerialParameters;
-import com.serotonin.bacnet4j.util.sero.SerialPortException;
-import com.serotonin.bacnet4j.util.sero.SerialPortProxy;
-import com.serotonin.bacnet4j.util.sero.SerialUtils;
+import com.serotonin.bacnet4j.util.sero.SerialPortWrapper;
 import com.serotonin.bacnet4j.util.sero.StreamUtils;
 
 abstract public class MstpNode implements Runnable {
@@ -73,8 +70,8 @@ abstract public class MstpNode implements Runnable {
     // Fields
     private MstpNetwork network;
 
-    private SerialParameters serialParams;
-    private SerialPortProxy serialPort;
+    private SerialPortWrapper wrapper;
+    //private SerialPortProxy serialPort;
 
     private OutputStream out;
     private InputStream in;
@@ -96,8 +93,8 @@ abstract public class MstpNode implements Runnable {
     private long bytesOut;
     private long bytesIn;
 
-    public MstpNode(SerialParameters serialParams, byte thisStation) {
-        this.serialParams = serialParams;
+    public MstpNode(SerialPortWrapper wrapper, byte thisStation) {
+        this.wrapper = wrapper;
         this.thisStation = thisStation;
     }
 
@@ -108,9 +105,9 @@ abstract public class MstpNode implements Runnable {
     }
 
     String getCommPortId() {
-        if (serialParams == null)
+        if (wrapper == null)
             return null;
-        return serialParams.getCommPortId();
+        return wrapper.getCommPortId();
     }
 
     public void initialize() throws Exception {
@@ -127,10 +124,10 @@ abstract public class MstpNode implements Runnable {
 
     public void initialize(boolean runInThread) throws Exception {
         if (!running) {
-            if (serialParams != null) {
-                serialPort = SerialUtils.openSerialPort(serialParams);
-                in = serialPort.getInputStream();
-                out = serialPort.getOutputStream();
+            if (wrapper != null) {
+                wrapper.open();
+                in = wrapper.getInputStream();
+                out = wrapper.getOutputStream();
             }
 
             start = timeSource.currentTimeMillis();
@@ -257,9 +254,9 @@ abstract public class MstpNode implements Runnable {
         }
 
         try {
-            SerialUtils.close(serialPort);
+            wrapper.close();
         }
-        catch (SerialPortException e) {
+        catch (Exception e) {
             LOG.warn("", e);
         }
     }
@@ -631,7 +628,7 @@ abstract public class MstpNode implements Runnable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((serialParams == null) ? 0 : serialParams.hashCode());
+        result = prime * result + ((wrapper == null) ? 0 : wrapper.hashCode());
         return result;
     }
 
@@ -644,11 +641,11 @@ abstract public class MstpNode implements Runnable {
         if (getClass() != obj.getClass())
             return false;
         MstpNode other = (MstpNode) obj;
-        if (serialParams == null) {
-            if (other.serialParams != null)
+        if (wrapper == null) {
+            if (other.wrapper != null)
                 return false;
         }
-        else if (!serialParams.equals(other.serialParams))
+        else if (!wrapper.equals(other.wrapper))
             return false;
         return true;
     }

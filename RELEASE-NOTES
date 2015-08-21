@@ -1,3 +1,19 @@
+*Version 3.1.2
+* Abstracting Serial Port with SerialPortWrapper
+* Removing all legacy Serial Port code from util.sero package
+
+*Version 3.1.0 - 3.1.1
+* The Gradle is also a build option now
+* Dependencies have been removed. BACnet4J now operates without any external libs
+* Support for IPv6 added
+* Ad hoc test code has begun to be replaced with JUnit tests 
+* Blocking request calls have been replaced with non-blocking promises/callbacks
+* Added implementations of many objects, including analog value, binary output, binary value, calendar, multistate 
+value, notification classes, and schedules.
+* Added intrinsic alarming for implemented objects
+* Added COV reporting
+* Many bug fixes and minor enhancements
+
 *Version 2.0.2
 * generic syntax update to version 1.7
 * fixes for private transfer handling
