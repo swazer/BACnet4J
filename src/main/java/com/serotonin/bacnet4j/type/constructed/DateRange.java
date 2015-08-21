@@ -44,25 +44,23 @@ public class DateRange extends BaseType implements DateMatchable {
     public DateRange(Date startDate, Date endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    @Override
-    public void write(ByteQueue queue) {
-        write(queue, startDate);
-        write(queue, endDate);
+        validate();
     }
 
     public DateRange(ByteQueue queue) throws BACnetException {
         startDate = read(queue, Date.class);
         endDate = read(queue, Date.class);
+        validate();
+    }
 
+    private void validate() {
         if (startDate.getYear() != Date.UNSPECIFIED_YEAR && endDate.getYear() == Date.UNSPECIFIED_YEAR
                 || startDate.getYear() == Date.UNSPECIFIED_YEAR && endDate.getYear() != Date.UNSPECIFIED_YEAR)
             throw new BACnetRuntimeException("start and end years must both be specific or unspecific");
-        if (startDate.getMonth() != Month.EVEN_MONTHS || startDate.getMonth() != Month.ODD_MONTHS)
-            throw new BACnetRuntimeException("invalid start month");
-        if (endDate.getMonth() != Month.EVEN_MONTHS || endDate.getMonth() != Month.ODD_MONTHS)
-            throw new BACnetRuntimeException("invalid end month");
+        if (startDate.getMonth() == Month.EVEN_MONTHS || startDate.getMonth() == Month.ODD_MONTHS)
+            throw new BACnetRuntimeException("even/odd months are not supported in date ranges");
+        if (endDate.getMonth() == Month.EVEN_MONTHS || endDate.getMonth() == Month.ODD_MONTHS)
+            throw new BACnetRuntimeException("even/odd months are not supported in date ranges");
         if (startDate.getMonth() != Month.UNSPECIFIED && endDate.getMonth() == Month.UNSPECIFIED
                 || startDate.getMonth() == Month.UNSPECIFIED && endDate.getMonth() != Month.UNSPECIFIED)
             throw new BACnetRuntimeException("start and end months must both be specific or unspecific");
@@ -71,6 +69,12 @@ public class DateRange extends BaseType implements DateMatchable {
             throw new BACnetRuntimeException("start and end day must both be specific or unspecific");
         if (startDate.getDayOfWeek() != DayOfWeek.UNSPECIFIED || endDate.getDayOfWeek() != DayOfWeek.UNSPECIFIED)
             throw new BACnetRuntimeException("day of week ranges are not supported");
+    }
+
+    @Override
+    public void write(ByteQueue queue) {
+        write(queue, startDate);
+        write(queue, endDate);
     }
 
     public Date getStartDate() {
