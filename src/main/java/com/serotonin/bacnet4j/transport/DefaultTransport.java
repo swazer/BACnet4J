@@ -484,6 +484,7 @@ public class DefaultTransport implements Transport, Runnable {
                     LOG.warn("Error sending error response", e);
                 }
                 localDevice.getExceptionDispatcher().fireReceivedException(e);
+                return;
             }
 
             if (confAPDU.isSegmentedMessage()) {
