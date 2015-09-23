@@ -4,6 +4,30 @@ IPv6, and MS/TP.
 
 A discussion forum for this package can be found at http://infiniteautomation.com/forum/category/12/bacnet4j-general-discussion.
 
+A public Maven Repository is now available with the latest builds add this to your pom.xml
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bacnet-data-source</id>
+            <name>BACnet Dependencies</name>
+           <url>http://mangoautomation.net:9902/maven-repo/</url>
+        </repository>
+    </repositories>
+    
+The dependency information is:
+
+   <dependency>
+     <groupId>com.serotonin</groupId>
+     <artifactId>bacnet4j</artifactId>
+   	 <version>3.1.2</version>
+   </dependency>
+
 *Version 3.0 release notes*
 
 - The ANT build system has been replaced with Gradle
