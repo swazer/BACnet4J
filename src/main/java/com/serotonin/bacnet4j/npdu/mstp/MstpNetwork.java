@@ -30,7 +30,7 @@ package com.serotonin.bacnet4j.npdu.mstp;
 
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.npdu.MessageValidationAssertionException;
+import com.serotonin.bacnet4j.npdu.MessageValidationException;
 import com.serotonin.bacnet4j.npdu.NPDU;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
@@ -128,7 +128,7 @@ public class MstpNetwork extends Network {
 
     @Override
     protected NPDU handleIncomingDataImpl(ByteQueue queue, OctetString linkService)
-            throws MessageValidationAssertionException {
+            throws MessageValidationException {
         return parseNpduData(queue, linkService);
     }
 

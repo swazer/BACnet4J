@@ -42,7 +42,7 @@ import java.util.Collections;
 import com.serotonin.bacnet4j.base.BACnetUtils;
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.npdu.MessageValidationAssertionException;
+import com.serotonin.bacnet4j.npdu.MessageValidationException;
 import com.serotonin.bacnet4j.npdu.NPDU;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
@@ -243,13 +243,13 @@ public class IpNetwork extends Network implements Runnable {
         // Initial parsing of IP message.
         // BACnet/IP
         if (queue.pop() != BVLC_TYPE)
-            throw new MessageValidationAssertionException("Protocol id is not BACnet/IP (0x81)");
+            throw new MessageValidationException("Protocol id is not BACnet/IP (0x81)");
 
         byte function = queue.pop();
 
         int length = BACnetUtils.popShort(queue);
         if (length != queue.size() + 4)
-            throw new MessageValidationAssertionException("Length field does not match data: given=" + length
+            throw new MessageValidationException("Length field does not match data: given=" + length
                     + ", expected=" + (queue.size() + 4));
 
         NPDU npdu = null;
@@ -268,7 +268,7 @@ public class IpNetwork extends Network implements Runnable {
         else if (function == 0xa || function == 0xb)
             npdu = parseNpduData(queue, linkService);
         else
-            throw new MessageValidationAssertionException("Unhandled BVLC function type: 0x"
+            throw new MessageValidationException("Unhandled BVLC function type: 0x"
                     + Integer.toHexString(function & 0xff));
 
         return npdu;

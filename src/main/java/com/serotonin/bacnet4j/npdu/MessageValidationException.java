@@ -28,10 +28,10 @@
  */
 package com.serotonin.bacnet4j.npdu;
 
-public class MessageValidationAssertionException extends Exception {
+public class MessageValidationException extends Exception {
     private static final long serialVersionUID = -1;
 
-    public MessageValidationAssertionException(String message) {
+    public MessageValidationException(String message) {
         super(message);
     }
 }
