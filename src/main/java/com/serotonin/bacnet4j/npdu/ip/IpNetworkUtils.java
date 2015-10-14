@@ -30,11 +30,16 @@ package com.serotonin.bacnet4j.npdu.ip;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.serotonin.bacnet4j.base.BACnetUtils;
 import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.primitive.OctetString;
+import com.serotonin.bacnet4j.util.sero.ByteQueue;
 import com.serotonin.bacnet4j.util.sero.IpAddressUtils;
 
 public class IpNetworkUtils {
@@ -57,9 +62,15 @@ public class IpNetworkUtils {
         return toOctetString(BACnetUtils.dottedStringToBytes(dotted), port);
     }
 
-    //    public OctetString toOctetString(InetSocketAddress addr) {
-    //        return toOctetString(addr.getAddress().getAddress(), addr.getPort());
-    //    }
+    public static OctetString toOctetString(ByteQueue queue) {
+        byte[] b = new byte[6];
+        queue.pop(b);
+        return new OctetString(b);
+    }
+
+    public static OctetString toOctetString(InetSocketAddress addr) {
+        return toOctetString(addr.getAddress().getAddress(), addr.getPort());
+    }
 
     private static byte[] toBytes(byte[] ipAddress, int port) {
         if (ipAddress.length != 4)
@@ -144,5 +155,22 @@ public class IpNetworkUtils {
 
     public static Address toAddress(int networkNumber, InetSocketAddress addr) {
         return toAddress(networkNumber, addr.getAddress().getAddress(), addr.getPort());
+    }
+
+    public static List<InetAddress> getLocalInetAddresses() {
+        try {
+            List<InetAddress> result = new ArrayList<InetAddress>();
+            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+                    if (!addr.isLoopbackAddress() && addr.isSiteLocalAddress())
+                        result.add(addr);
+                }
+            }
+            return result;
+        }
+        catch (Exception e) {
+            // Should never happen, so just wrap in a RuntimeException
+            throw new RuntimeException(e);
+        }
     }
 }
