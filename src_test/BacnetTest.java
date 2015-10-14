@@ -5,6 +5,7 @@ import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyAck;
 import com.serotonin.bacnet4j.service.confirmed.ReadPropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
@@ -22,7 +23,7 @@ public class BacnetTest {
     static LocalDevice localDevice;
 
     public static void main(String[] args) throws Exception {
-        IpNetwork network = new IpNetwork();
+        IpNetwork network = new IpNetworkBuilder().build();
         Transport transport = new DefaultTransport(network);
         //        transport.setTimeout(15000);
         //        transport.setSegTimeout(15000);
@@ -70,8 +71,8 @@ public class BacnetTest {
 
         // Get the device's supported services
         System.out.println("protocolServicesSupported");
-        ReadPropertyAck ack = (ReadPropertyAck) localDevice.send(d, new ReadPropertyRequest(oid,
-                PropertyIdentifier.protocolServicesSupported));
+        ReadPropertyAck ack = (ReadPropertyAck) localDevice.send(d,
+                new ReadPropertyRequest(oid, PropertyIdentifier.protocolServicesSupported));
         d.setServicesSupported((ServicesSupported) ack.getValue());
 
         System.out.println("objectName");

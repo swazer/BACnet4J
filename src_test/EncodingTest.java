@@ -1,6 +1,6 @@
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
-import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
+import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.service.confirmed.ConfirmedRequestService;
 import com.serotonin.bacnet4j.service.confirmed.WritePropertyRequest;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
@@ -24,7 +24,7 @@ public class EncodingTest {
     }
 
     static void send() throws Exception {
-        LocalDevice localDevice = new LocalDevice(123, new DefaultTransport(new IpNetwork()));
+        LocalDevice localDevice = new LocalDevice(123, new DefaultTransport(new IpNetworkBuilder().build()));
 
         localDevice.initialize();
 
@@ -66,8 +66,8 @@ public class EncodingTest {
 
         System.out.println(queue);
 
-        ConfirmedRequestService reqIn = ConfirmedRequestService.createConfirmedRequestService(
-                WritePropertyRequest.TYPE_ID, queue);
+        ConfirmedRequestService reqIn = ConfirmedRequestService
+                .createConfirmedRequestService(WritePropertyRequest.TYPE_ID, queue);
         System.out.println(reqIn);
     }
 }
