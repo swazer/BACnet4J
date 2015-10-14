@@ -28,6 +28,8 @@
  */
 package com.serotonin.bacnet4j.transport;
 
+import java.util.Map;
+
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.ResponseConsumer;
 import com.serotonin.bacnet4j.ServiceFuture;
@@ -86,6 +88,8 @@ public interface Transport {
     Address getLocalBroadcastAddress();
 
     void addNetworkRouter(int networkNumber, OctetString mac);
+
+    Map<Integer, OctetString> getNetworkRouters();
 
     void send(Address address, UnconfirmedRequestService service, boolean broadcast);
 
