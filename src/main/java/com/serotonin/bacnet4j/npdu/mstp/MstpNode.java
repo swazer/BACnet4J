@@ -52,7 +52,7 @@ abstract public class MstpNode implements Runnable {
     private static final byte PREAMBLE2 = (byte) 0xFF;
     private static final int MAX_FRAME_LENGTH = 501;
 
-    public static boolean DEBUG = false;
+    private boolean trace = false;
 
     private enum ReadFrameState {
         idle, preamble, header, headerCrc, data, dataCrc;
@@ -85,7 +85,6 @@ abstract public class MstpNode implements Runnable {
     private final DataCRC sendDataCRC = new DataCRC();
 
     protected TimeSource timeSource = new ClockTimeSource();
-    private long start;
     Thread thread;
 
     private volatile boolean running;
@@ -117,6 +116,14 @@ abstract public class MstpNode implements Runnable {
         initialize(true);
     }
 
+    public boolean isTrace() {
+        return trace;
+    }
+
+    public void setTrace(boolean trace) {
+        this.trace = trace;
+    }
+
     public long getBytesOut() {
         return bytesOut;
     }
@@ -132,8 +139,6 @@ abstract public class MstpNode implements Runnable {
                 in = serialPort.getInputStream();
                 out = serialPort.getOutputStream();
             }
-
-            start = timeSource.currentTimeMillis();
 
             running = true;
             lastNonSilence = timeSource.currentTimeMillis();
@@ -309,18 +314,18 @@ abstract public class MstpNode implements Runnable {
             if (in.available() > 0) {
                 readCount = in.read(readArray);
                 bytesIn += readCount;
-                if (DEBUG)
-                    debug("in: " + StreamUtils.dumpArrayHex(readArray, 0, readCount));
+                if (trace)
+                    trace("in: " + StreamUtils.dumpArrayHex(readArray, 0, readCount));
                 inputBuffer.push(readArray, 0, readCount);
                 eventCount += readCount;
-                noise();
+                //noise();
             }
         }
         catch (IOException e) {
             if (StringUtils.equals(e.getMessage(), "Stream closed."))
                 throw new RuntimeException(e);
             if (LOG.isDebugEnabled())
-                LOG.debug("Input stream listener exception", e);
+                LOG.debug(thisStation + " Input stream listener exception", e);
             receiveError = true;
         }
     }
@@ -334,6 +339,7 @@ abstract public class MstpNode implements Runnable {
             if (b == PREAMBLE1) {
                 // Preamble1
                 state = ReadFrameState.preamble;
+                noise();
                 break;
             }
             // else
@@ -345,6 +351,8 @@ abstract public class MstpNode implements Runnable {
     private void preamble() {
         if (silence() > Constants.FRAME_ABORT) {
             // Timeout
+            if (LOG.isDebugEnabled())
+                LOG.debug(thisStation + " Frame abort due to timeout");
             state = ReadFrameState.idle;
             activity = true;
         }
@@ -381,7 +389,7 @@ abstract public class MstpNode implements Runnable {
             // Timeout
             receivedInvalidFrame = "Timeout reading header";
             if (LOG.isDebugEnabled())
-                LOG.debug("Timeout reading header: index=" + index + ", frame=" + frame);
+                LOG.debug(thisStation + " Timeout reading header: index=" + index + ", frame=" + frame);
             state = ReadFrameState.idle;
             activity = true;
         }
@@ -395,8 +403,8 @@ abstract public class MstpNode implements Runnable {
                     // FrameType
                     headerCRC.accumulate(b);
                     frame.setFrameType(FrameType.forId(b));
-                    if (DEBUG && frame.getFrameType() == null)
-                        debug("Unknown frame type for value: " + b);
+                    if (trace && frame.getFrameType() == null)
+                        trace("Unknown frame type for value: " + b);
                     index = 1;
                 }
                 else if (index == 1) {
@@ -454,7 +462,7 @@ abstract public class MstpNode implements Runnable {
                 // NoData
                 receivedValidFrame = true;
                 if (frame.getFrameType() == null && LOG.isDebugEnabled())
-                    LOG.debug("Received valid frame with no type (1): " + frame);
+                    LOG.debug(thisStation + " Received valid frame with no type (1): " + frame);
                 state = ReadFrameState.idle;
             }
             else {
@@ -510,7 +518,7 @@ abstract public class MstpNode implements Runnable {
             // GoodCRC
             receivedValidFrame = true;
             if (frame.getFrameType() == null && LOG.isDebugEnabled())
-                LOG.debug("Received valid frame with no type (2): " + frame);
+                LOG.debug(thisStation + " Received valid frame with no type (2): " + frame);
         }
 
         state = ReadFrameState.idle;
@@ -549,8 +557,8 @@ abstract public class MstpNode implements Runnable {
         //        }
 
         try {
-            if (DEBUG)
-                debug("out: " + frame);
+            if (trace)
+                trace("out: " + frame);
             //LOG.fine("writing frame: " + frame);
 
             // Preamble
@@ -600,8 +608,8 @@ abstract public class MstpNode implements Runnable {
         lastNonSilence = timeSource.currentTimeMillis();
     }
 
-    protected void debug(String msg) {
-        System.out.println(thisStation + "/" + (timeSource.currentTimeMillis() - start) + ": " + msg);
+    protected void trace(String msg) {
+        System.out.println(thisStation + "/" + (timeSource.currentTimeMillis() % 10000000) + ": " + msg);
     }
 
     //

@@ -11,7 +11,6 @@ import com.serotonin.bacnet4j.event.DeviceEventAdapter;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.npdu.mstp.MasterNode;
 import com.serotonin.bacnet4j.npdu.mstp.MstpNetwork;
-import com.serotonin.bacnet4j.npdu.mstp.MstpNode;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
@@ -34,12 +33,12 @@ public class MstpObjectList {
     static boolean whoIsReceived;
 
     public static void main(String[] args) throws Exception {
-        MstpNode.DEBUG = true;
         SerialParameters serialParams = new SerialParameters();
         //        serialParams.setCommPortId("COM4");
         serialParams.setCommPortId("COM16");
         serialParams.setBaudRate(38400);
         MasterNode node = new MasterNode(serialParams, (byte) 0, 2);
+        node.setTrace(true);
         MstpNetwork network = new MstpNetwork(node);
         Transport transport = new DefaultTransport(network);
         localDevice = new LocalDevice(1234, transport);
@@ -91,8 +90,9 @@ public class MstpObjectList {
 
         // Get the device's object list.
         LOG.info("Getting object list");
-        List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>) RequestUtils.sendReadPropertyAllowNull(
-                localDevice, d, d.getObjectIdentifier(), PropertyIdentifier.objectList)).getValues();
+        List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>) RequestUtils
+                .sendReadPropertyAllowNull(localDevice, d, d.getObjectIdentifier(), PropertyIdentifier.objectList))
+                        .getValues();
         LOG.info("Got object list: " + oids.size());
 
         PropertyReferences refs = new PropertyReferences();
