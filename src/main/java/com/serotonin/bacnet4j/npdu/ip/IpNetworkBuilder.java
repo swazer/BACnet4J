@@ -6,6 +6,7 @@ public class IpNetworkBuilder {
     private int port = IpNetwork.DEFAULT_PORT;
     private String localBindAddress = IpNetwork.DEFAULT_BIND_IP;
     private int localNetworkNumber = 0;
+    private boolean reuseAddress = false;
 
     public IpNetworkBuilder broadcastIp(String broadcastIp) {
         this.broadcastIp = broadcastIp;
@@ -32,8 +33,13 @@ public class IpNetworkBuilder {
         return this;
     }
 
+    public IpNetworkBuilder reuseAddress(boolean reuseAddress) {
+        this.reuseAddress = reuseAddress;
+        return this;
+    }
+
     @SuppressWarnings("deprecation")
     public IpNetwork build() {
-        return new IpNetwork(broadcastIp, port, localBindAddress, subnetMask, localNetworkNumber);
+        return new IpNetwork(broadcastIp, port, localBindAddress, subnetMask, localNetworkNumber, reuseAddress);
     }
 }

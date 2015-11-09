@@ -75,6 +75,7 @@ public class IpNetwork extends Network implements Runnable {
     private final String localBindAddressStr;
     private final String broadcastIp;
     private final String subnetMaskStr;
+    private final boolean reuseAddress;
 
     // BBMD support
     private List<BDTEntry> broadcastDistributionTable = new ArrayList<BDTEntry>();
@@ -134,18 +135,20 @@ public class IpNetwork extends Network implements Runnable {
      */
     @Deprecated
     public IpNetwork(String broadcastIp, int port, String localBindAddress, int localNetworkNumber) {
-        this(broadcastIp, port, localBindAddress, DEFAULT_SUBNET_MASK, localNetworkNumber);
+        this(broadcastIp, port, localBindAddress, DEFAULT_SUBNET_MASK, localNetworkNumber, false);
     }
 
     /**
      * @deprecated use an IpNetworkBuilder instead.
      */
     @Deprecated
-    public IpNetwork(String broadcastIp, int port, String localBindAddress, String subnetMask, int localNetworkNumber) {
+    public IpNetwork(String broadcastIp, int port, String localBindAddress, String subnetMask, int localNetworkNumber,
+            boolean reuseAddress) {
         super(localNetworkNumber);
         this.broadcastIp = broadcastIp;
         this.subnetMaskStr = subnetMask;
         this.port = port;
+        this.reuseAddress = reuseAddress;
 
         if (localBindAddress == null || localBindAddress.equals(DEFAULT_BIND_IP)) {
             // It's problematic to not know what the local IP address is, so use utilities to try to determine it.
@@ -201,7 +204,15 @@ public class IpNetwork extends Network implements Runnable {
 
         localBindAddress = InetAddrCache.get(localBindAddressStr, port);
 
-        socket = new DatagramSocket(localBindAddress);
+        if (reuseAddress) {
+            socket = new DatagramSocket();
+            if (!socket.getReuseAddress())
+                LOG.warn("reuseAddress was set, but not supported by the underlying platform");
+            socket.setReuseAddress(true);
+            socket.bind(localBindAddress);
+        }
+        else
+            socket = new DatagramSocket(localBindAddress);
         socket.setBroadcast(true);
 
         //        broadcastAddress = new Address(broadcastIp, port, new Network(0xffff, new byte[0]));
