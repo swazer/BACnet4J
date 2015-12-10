@@ -101,6 +101,45 @@ public class Extended extends NotificationParameters {
             else
                 reference.write(queue, 0);
         }
+
+        public Parameter(ByteQueue queue) throws BACnetException {
+            reference = readOptional(queue, DeviceObjectPropertyReference.class, 0);
+            if (reference == null)
+                primitive = Primitive.createPrimitive(queue);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((primitive == null) ? 0 : primitive.hashCode());
+            result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Parameter other = (Parameter) obj;
+            if (primitive == null) {
+                if (other.primitive != null)
+                    return false;
+            }
+            else if (!primitive.equals(other.primitive))
+                return false;
+            if (reference == null) {
+                if (other.reference != null)
+                    return false;
+            }
+            else if (!reference.equals(other.reference))
+                return false;
+            return true;
+        }
     }
 
     @Override
