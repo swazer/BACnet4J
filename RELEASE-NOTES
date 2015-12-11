@@ -1,3 +1,8 @@
+*Version 3.2.2
+* Added BBMD support
+* Much enhanced support for acting as a foreign device
+* Improved test framework
+
 *Version 3.1.2
 * Abstracting Serial Port with SerialPortWrapper
 * Removing all legacy Serial Port code from util.sero package
