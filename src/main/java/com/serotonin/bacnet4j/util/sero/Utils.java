@@ -39,4 +39,12 @@ public class Utils {
         }
         return object1.equals(object2);
     }
+
+    public static byte[] commaSeparatedHex(String s) {
+        String[] parts = s.split(",");
+        byte[] result = new byte[parts.length];
+        for (int i = 0; i < parts.length; i++)
+            result[i] = (byte) Integer.parseInt(parts[i], 16);
+        return result;
+    }
 }

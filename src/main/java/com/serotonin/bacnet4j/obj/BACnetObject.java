@@ -497,7 +497,7 @@ public class BACnetObject implements Serializable {
         List<PropertyTypeDefinition> defs = ObjectProperties.getRequiredPropertyTypeDefinitions(objectType);
         for (PropertyTypeDefinition def : defs) {
             if (getProperty(def.getPropertyIdentifier()) == null)
-                throw new BACnetServiceException(ErrorClass.property, ErrorCode.other,
+                throw new BACnetServiceException(ErrorClass.property, ErrorCode.missingRequiredParameter,
                         "Required property not set: " + def.getPropertyIdentifier());
         }
     }

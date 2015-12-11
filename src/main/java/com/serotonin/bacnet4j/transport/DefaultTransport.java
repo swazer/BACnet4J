@@ -82,7 +82,7 @@ public class DefaultTransport implements Transport, Runnable {
     static final Logger LOG = LoggerFactory.getLogger(DefaultTransport.class);
     static final MaxSegments MAX_SEGMENTS = MaxSegments.MORE_THAN_64;
 
-    static final Map<Integer, OctetString> networkRouters = new HashMap<Integer, OctetString>();
+    final Map<Integer, OctetString> networkRouters = new HashMap<Integer, OctetString>();
 
     // Configuration
     private LocalDevice localDevice;
@@ -217,6 +217,11 @@ public class DefaultTransport implements Transport, Runnable {
         networkRouters.put(networkNumber, mac);
     }
 
+    @Override
+    public Map<Integer, OctetString> getNetworkRouters() {
+        return networkRouters;
+    }
+
     //
     //
     // Adding new requests and responses.
@@ -270,8 +275,8 @@ public class DefaultTransport implements Transport, Runnable {
                     // Going to a specific remote network. Check if we know the router for it.
                     linkService = networkRouters.get(targetNetworkNumber);
                     if (linkService == null)
-                        handleException(new BACnetTimeoutException("Unable to find router to network "
-                                + address.getNetworkNumber().intValue()));
+                        handleException(new BACnetTimeoutException(
+                                "Unable to find router to network " + address.getNetworkNumber().intValue()));
                 }
                 sendImpl();
             }
@@ -484,6 +489,7 @@ public class DefaultTransport implements Transport, Runnable {
                     LOG.warn("Error sending error response", e);
                 }
                 localDevice.getExceptionDispatcher().fireReceivedException(e);
+                return;
             }
 
             if (confAPDU.isSegmentedMessage()) {
@@ -504,8 +510,8 @@ public class DefaultTransport implements Transport, Runnable {
                 catch (BACnetException e) {
                     LOG.warn("Error handling incoming request", e);
                     com.serotonin.bacnet4j.apdu.Error error = new com.serotonin.bacnet4j.apdu.Error(
-                            confAPDU.getInvokeId(), new BaseError((byte) 127, new BACnetError(ErrorClass.services,
-                                    ErrorCode.operationalProblem)));
+                            confAPDU.getInvokeId(), new BaseError((byte) 127,
+                                    new BACnetError(ErrorClass.services, ErrorCode.operationalProblem)));
                     try {
                         network.sendAPDU(from, linkService, error, false);
                     }
@@ -600,11 +606,8 @@ public class DefaultTransport implements Transport, Runnable {
             // Do we need to send an ack?
             if (!msg.isMoreFollows() || segmentWindow.isFull()) {
                 // Send an acknowledgement
-                network.sendAPDU(
-                        key.getAddress(),
-                        key.getLinkService(),
-                        new SegmentACK(false, !key.isFromServer(), msg.getInvokeId(), lastSeq, windowSize, msg
-                                .isMoreFollows()), false);
+                network.sendAPDU(key.getAddress(), key.getLinkService(), new SegmentACK(false, !key.isFromServer(),
+                        msg.getInvokeId(), lastSeq, windowSize, msg.isMoreFollows()), false);
 
                 // Append the window onto the original response.
                 for (Segmentable segment : segmentWindow.getSegments()) {
@@ -736,8 +739,8 @@ public class DefaultTransport implements Transport, Runnable {
     private void sendConfirmedResponse(final Address address, final OctetString linkService,
             final ConfirmedRequest request, final AcknowledgementService response) throws BACnetException {
         if (response == null)
-            network.sendAPDU(address, linkService, new SimpleACK(request.getInvokeId(), request.getServiceRequest()
-                    .getChoiceId()), false);
+            network.sendAPDU(address, linkService,
+                    new SimpleACK(request.getInvokeId(), request.getServiceRequest().getChoiceId()), false);
         else {
             // A complex ack response. Serialize the data.
             final ByteQueue serviceData = new ByteQueue();
@@ -759,8 +762,8 @@ public class DefaultTransport implements Transport, Runnable {
                 UnackedMessageContext ctx = new UnackedMessageContext(timeout, retries, null);
                 UnackedMessageKey key = unackedMessages.addServer(address, linkService, request.getInvokeId(), ctx);
 
-                ctx.setSegmentTemplate(new ComplexACK(true, true, request.getInvokeId(), 0, segWindow, response
-                        .getChoiceId(), null));
+                ctx.setSegmentTemplate(
+                        new ComplexACK(true, true, request.getInvokeId(), 0, segWindow, response.getChoiceId(), null));
                 ctx.setServiceData(serviceData);
                 ctx.setSegBuf(new byte[maxServiceData]);
 
@@ -772,8 +775,8 @@ public class DefaultTransport implements Transport, Runnable {
             }
             else
                 // We can send the whole APDU in one shot.
-                network.sendAPDU(address, linkService, new ComplexACK(false, false, request.getInvokeId(), 0, 0,
-                        response), false);
+                network.sendAPDU(address, linkService,
+                        new ComplexACK(false, false, request.getInvokeId(), 0, 0, response), false);
         }
     }
 
@@ -806,10 +809,10 @@ public class DefaultTransport implements Transport, Runnable {
                         // A segmented message.
                         if (ctx.getSegmentWindow().isEmpty() && ctx.getConsumer() != null) {
                             // No segments received. Return a timeout.
-                            ctx.getConsumer().ex(
-                                    new BACnetTimeoutException("Timeout while waiting for segment part: invokeId="
-                                            + key.getInvokeId() + ", sequenceId="
-                                            + ctx.getSegmentWindow().getFirstSequenceId()));
+                            ctx.getConsumer()
+                                    .ex(new BACnetTimeoutException(
+                                            "Timeout while waiting for segment part: invokeId=" + key.getInvokeId()
+                                                    + ", sequenceId=" + ctx.getSegmentWindow().getFirstSequenceId()));
                             umIter.remove();
                         }
                         else if (ctx.getSegmentWindow().isEmpty())
@@ -818,9 +821,10 @@ public class DefaultTransport implements Transport, Runnable {
                             // Return a NAK with the last sequence id received in order and start over.
                             try {
                                 network.sendAPDU(key.getAddress(), key.getLinkService(),
-                                        new SegmentACK(true, key.isFromServer(), key.getInvokeId(), ctx
-                                                .getSegmentWindow().getLatestSequenceId(), ctx.getSegmentWindow()
-                                                .getWindowSize(), true), false);
+                                        new SegmentACK(true, key.isFromServer(), key.getInvokeId(),
+                                                ctx.getSegmentWindow().getLatestSequenceId(),
+                                                ctx.getSegmentWindow().getWindowSize(), true),
+                                        false);
                             }
                             catch (BACnetException ex) {
                                 ctx.getConsumer().ex(ex);

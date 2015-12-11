@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.serotonin.bacnet4j.base.BACnetUtils;
 import com.serotonin.bacnet4j.enums.MaxApduLength;
 import com.serotonin.bacnet4j.exception.BACnetException;
-import com.serotonin.bacnet4j.npdu.MessageValidationAssertionException;
+import com.serotonin.bacnet4j.npdu.MessageValidationException;
 import com.serotonin.bacnet4j.npdu.NPDU;
 import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
@@ -282,19 +282,19 @@ public class Ipv6Network extends Network implements Runnable {
     @Override
     protected NPDU handleIncomingDataImpl(ByteQueue queue, OctetString fromIpv6) throws Exception {
         if (queue.size() < 4)
-            throw new MessageValidationAssertionException("Message too short to be BACnet/IPv6: " + queue + " from "
+            throw new MessageValidationException("Message too short to be BACnet/IPv6: " + queue + " from "
                     + fromIpv6);
 
         // Initial parsing of IP message.
         // BACnet/IPv6
         if (queue.pop() != BVLC_TYPE)
-            throw new MessageValidationAssertionException("Protocol id is not BACnet/IPv6 (0x82)");
+            throw new MessageValidationException("Protocol id is not BACnet/IPv6 (0x82)");
 
         byte function = queue.pop();
 
         int length = BACnetUtils.popShort(queue);
         if (length != queue.size() + 4)
-            throw new MessageValidationAssertionException("Length field does not match data: given=" + length
+            throw new MessageValidationException("Length field does not match data: given=" + length
                     + ", expected=" + (queue.size() + 4));
 
         OctetString sourceVMAC = BACnetUtils.popDeviceId(queue);
@@ -381,7 +381,7 @@ public class Ipv6Network extends Network implements Runnable {
             npdu = parseNpduData(queue, sourceVMAC);
         }
         else
-            throw new MessageValidationAssertionException("Unhandled BVLC function type: 0x"
+            throw new MessageValidationException("Unhandled BVLC function type: 0x"
                     + Integer.toHexString(function & 0xff));
 
         return npdu;

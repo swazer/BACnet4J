@@ -175,7 +175,7 @@ public class MasterNode extends MstpNode {
     private void idle() {
         if (silence() >= Constants.NO_TOKEN) {
             // LostToken
-            //            debug("idle:LostToken");
+            //            trace("idle:LostToken");
             if (LOG.isDebugEnabled())
                 LOG.debug(thisStation + " idle:LostToken");
             state = MasterNodeState.noToken;
@@ -192,6 +192,10 @@ public class MasterNode extends MstpNode {
             frame();
             receivedValidFrame = false;
             activity = true;
+        }
+        else {
+            if (LOG.isDebugEnabled())
+                LOG.debug(thisStation + " idle:other, silence=" + silence());
         }
     }
 
@@ -240,7 +244,8 @@ public class MasterNode extends MstpNode {
                 LOG.debug(thisStation + " idle:ReceivedDataNoReply");
             receivedDataNoReply(frame);
         }
-        else if (frame.forStation(thisStation) && type.oneOf(FrameType.bacnetDataExpectingReply, FrameType.testRequest)) {
+        else if (frame.forStation(thisStation)
+                && type.oneOf(FrameType.bacnetDataExpectingReply, FrameType.testRequest)) {
             // ReceivedDataNeedingReply
             //            debug("idle:ReceivedDataNeedingReply");
             if (LOG.isDebugEnabled())
@@ -248,6 +253,10 @@ public class MasterNode extends MstpNode {
             receivedDataNeedingReply(frame);
             state = MasterNodeState.answerDataRequest;
             replyDeadline = lastNonSilence + Constants.REPLY_DELAY;
+        }
+        else {
+            if (LOG.isDebugEnabled())
+                LOG.debug(thisStation + " idle:frame-other");
         }
     }
 

@@ -175,11 +175,11 @@ abstract public class Network {
 
     abstract protected NPDU handleIncomingDataImpl(ByteQueue queue, OctetString linkService) throws Exception;
 
-    public NPDU parseNpduData(ByteQueue queue, OctetString linkService) throws MessageValidationAssertionException {
+    public NPDU parseNpduData(ByteQueue queue, OctetString linkService) throws MessageValidationException {
         // Network layer protocol control information. See 6.2.2
         NPCI npci = new NPCI(queue);
         if (npci.getVersion() != 1)
-            throw new MessageValidationAssertionException("Invalid protocol version: " + npci.getVersion());
+            throw new MessageValidationException("Invalid protocol version: " + npci.getVersion());
 
         // Check the destination network number and ignore foreign networks requests  
         if (npci.hasDestinationInfo()) {

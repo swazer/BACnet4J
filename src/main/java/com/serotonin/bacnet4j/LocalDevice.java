@@ -41,6 +41,7 @@ import com.serotonin.bacnet4j.event.DeviceEventHandler;
 import com.serotonin.bacnet4j.event.ExceptionDispatcher;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.exception.BACnetServiceException;
+import com.serotonin.bacnet4j.npdu.Network;
 import com.serotonin.bacnet4j.npdu.NetworkIdentifier;
 import com.serotonin.bacnet4j.obj.BACnetObject;
 import com.serotonin.bacnet4j.service.VendorServiceKey;
@@ -123,15 +124,15 @@ public class LocalDevice {
         configuration.setLocalDevice(this);
         configuration.writeProperty(PropertyIdentifier.maxApduLengthAccepted, new UnsignedInteger(1476));
         configuration.writeProperty(PropertyIdentifier.vendorIdentifier, new Unsigned16(VENDOR_ID));
-        configuration.writeProperty(PropertyIdentifier.vendorName, new CharacterString(
-                "Serotonin Software Technologies, Inc."));
+        configuration.writeProperty(PropertyIdentifier.vendorName,
+                new CharacterString("Serotonin Software Technologies, Inc."));
         configuration.writeProperty(PropertyIdentifier.segmentationSupported, Segmentation.segmentedBoth);
         configuration.writeProperty(PropertyIdentifier.maxSegmentsAccepted, new UnsignedInteger(1000));
-        configuration.writeProperty(PropertyIdentifier.apduSegmentTimeout, new UnsignedInteger(
-                Transport.DEFAULT_SEG_TIMEOUT));
+        configuration.writeProperty(PropertyIdentifier.apduSegmentTimeout,
+                new UnsignedInteger(Transport.DEFAULT_SEG_TIMEOUT));
         configuration.writeProperty(PropertyIdentifier.apduTimeout, new UnsignedInteger(Transport.DEFAULT_TIMEOUT));
-        configuration.writeProperty(PropertyIdentifier.numberOfApduRetries, new UnsignedInteger(
-                Transport.DEFAULT_RETRIES));
+        configuration.writeProperty(PropertyIdentifier.numberOfApduRetries,
+                new UnsignedInteger(Transport.DEFAULT_RETRIES));
         configuration.writeProperty(PropertyIdentifier.deviceAddressBinding, new SequenceOf<AddressBinding>());
         configuration.writeProperty(PropertyIdentifier.activeCovSubscriptions, new SequenceOf<CovSubscription>());
 
@@ -195,6 +196,10 @@ public class LocalDevice {
         configuration.writeProperty(PropertyIdentifier.protocolVersion, new UnsignedInteger(1));
         configuration.writeProperty(PropertyIdentifier.protocolRevision, new UnsignedInteger(0));
         configuration.writeProperty(PropertyIdentifier.databaseRevision, new UnsignedInteger(0));
+    }
+
+    public Network getNetwork() {
+        return transport.getNetwork();
     }
 
     public NetworkIdentifier getNetworkIdentifier() {
@@ -408,7 +413,8 @@ public class LocalDevice {
             // Just use some hopeful defaults.
             transport.send(address, MaxApduLength.UP_TO_50.getMaxLength(), Segmentation.noSegmentation, serviceRequest,
                     consumer);
-        send(d, serviceRequest, consumer);
+        else
+            send(d, serviceRequest, consumer);
     }
 
     public void send(Address address, UnconfirmedRequestService serviceRequest) {
@@ -573,8 +579,8 @@ public class LocalDevice {
                     if (destination.getRecipient().isAddress())
                         address = destination.getRecipient().getAddress();
                     else {
-                        RemoteDevice remoteDevice = getRemoteDevice(destination.getRecipient().getDevice()
-                                .getInstanceNumber());
+                        RemoteDevice remoteDevice = getRemoteDevice(
+                                destination.getRecipient().getDevice().getInstanceNumber());
                         if (remoteDevice != null)
                             address = remoteDevice.getAddress();
                     }
@@ -624,8 +630,8 @@ public class LocalDevice {
         if (d == null) {
             ObjectIdentifier deviceOid = new ObjectIdentifier(ObjectType.device, deviceId);
             ReadPropertyRequest req = new ReadPropertyRequest(deviceOid, PropertyIdentifier.maxApduLengthAccepted);
-            ReadPropertyAck ack = (ReadPropertyAck) transport.send(address, MaxApduLength.UP_TO_50.getMaxLength(),
-                    Segmentation.noSegmentation, req).get();
+            ReadPropertyAck ack = (ReadPropertyAck) transport
+                    .send(address, MaxApduLength.UP_TO_50.getMaxLength(), Segmentation.noSegmentation, req).get();
 
             // If we got this far, then we got a response. Now get the other required properties.
             d = new RemoteDevice(deviceOid.getInstanceNumber(), address);
@@ -649,5 +655,10 @@ public class LocalDevice {
         }
 
         return d;
+    }
+
+    @Override
+    public String toString() {
+        return "" + configuration.getInstanceId() + ": " + configuration.getObjectName();
     }
 }
