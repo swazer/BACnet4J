@@ -150,7 +150,8 @@ public class IpNetwork extends Network implements Runnable {
         this.port = port;
         this.reuseAddress = reuseAddress;
 
-        if (localBindAddress == null || localBindAddress.equals(DEFAULT_BIND_IP)) {
+        if (localBindAddress == null ){ 
+        	//|| localBindAddress.equals(DEFAULT_BIND_IP)) { removed because iAm responses are broadcasts and thus without this set some systems cannot recieve them
             // It's problematic to not know what the local IP address is, so use utilities to try to determine it.
             List<InetAddress> inetAddrs = IpNetworkUtils.getLocalInetAddresses();
             if (inetAddrs.isEmpty())
@@ -212,7 +213,7 @@ public class IpNetwork extends Network implements Runnable {
             socket.bind(localBindAddress);
         }
         else
-            socket = new DatagramSocket(localBindAddress);
+            socket = new DatagramSocket();
         socket.setBroadcast(true);
 
         //        broadcastAddress = new Address(broadcastIp, port, new Network(0xffff, new byte[0]));
