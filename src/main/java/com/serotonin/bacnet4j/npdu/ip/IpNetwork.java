@@ -213,7 +213,7 @@ public class IpNetwork extends Network implements Runnable {
             socket.bind(localBindAddress);
         }
         else
-            socket = new DatagramSocket();
+            socket = new DatagramSocket(localBindAddress);
         socket.setBroadcast(true);
 
         //        broadcastAddress = new Address(broadcastIp, port, new Network(0xffff, new byte[0]));
