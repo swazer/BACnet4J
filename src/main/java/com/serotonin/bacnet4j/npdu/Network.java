@@ -96,12 +96,12 @@ abstract public class Network {
             npci = new NPCI((Address) null);
         else if (isThisNetwork(recipient)) {
             if (router != null)
-                throw new RuntimeException("Invalid arguments: router address provided for a local recipient");
+                throw new RuntimeException("Invalid arguments: router address provided for local recipient " + recipient);
             npci = new NPCI(null, null, apdu.expectsReply());
         }
         else {
             if (router == null)
-                throw new RuntimeException("Invalid arguments: router address not provided for a remote recipient");
+                throw new RuntimeException("Invalid arguments: router address not provided for remote recipient " + recipient);
             npci = new NPCI(recipient, null, apdu.expectsReply());
         }
 

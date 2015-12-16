@@ -409,8 +409,13 @@ public class DefaultTransport implements Transport, Runnable {
                 pause = false;
             }
 
-            if (pause && running)
-                pause = expire();
+            if (pause && running){
+            	try{
+            		pause = expire();
+            	}catch(Exception e){
+            		LOG.error("Error during expire messages: ", e);
+            	}
+            }
 
             if (pause && running)
                 ThreadUtils.waitSync(pauseLock, 50);
