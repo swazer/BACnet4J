@@ -92,7 +92,10 @@ public class DiscoveryUtils {
         try {
             Map<PropertyIdentifier, Encodable> map = RequestUtils.getProperties(localDevice, d, null,
                     PropertyIdentifier.protocolServicesSupported);
-            d.setServicesSupported((ServicesSupported) map.get(PropertyIdentifier.protocolServicesSupported));
+            Encodable e =  map.get(PropertyIdentifier.protocolServicesSupported);
+            if(e instanceof ServicesSupported)
+            	d.setServicesSupported((ServicesSupported)e);
+            //TODO could be BACnetError here or other, should log this?
         }
         catch (BACnetException e) {
             // ignore
