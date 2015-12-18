@@ -1,6 +1,8 @@
 *Version 3.2.3
 * Removed restriction on binding LocalDevice to 0.0.0.0
 * Added code to ensure DefaultTransport thread can't die from a bad expire() call
+* Added code to ServiceFutureImpl to allow using timeouts
+* Using timeouts in DefaultTransport for ServiceFutures
 
 *Version 3.2.2
 * Added BBMD support

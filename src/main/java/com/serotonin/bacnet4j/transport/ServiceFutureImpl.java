@@ -48,8 +48,12 @@ public class ServiceFutureImpl implements ServiceFuture, ResponseConsumer {
     
     private long timeout; //Timeout to wait before giving up
 
+    public ServiceFutureImpl(){
+    	this(0);
+    }
+    
     public ServiceFutureImpl(long timeout){
-    	
+    	this.timeout = timeout;
     }
     
     @SuppressWarnings("unchecked")
