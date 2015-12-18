@@ -45,7 +45,13 @@ public class ServiceFutureImpl implements ServiceFuture, ResponseConsumer {
     private AckAPDU fail;
     private BACnetException ex;
     private volatile boolean done;
+    
+    private long timeout; //Timeout to wait before giving up
 
+    public ServiceFutureImpl(long timeout){
+    	
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public synchronized <T extends AcknowledgementService> T get() throws BACnetException {
@@ -55,8 +61,11 @@ public class ServiceFutureImpl implements ServiceFuture, ResponseConsumer {
             return (T) ack;
         }
 
-        ThreadUtils.wait(this);
+        ThreadUtils.wait(this, timeout);
 
+        if(ex == null && ack == null && fail == null)
+        	ex = new BACnetException("Timeout waiting for response.");
+        
         if (ex != null)
             throw ex;
 

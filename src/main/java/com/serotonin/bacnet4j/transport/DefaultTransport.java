@@ -238,7 +238,7 @@ public class DefaultTransport implements Transport, Runnable {
         if (Thread.currentThread() == thread)
             throw new IllegalStateException("Cannot send future request in the transport thread. Use a callback " // 
                     + "call instead, or make this call in a new thread.");
-        ServiceFutureImpl future = new ServiceFutureImpl();
+        ServiceFutureImpl future = new ServiceFutureImpl(timeout);
         send(address, maxAPDULengthAccepted, segmentationSupported, service, future);
         return future;
     }
