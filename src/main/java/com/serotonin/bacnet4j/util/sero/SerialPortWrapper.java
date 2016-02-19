@@ -70,14 +70,14 @@ public abstract class SerialPortWrapper {
 	 * @return
 	 */
 	public int getStopBits(){
-	    return PARITY_NONE;
+	    return STOPBITS_1;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getParity(){
-	    return STOPBITS_1;
+	    return PARITY_NONE;
 	}
 
 	/**

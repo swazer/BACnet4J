@@ -1,3 +1,6 @@
+*Version 3.2.4*
+* Fixing bug in SerialPortWrapper where stop bits and data bits were reversed.
+
 *Version 3.2.3
 * Removed restriction on binding LocalDevice to 0.0.0.0
 * Added code to ensure DefaultTransport thread can't die from a bad expire() call

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.serotonin</groupId>
     <artifactId>bacnet4j</artifactId>
-    <version>3.2.3</version>
+    <version>3.2.4</version>
     <name>BACnet4j Library</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
